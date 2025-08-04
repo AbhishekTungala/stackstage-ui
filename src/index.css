@@ -88,6 +88,11 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 0 0% 100% / 0.1;
     --sidebar-ring: 220 91% 65%;
+
+    /* Aurora colors for dark mode */
+    --aurora-primary: 58 41 255;
+    --aurora-secondary: 255 148 180;
+    --aurora-tertiary: 255 50 50;
   }
 
   :root {
@@ -171,6 +176,11 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Aurora colors for light mode */
+    --aurora-primary: 58 41 255;
+    --aurora-secondary: 255 148 180;
+    --aurora-tertiary: 255 50 50;
   }
 }
 
@@ -252,6 +262,61 @@ All colors MUST be HSL.
 
   .pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Magic UI Components */
+  .aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(45deg, 
+      hsla(var(--aurora-primary), 0.1), 
+      hsla(var(--aurora-secondary), 0.1), 
+      hsla(var(--aurora-tertiary), 0.1));
+    animation: aurora 15s ease-in-out infinite;
+  }
+
+  .magic-bento {
+    @apply rounded-2xl overflow-hidden relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+  }
+
+  .magic-bento:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+  }
+
+  .tilted-card {
+    perspective: 1000px;
+    transition: transform 0.3s ease;
+  }
+
+  .tilted-card:hover .card-inner {
+    transform: rotateY(12deg) rotateX(5deg);
+  }
+
+  .card-inner {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+
+  .dock-container {
+    @apply fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50;
+  }
+
+  .dock {
+    @apply flex items-end space-x-2 p-2 rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20;
+  }
+
+  .dock-item {
+    @apply w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center transition-all duration-300 hover:w-16 hover:h-16 cursor-pointer;
   }
 }
 
@@ -357,5 +422,44 @@ All colors MUST be HSL.
   }
   50% { 
     box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+  }
+}
+
+@keyframes aurora {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  33% {
+    transform: rotate(120deg) scale(1.1);
+    opacity: 0.8;
+  }
+  66% {
+    transform: rotate(240deg) scale(0.9);
+    opacity: 0.6;
+  }
+}
+
+@keyframes tilt {
+  0%, 100% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  25% {
+    transform: rotateY(5deg) rotateX(2deg);
+  }
+  75% {
+    transform: rotateY(-5deg) rotateX(-2deg);
+  }
+}
+
+@keyframes magnetism {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
   }
 }

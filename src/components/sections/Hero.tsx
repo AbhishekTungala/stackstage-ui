@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Github, Play, Zap, Shield, TrendingUp } from "lucide-react";
+import Aurora from "@/components/ui/aurora";
 
 const Hero = () => {
   const [currentText, setCurrentText] = useState("");
@@ -39,12 +40,20 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Aurora Background */}
+      <Aurora 
+        colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+        blend={0.5}
+        amplitude={1.0}
+        speed={0.5}
+      />
+      
       {/* Background gradient */}
-      <div className="absolute inset-0 hero-glow opacity-50" />
+      <div className="absolute inset-0 hero-glow opacity-30" />
       
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="animate-fade-in-up">
+      <div className="relative z-10 max-w-screen-xl mx-auto px-6 md:px-20 text-center">
+        <div className="animate-fade-in-up space-y-6">
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 glass-card mb-8">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
@@ -52,7 +61,7 @@ const Hero = () => {
           </div>
 
           {/* Main heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             <span className="block">Your Cloud Architect</span>
             <span className="block text-gradient min-h-[1.2em]">
               {currentText}
@@ -61,7 +70,7 @@ const Hero = () => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
             StackStage analyzes your cloud infrastructure, scores architecture health, 
             and provides intelligent optimization recommendations in seconds.
           </p>

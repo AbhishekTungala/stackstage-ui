@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import TiltedCard from "@/components/ui/tilted-card";
 import { 
   Download, 
   ZoomIn, 
@@ -92,14 +93,14 @@ graph TB
       <Header />
       
       <main className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-6 md:px-20">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Architecture 
               <span className="text-gradient"> Diagram</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base text-muted-foreground max-w-3xl mx-auto">
               Visual representation of your cloud infrastructure with highlighted issues and recommendations.
             </p>
           </div>
@@ -175,37 +176,58 @@ graph TB
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Diagram */}
+            {/* Diagram with Tilted Card */}
             <div className="lg:col-span-3">
-              <Card className="glass-card">
-                <CardContent className="p-6">
-                  <div 
-                    className="w-full overflow-auto border rounded-lg bg-white"
-                    style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top left' }}
-                  >
-                    <div className="p-8 min-h-[600px] flex items-center justify-center">
-                      {/* Mermaid Diagram Placeholder */}
-                      <div className="text-center space-y-4">
-                        <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                          <Share2 className="w-8 h-8 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-foreground">
-                          Interactive Architecture Diagram
-                        </h3>
-                        <p className="text-muted-foreground max-w-md">
-                          Your cloud infrastructure visualized with Mermaid.js. 
-                          Red components indicate critical issues, yellow shows warnings.
-                        </p>
-                        <div className="bg-muted/20 rounded-lg p-4 text-left">
-                          <pre className="text-xs text-muted-foreground whitespace-pre-wrap">
-                            {diagramCode.trim()}
-                          </pre>
-                        </div>
+              <TiltedCard
+                captionText="Designed by StackStage AI"
+                rotateAmplitude={8}
+                scaleOnHover={1.03}
+                displayOverlayContent={true}
+                overlayContent={
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Diagram Controls</h3>
+                    <p className="text-sm opacity-90 mb-4">
+                      Red = Critical Issues, Yellow = Warnings, Green = Healthy
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <ZoomIn className="w-4 h-4 mr-2" />
+                        Zoom
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Download className="w-4 h-4 mr-2" />
+                        Export
+                      </Button>
+                    </div>
+                  </div>
+                }
+              >
+                <div 
+                  className="w-full overflow-auto border rounded-lg bg-white"
+                  style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top left' }}
+                >
+                  <div className="p-8 min-h-[600px] flex items-center justify-center">
+                    {/* Mermaid Diagram Placeholder */}
+                    <div className="text-center space-y-4">
+                      <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <Share2 className="w-8 h-8 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground">
+                        Interactive Architecture Diagram
+                      </h3>
+                      <p className="text-muted-foreground max-w-md">
+                        Your cloud infrastructure visualized with Mermaid.js. 
+                        Red components indicate critical issues, yellow shows warnings.
+                      </p>
+                      <div className="bg-muted/20 rounded-lg p-4 text-left">
+                        <pre className="text-xs text-muted-foreground whitespace-pre-wrap">
+                          {diagramCode.trim()}
+                        </pre>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </TiltedCard>
             </div>
 
             {/* Legend & Stats */}

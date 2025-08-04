@@ -21,6 +21,8 @@ import {
   Wrench,
   ArrowRight
 } from "lucide-react";
+import MagicBento from "@/components/ui/magic-bento";
+import AnimatedList from "@/components/ui/animated-list";
 
 const Results = () => {
   const [overallScore] = useState(78);
@@ -90,14 +92,14 @@ const Results = () => {
       <Header />
       
       <main className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-6 md:px-20">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Architecture 
               <span className="text-gradient"> Analysis Results</span>
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Your cloud infrastructure has been analyzed. Here's what we found.
             </p>
           </div>
@@ -157,13 +159,20 @@ const Results = () => {
             </CardContent>
           </Card>
 
-          {/* Category Scores */}
+          {/* Category Scores with Magic Bento */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
             {scores.map((item) => {
               const Icon = item.icon;
               return (
-                <Card key={item.category} className="glass-card group hover:shadow-lg transition-all">
-                  <CardContent className="p-6">
+                <MagicBento 
+                  key={item.category}
+                  enableTilt={true}
+                  enableBorderGlow={true}
+                  enableMagnetism={true}
+                  spotlightRadius={200}
+                  glowColor="132, 0, 255"
+                >
+                  <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center`}>
                         <Icon className={`w-5 h-5 ${item.color}`} />
@@ -190,10 +199,28 @@ const Results = () => {
                         </span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </MagicBento>
               );
             })}
+          </div>
+
+          {/* Animated Issues List */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
+              Issues by Category
+            </h2>
+            <AnimatedList
+              items={scores.map(score => ({
+                label: score.category,
+                description: `${score.issues} issues found - ${score.status}`,
+                icon: <score.icon className={`w-5 h-5 ${score.color}`} />
+              }))}
+              showGradients={true}
+              enableArrowNavigation={true}
+              displayScrollbar={true}
+              className="max-w-2xl mx-auto"
+            />
           </div>
 
           {/* Action Buttons */}

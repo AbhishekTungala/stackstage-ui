@@ -38,9 +38,9 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem('stackstage-theme', theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem('stackstage-theme', newTheme);
+      setTheme(newTheme);
     },
     toggleTheme: () => {
       const newTheme = theme === 'dark' ? 'light' : 'dark';
