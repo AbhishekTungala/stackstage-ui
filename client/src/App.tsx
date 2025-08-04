@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Router, Route, Switch } from "wouter";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -22,20 +22,20 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/analyze" element={<Analyze />} />
-            <Route path="/results" element={<Results />} />
-            <Route path="/results/fixes" element={<Fixes />} />
-            <Route path="/results/diagram" element={<Diagram />} />
-            <Route path="/results/share" element={<Share />} />
+        <Router>
+          <Switch>
+            <Route path="/" component={Landing} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
+            <Route path="/analyze" component={Analyze} />
+            <Route path="/results" component={Results} />
+            <Route path="/results/fixes" component={Fixes} />
+            <Route path="/results/diagram" component={Diagram} />
+            <Route path="/results/share" component={Share} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+            <Route component={NotFound} />
+          </Switch>
+        </Router>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

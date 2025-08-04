@@ -197,7 +197,9 @@ All colors MUST be HSL.
 
 @layer components {
   .glass {
-    @apply backdrop-blur-xl bg-glass border border-glass-border rounded-2xl;
+    @apply backdrop-blur-xl rounded-2xl;
+    background-color: hsl(var(--glass));
+    border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-glass);
   }
 
@@ -206,7 +208,9 @@ All colors MUST be HSL.
   }
 
   .glass-subtle {
-    @apply backdrop-blur-lg bg-glass-subtle border border-glass-border rounded-xl;
+    @apply backdrop-blur-lg rounded-xl;
+    background-color: hsl(var(--glass-subtle));
+    border: 1px solid hsl(var(--glass-border));
     box-shadow: 0 4px 24px hsl(var(--glass-shadow) / 0.1);
   }
 

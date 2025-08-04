@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Github, Zap, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+  const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
 
   const navigation = [

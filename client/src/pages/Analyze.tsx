@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "wouter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ const Analyze = () => {
     // Simulate analysis
     setTimeout(() => {
       setIsAnalyzing(false);
-      // Redirect to results
+      // Redirect to results - using wouter navigation
       window.location.href = "/results";
     }, 3000);
   };

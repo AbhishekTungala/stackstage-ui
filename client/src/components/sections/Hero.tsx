@@ -1,127 +1,71 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Github, Play, Zap, Shield, TrendingUp } from "lucide-react";
-import Aurora from "@/components/ui/aurora";
+import { Link } from "wouter";
+import { Zap, ArrowRight, Shield, DollarSign, TrendingUp } from "lucide-react";
 
 const Hero = () => {
-  const [currentText, setCurrentText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
-  const texts = [
-    "Build with Confidence",
-    "Optimize Your Cloud",
-    "Secure Your Architecture"
-  ];
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const current = texts[currentIndex];
-      
-      if (!isDeleting) {
-        if (currentText.length < current.length) {
-          setCurrentText(current.substring(0, currentText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        if (currentText.length > 0) {
-          setCurrentText(current.substring(0, currentText.length - 1));
-        } else {
-          setIsDeleting(false);
-          setCurrentIndex((currentIndex + 1) % texts.length);
-        }
-      }
-    }, isDeleting ? 50 : 150);
-
-    return () => clearTimeout(timeout);
-  }, [currentText, currentIndex, isDeleting, texts]);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Aurora Background */}
-      <Aurora 
-        colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
-        blend={0.5}
-        amplitude={1.0}
-        speed={0.5}
-      />
-      
-      {/* Background gradient */}
-      <div className="absolute inset-0 hero-glow opacity-30" />
+    <section className="relative pt-32 pb-20 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 mesh-bg" />
       
       {/* Content */}
-      <div className="relative z-10 max-w-screen-xl mx-auto px-6 md:px-20 text-center">
-        <div className="animate-fade-in-up space-y-6">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 glass-card mb-8">
-            <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-            <span className="text-sm font-medium">AI-Powered Architecture Analysis</span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8">
+            <Zap className="w-4 h-4 mr-2" />
+            Cloud Architecture Analysis Platform
           </div>
-
-          {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            <span className="block">Your Cloud Architect</span>
-            <span className="block text-gradient min-h-[1.2em]">
-              {currentText}
-              <span className="animate-pulse">|</span>
-            </span>
+          
+          {/* Heading */}
+          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
+            Build with
+            <span className="text-gradient block">Confidence</span>
           </h1>
-
-          {/* Subtitle */}
-          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-            StackStage analyzes your cloud infrastructure, scores architecture health, 
-            and provides intelligent optimization recommendations in seconds.
+          
+          {/* Subheading */}
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+            Analyze your cloud infrastructure for security vulnerabilities, 
+            cost optimization opportunities, and performance improvements.
           </p>
-
+          
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Button variant="hero" size="hero" asChild className="group">
-              <Link to="/analyze">
-                Start Free Analysis
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-            
-            <Button variant="outline" size="lg" asChild>
-              <Link to="/demo">
-                <Play className="mr-2 w-5 h-5" />
-                Watch Demo
-              </Link>
-            </Button>
+            <Link href="/analyze">
+              <Button size="lg" className="px-8 py-6 text-lg" variant="hero">
+                Start Analysis
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
+                Sign In
+              </Button>
+            </Link>
           </div>
-
-          {/* Social proof */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <Github className="w-5 h-5" />
-              <span className="text-sm">Open Source</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Shield className="w-5 h-5" />
-              <span className="text-sm">Enterprise Security</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-sm">10k+ Analyses</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Dashboard preview */}
-        <div className="mt-20 animate-fade-in-up animation-delay-300">
-          <div className="glass-card max-w-4xl mx-auto p-8">
-            <div className="aspect-video bg-gradient-to-br from-muted/50 to-muted/20 rounded-xl flex items-center justify-center">
-              <div className="text-center">
-                <Zap className="w-16 h-16 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  Interactive Dashboard Preview
-                </h3>
-                <p className="text-muted-foreground">
-                  See real-time architecture analysis and scoring
-                </p>
+          
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
+                <Shield className="w-6 h-6 text-primary" />
               </div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">99.9%</h3>
+              <p className="text-muted-foreground">Security Detection Rate</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
+                <DollarSign className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">30%</h3>
+              <p className="text-muted-foreground">Average Cost Savings</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
+                <TrendingUp className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">2x</h3>
+              <p className="text-muted-foreground">Performance Improvement</p>
             </div>
           </div>
         </div>
