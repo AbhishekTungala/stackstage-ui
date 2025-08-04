@@ -108,7 +108,7 @@ const Pricing = () => {
               </div>
 
               {/* Pricing Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-8">
                 {pricingPlans.map((plan, index) => (
                   <motion.div
                     key={plan.name}
@@ -124,8 +124,15 @@ const Pricing = () => {
                         : 'hover:shadow-xl'
                     } transition-all duration-300`}>
                       {plan.badge && (
-                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <Badge variant="default" className="px-4 py-1 bg-primary text-primary-foreground">
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                          <Badge 
+                            variant="default" 
+                            className={`px-4 py-2 text-sm font-semibold shadow-lg ${
+                              plan.badge === "Most Popular" 
+                                ? 'bg-gradient-to-r from-primary to-primary-glow text-white border-none' 
+                                : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white border-none'
+                            }`}
+                          >
                             {plan.badge}
                           </Badge>
                         </div>
