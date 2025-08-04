@@ -305,9 +305,9 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                       Quick Start
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    <ScrollArea className="h-72 px-6 pb-6">
-                      <div className="space-y-3">
+                  <CardContent className="px-6 pb-6">
+                    <ScrollArea className="h-72">
+                      <div className="space-y-3 pr-2">
                         {conversationTemplates.map((template) => (
                           <motion.div
                             key={template.id}
@@ -315,10 +315,10 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                             whileTap={{ scale: 0.98 }}
                           >
                             <Card 
-                              className={`cursor-pointer transition-all duration-200 ${
+                              className={`cursor-pointer transition-all duration-200 border-border ${
                                 selectedTemplate === template.id 
-                                  ? 'ring-2 ring-primary bg-primary/5' 
-                                  : 'hover:shadow-md'
+                                  ? 'ring-2 ring-primary bg-primary/5 border-primary/50' 
+                                  : 'hover:shadow-md hover:border-primary/30'
                               }`}
                               onClick={() => handleTemplateSelect(template)}
                             >
@@ -352,15 +352,15 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   <CardHeader>
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    <ScrollArea className="h-48 px-6 pb-6">
-                      <div className="space-y-2">
+                  <CardContent className="px-6 pb-6">
+                    <ScrollArea className="h-48">
+                      <div className="space-y-2 pr-2">
                         {quickActions.map((action, index) => (
                           <Button
                             key={index}
                             variant="outline"
                             size="sm"
-                            className="w-full justify-start"
+                            className="w-full justify-start border-border hover:border-primary/50"
                           >
                             <action.icon className="w-4 h-4 mr-2" />
                             {action.label}
