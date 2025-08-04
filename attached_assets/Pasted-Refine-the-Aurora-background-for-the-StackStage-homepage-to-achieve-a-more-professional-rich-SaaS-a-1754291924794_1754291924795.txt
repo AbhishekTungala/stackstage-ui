@@ -1,0 +1,77 @@
+Refine the Aurora background for the StackStage homepage to achieve a more professional, rich SaaS aesthetic.
+
+---
+
+### 🎯 Goals:
+- **Keep existing Aurora colors** (blue, violet, cyan) — ✅ good palette
+- **Reduce brightness and saturation** to make it **fade subtly**
+- **Darken homepage base background** for better contrast
+- Ensure everything remains **motion-enhanced** but not distracting
+
+---
+
+## ✅ 1. Adjust Aurora Background Styling
+
+🎯 Current Issue:
+The Aurora gradient is **too bright and harsh**, clashing with content.
+
+### ✔️ Fix:
+Use `opacity`, `blur`, and `mix-blend-mode` to soften the Aurora glow.
+
+```tsx
+// Aurora.tsx or styled div
+<div
+  className="absolute inset-0 z-[-1] pointer-events-none"
+  style={{
+    background: `
+      radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.2) 0%, transparent 60%),
+      radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.15) 0%, transparent 60%)
+    `,
+    filter: "blur(100px)",
+    opacity: 0.4,
+    mixBlendMode: "screen",
+  }}
+></div>
+✅ 2. Darken the Homepage Background
+🎯 Goal:
+Make the base background a deep slate or black for contrast.
+
+✔️ Fix:
+In Hero.tsx or top-level div in Landing.tsx, add:
+
+tsx
+Copy
+Edit
+<div className="relative bg-slate-950 text-white min-h-screen">
+  {/* Aurora + Hero Content */}
+</div>
+Or set this in global CSS or body:
+
+css
+Copy
+Edit
+body {
+  background-color: #0f172a; /* slate-950 */
+  color: white;
+}
+✅ 3. Bonus Polish (Optional)
+Add a subtle grain or noise texture overlay (low opacity)
+
+Use motion.div to animate slight background scroll or drift
+
+Ensure all text and UI remain readable with proper contrast
+
+📌 The final effect should look:
+
+💼 Premium & modern (Linear/Figma-grade)
+
+🎬 Smooth & soft — not flashy
+
+🌌 Like a professional dev tool you'd trust for high-stakes infra
+
+“Make it feel like the interface is breathing intelligence.”
+
+vbnet
+Copy
+Edit

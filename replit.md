@@ -44,6 +44,9 @@ StackStage is a modern cloud architecture analysis platform that helps users ana
   - Optimized Aurora with mix-blend-screen and proper z-index layering
   - All components now use Framer Motion for smooth, professional animations
   - Perfect glass morphism interaction with Aurora background
+  - Refined Aurora to professional SaaS aesthetic with reduced brightness and saturation
+  - Darkened homepage background to slate-950 for optimal contrast
+  - Aurora now uses rgba values for subtle, non-distracting motion blur effects
 
 ## User Preferences
 - Modern, professional design aesthetic
