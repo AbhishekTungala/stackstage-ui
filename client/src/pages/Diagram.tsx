@@ -23,7 +23,7 @@ import {
   FileImage,
   FileCode,
   Loader2,
-  Refresh,
+  RefreshCw,
   Settings,
   Palette,
   Move3D
@@ -447,7 +447,7 @@ graph TB
                     {isGenerating ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     ) : (
-                      <Refresh className="w-4 h-4 mr-2" />
+                      <RefreshCw className="w-4 h-4 mr-2" />
                     )}
                     {isGenerating ? "Generating..." : "Generate New"}
                   </Button>
@@ -665,7 +665,7 @@ graph TB
                 <CardContent className="space-y-3">
                   <Button variant="outline" size="sm" className="w-full justify-start glass-button" asChild>
                     <Link to="/analyze">
-                      <Refresh className="w-4 h-4 mr-2" />
+                      <RefreshCw className="w-4 h-4 mr-2" />
                       Run New Analysis
                     </Link>
                   </Button>
@@ -776,31 +776,6 @@ graph TB
         </div>
       </main>
       
-      <Footer />
-    </div>
-  );
-};
-
-export default Diagram;
-              <Button variant="hero" size="lg" asChild>
-                <Link to="/results/fixes">
-                  Fix Critical Issues
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/results/share">
-                  Share Diagram
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg">
-                <Download className="mr-2 w-5 h-5" />
-                Download PNG
-              </Button>
-            </div>
-          </div>
-        </div>
-      </main>
-
       <Footer />
     </div>
   );
