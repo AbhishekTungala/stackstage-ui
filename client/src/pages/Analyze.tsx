@@ -673,7 +673,8 @@ resource "aws_instance" "web_server" {
                       <Button
                         onClick={handleAnalyze}
                         disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
-                        className="px-12 py-4 text-lg font-semibold text-white"
+                        className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white"
+                        style={{ color: '#ffffff !important' }}
                         size="lg"
                         variant="hero"
                       >
