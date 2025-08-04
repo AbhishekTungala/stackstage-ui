@@ -305,41 +305,39 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                       Quick Start
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="px-6 pb-6">
-                      <ScrollArea className="h-72">
-                        <div className="space-y-3">
-                          {conversationTemplates.map((template) => (
-                            <motion.div
-                              key={template.id}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
+                  <CardContent>
+                    <ScrollArea className="h-72 -mx-6 px-6">
+                      <div className="space-y-3">
+                        {conversationTemplates.map((template) => (
+                          <motion.div
+                            key={template.id}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Card 
+                              className={`cursor-pointer transition-all duration-200 ${
+                                selectedTemplate === template.id 
+                                  ? 'ring-2 ring-primary bg-primary/5' 
+                                  : 'hover:shadow-md'
+                              }`}
+                              onClick={() => handleTemplateSelect(template)}
                             >
-                              <Card 
-                                className={`cursor-pointer transition-all duration-200 ${
-                                  selectedTemplate === template.id 
-                                    ? 'ring-2 ring-primary bg-primary/5' 
-                                    : 'hover:shadow-md'
-                                }`}
-                                onClick={() => handleTemplateSelect(template)}
-                              >
-                                <CardContent className="p-3">
-                                  <div className="flex items-center space-x-3">
-                                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
-                                      <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-medium text-sm">{template.title}</h4>
-                                      <p className="text-xs text-muted-foreground">{template.description}</p>
-                                    </div>
+                              <CardContent className="p-3">
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
+                                    <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
                                   </div>
-                                </CardContent>
-                              </Card>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </div>
+                                  <div>
+                                    <h4 className="font-medium text-sm">{template.title}</h4>
+                                    <p className="text-xs text-muted-foreground">{template.description}</p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -354,24 +352,22 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   <CardHeader>
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="px-6 pb-6">
-                      <ScrollArea className="h-48">
-                        <div className="space-y-2">
-                          {quickActions.map((action, index) => (
-                            <Button
-                              key={index}
-                              variant="outline"
-                              size="sm"
-                              className="w-full justify-start"
-                            >
-                              <action.icon className="w-4 h-4 mr-2" />
-                              {action.label}
-                            </Button>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </div>
+                  <CardContent>
+                    <ScrollArea className="h-48 -mx-6 px-6">
+                      <div className="space-y-2">
+                        {quickActions.map((action, index) => (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                          >
+                            <action.icon className="w-4 h-4 mr-2" />
+                            {action.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </CardContent>
                 </Card>
               </motion.div>
