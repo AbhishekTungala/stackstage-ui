@@ -57,7 +57,7 @@ const Footer = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="py-6"
+          className="py-4"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
@@ -221,13 +221,13 @@ const Footer = () => {
 
         <Separator className="opacity-50" />
 
-        {/* Bottom Section - Restored font sizes, reduced gap */}
+        {/* Bottom Section - Restored font sizes, minimal gap */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="py-2"
+          className="py-1"
         >
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-2 lg:space-y-0">
             <div className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-4">
