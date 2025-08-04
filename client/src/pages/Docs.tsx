@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { Link } from "wouter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -358,12 +358,7 @@ curl -X POST https://api.stackstage.com/v1/analysis \\
                 </div>
 
                 {/* Search */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className={`${isSidebarOpen ? 'block' : 'hidden lg:block'}`}
-                >
+                <div className={`${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -373,25 +368,19 @@ curl -X POST https://api.stackstage.com/v1/analysis \\
                       className="pl-10 glass-input"
                     />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Navigation */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className={`${isSidebarOpen ? 'block' : 'hidden lg:block'}`}
-                >
+                <div className={`${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
                   <ScrollArea className="h-[calc(100vh-300px)]">
                     <div className="space-y-4">
                       {filteredSections.map((section) => (
                         <div key={section.id}>
-                          <motion.div
-                            whileHover={{ x: 2 }}
+                          <div
                             className={`cursor-pointer p-3 rounded-xl border transition-all duration-200 ${
                               selectedSection === section.id
                                 ? 'bg-primary/10 border-primary/30 ring-1 ring-primary/20'
-                                : 'border-border/50 hover:border-primary/20 hover:bg-muted/50'
+                                : 'border-white/10 hover:border-white/20 hover:bg-muted/50'
                             }`}
                             onClick={() => {
                               setSelectedSection(section.id);
@@ -413,49 +402,38 @@ curl -X POST https://api.stackstage.com/v1/analysis \\
                                 <p className="text-xs text-muted-foreground">{section.description}</p>
                               </div>
                             </div>
-                          </motion.div>
+                          </div>
                           
                           {/* Articles */}
                           {selectedSection === section.id && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="ml-4 mt-2 space-y-1 border-l border-border/50 pl-4"
-                            >
+                            <div className="ml-4 mt-2 space-y-1 border-l border-border/50 pl-4">
                               {section.articles.map((article) => (
-                                <motion.div
+                                <div
                                   key={article.id}
-                                  whileHover={{ x: 2 }}
-                                  className={`cursor-pointer p-2 rounded-lg transition-all duration-200 ${
+                                  className={`cursor-pointer p-2 rounded-lg border border-white/10 transition-all duration-200 ${
                                     selectedArticle === article.id
-                                      ? 'bg-primary/5 text-primary'
-                                      : 'hover:bg-muted/50 text-muted-foreground'
+                                      ? 'bg-primary/5 text-primary border-primary/20'
+                                      : 'hover:bg-muted/50 hover:border-white/20 text-muted-foreground'
                                   }`}
                                   onClick={() => setSelectedArticle(article.id)}
                                 >
                                   <div className="text-sm font-medium">{article.title}</div>
                                   <div className="text-xs text-muted-foreground">{article.readTime}</div>
-                                </motion.div>
+                                </div>
                               ))}
-                            </motion.div>
+                            </div>
                           )}
                         </div>
                       ))}
                     </div>
                   </ScrollArea>
-                </motion.div>
+                </div>
               </div>
             </div>
 
             {/* Main Content */}
             <div className="lg:col-span-3">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="space-y-8"
-              >
+              <div className="space-y-8">
                 {/* Breadcrumb */}
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <Home className="w-4 h-4" />
@@ -750,7 +728,7 @@ curl -X POST https://api.stackstage.com/v1/analysis \\
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
