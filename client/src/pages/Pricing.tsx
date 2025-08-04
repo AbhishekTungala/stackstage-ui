@@ -127,7 +127,7 @@ const Pricing = () => {
                         <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
                           <Badge 
                             variant="default" 
-                            className={`px-3 py-1 text-xs font-medium shadow-md ${
+                            className={`px-2 py-0.5 text-[10px] font-medium shadow-md ${
                               plan.badge === "Most Popular" 
                                 ? 'bg-gradient-to-r from-primary to-primary-glow text-white border-none' 
                                 : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white border-none'
