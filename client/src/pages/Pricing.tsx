@@ -97,7 +97,7 @@ const Pricing = () => {
                     <Sparkles className="w-4 h-4 mr-2" />
                     Transparent Pricing
                   </Badge>
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent leading-tight">
                     Simple, Scalable Pricing
                   </h1>
                   <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
