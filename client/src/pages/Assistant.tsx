@@ -343,15 +343,15 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                 className="space-y-3"
               >
                 <h3 className="text-lg font-semibold text-foreground">Quick Actions</h3>
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                   {quickActions.map((action, index) => (
                     <Button
                       key={index}
                       variant="outline"
                       size="sm"
-                      className="w-full justify-center glass-card h-8 px-2 text-sm"
+                      className="w-full justify-center glass-card h-7 px-1.5 text-sm"
                     >
-                      <action.icon className="w-3 h-3 mr-1.5" />
+                      <action.icon className="w-2.5 h-2.5 mr-1" />
                       {action.label}
                     </Button>
                   ))}
