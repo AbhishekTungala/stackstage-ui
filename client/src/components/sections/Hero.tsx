@@ -32,8 +32,8 @@ const Hero = () => {
               blurAmount={5}
               borderColor="#6366f1"
               glowColor="rgba(99, 102, 241, 0.6)"
-              animationDuration={0.7}
-              pauseBetweenAnimations={1}
+              animationDuration={1.2}
+              pauseBetweenAnimations={1.5}
             />
           </div>
           
