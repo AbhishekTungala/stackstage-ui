@@ -10,6 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Send,
   Bot,
@@ -42,7 +46,11 @@ import {
   Star,
   Lightbulb,
   Target,
-  TrendingUp
+  TrendingUp,
+  X,
+  Upload,
+  Search,
+  Share2
 } from "lucide-react";
 
 interface Message {
@@ -81,6 +89,17 @@ How can I assist you today?`,
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState({
+    responseLength: 'medium',
+    technicality: 'balanced',
+    autoSuggestions: true,
+    soundNotifications: false,
+    saveChatHistory: true,
+    includeCodeExamples: true,
+    realTimeAnalysis: true,
+    complianceMode: false
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -391,7 +410,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                           <Sparkles className="w-2.5 h-2.5 mr-1" />
                           AI Powered
                         </Badge>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => setIsSettingsOpen(true)}>
                           <Settings className="w-3.5 h-3.5" />
                         </Button>
                       </div>
@@ -568,6 +587,157 @@ Shall I provide step-by-step implementation guides for these fixes?`,
           </div>
         </div>
       </main>
+
+      {/* Settings Dialog */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="glass-card border-primary/20 max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-xl">
+              <Settings className="w-5 h-5 mr-2 text-primary" />
+              AI Assistant Settings
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Response Preferences */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center">
+                <MessageSquare className="w-4 h-4 mr-2 text-primary" />
+                Response Preferences
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="responseLength">Response Length</Label>
+                  <Select value={settings.responseLength} onValueChange={(value) => setSettings({...settings, responseLength: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="brief">Brief - Quick answers</SelectItem>
+                      <SelectItem value="medium">Medium - Balanced detail</SelectItem>
+                      <SelectItem value="detailed">Detailed - Comprehensive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="technicality">Technical Level</Label>
+                  <Select value={settings.technicality} onValueChange={(value) => setSettings({...settings, technicality: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner - Simple terms</SelectItem>
+                      <SelectItem value="balanced">Balanced - Mixed approach</SelectItem>
+                      <SelectItem value="expert">Expert - Technical depth</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Features */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center">
+                <Sparkles className="w-4 h-4 mr-2 text-primary" />
+                AI Features
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Auto Suggestions</Label>
+                    <p className="text-sm text-muted-foreground">Show suggested questions after responses</p>
+                  </div>
+                  <Switch 
+                    checked={settings.autoSuggestions} 
+                    onCheckedChange={(checked) => setSettings({...settings, autoSuggestions: checked})}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Include Code Examples</Label>
+                    <p className="text-sm text-muted-foreground">Provide code snippets when relevant</p>
+                  </div>
+                  <Switch 
+                    checked={settings.includeCodeExamples} 
+                    onCheckedChange={(checked) => setSettings({...settings, includeCodeExamples: checked})}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Real-time Analysis</Label>
+                    <p className="text-sm text-muted-foreground">Enable live infrastructure monitoring insights</p>
+                  </div>
+                  <Switch 
+                    checked={settings.realTimeAnalysis} 
+                    onCheckedChange={(checked) => setSettings({...settings, realTimeAnalysis: checked})}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Compliance Mode</Label>
+                    <p className="text-sm text-muted-foreground">Enhanced security and compliance checking</p>
+                  </div>
+                  <Switch 
+                    checked={settings.complianceMode} 
+                    onCheckedChange={(checked) => setSettings({...settings, complianceMode: checked})}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Privacy & Storage */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center">
+                <Shield className="w-4 h-4 mr-2 text-primary" />
+                Privacy & Storage
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Save Chat History</Label>
+                    <p className="text-sm text-muted-foreground">Store conversations for future reference</p>
+                  </div>
+                  <Switch 
+                    checked={settings.saveChatHistory} 
+                    onCheckedChange={(checked) => setSettings({...settings, saveChatHistory: checked})}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Sound Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Play sound when receiving responses</p>
+                  </div>
+                  <Switch 
+                    checked={settings.soundNotifications} 
+                    onCheckedChange={(checked) => setSettings({...settings, soundNotifications: checked})}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-4 border-t border-border/50">
+            <Button variant="outline" onClick={() => setIsSettingsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setIsSettingsOpen(false)} className="bg-primary">
+              Save Settings
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
