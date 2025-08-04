@@ -88,6 +88,11 @@ All colors MUST be HSL.
     --aurora-primary: 99 102 241;
     --aurora-secondary: 236 72 153;
     --aurora-tertiary: 20 184 166;
+    
+    /* Professional fade gradients */
+    --fade-gradient-bottom: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,1) calc(100% - 300px), rgba(255,255,255,0) 100%);
+    --fade-gradient-top: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 300px, rgba(255,255,255,1) 100%);
+    --fade-gradient-both: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 300px, rgba(255,255,255,1) calc(100% - 300px), rgba(255,255,255,0) 100%);
   }
 
   .dark {
@@ -176,6 +181,11 @@ All colors MUST be HSL.
     --aurora-primary: 99 102 241;
     --aurora-secondary: 236 72 153;
     --aurora-tertiary: 20 184 166;
+    
+    /* Professional fade gradients for dark mode */
+    --fade-gradient-bottom: linear-gradient(to bottom, rgba(5,8,21,1) 0%, rgba(5,8,21,1) calc(100% - 300px), rgba(5,8,21,0) 100%);
+    --fade-gradient-top: linear-gradient(to bottom, rgba(5,8,21,0) 0%, rgba(5,8,21,1) 300px, rgba(5,8,21,1) 100%);
+    --fade-gradient-both: linear-gradient(to bottom, rgba(5,8,21,0) 0%, rgba(5,8,21,1) 300px, rgba(5,8,21,1) calc(100% - 300px), rgba(5,8,21,0) 100%);
   }
 }
 
@@ -227,6 +237,22 @@ All colors MUST be HSL.
     will-change: transform, opacity;
     backface-visibility: hidden;
     transform: translateZ(0);
+  }
+  
+  /* Professional Aurora fade effects */
+  .aurora-fade-bottom {
+    mask-image: var(--fade-gradient-bottom);
+    -webkit-mask-image: var(--fade-gradient-bottom);
+  }
+  
+  .aurora-fade-top {
+    mask-image: var(--fade-gradient-top);
+    -webkit-mask-image: var(--fade-gradient-top);
+  }
+  
+  .aurora-fade-both {
+    mask-image: var(--fade-gradient-both);
+    -webkit-mask-image: var(--fade-gradient-both);
   }
 
   /* Ensure aurora renders behind all content */

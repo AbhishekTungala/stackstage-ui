@@ -79,9 +79,15 @@ const Pricing = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      {/* Aurora Background */}
+      {/* Aurora Background with smooth fade */}
       <div className="absolute inset-0">
-        <Aurora intensity={0.3} speed={1.5} className="aurora-background" />
+        <Aurora 
+          intensity={0.3} 
+          speed={1.5} 
+          className="aurora-background"
+          fadeHeight={250}
+          fadeDirection="bottom"
+        />
       </div>
         
       <main className="relative flex-1">

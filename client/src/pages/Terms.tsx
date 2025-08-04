@@ -174,7 +174,13 @@ const Terms = () => {
       
       {/* Aurora Background */}
       <div className="absolute inset-0">
-        <Aurora intensity={0.2} speed={2} className="aurora-background" />
+        <Aurora 
+          intensity={0.2} 
+          speed={2} 
+          className="aurora-background"
+          fadeHeight={250}
+          fadeDirection="bottom"
+        />
       </div>
 
       <main className="relative flex-1 pt-20">

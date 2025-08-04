@@ -188,9 +188,15 @@ const Analyze = () => {
     <div className="min-h-screen relative flex flex-col">
       <Header />
       
-      {/* Aurora Background */}
+      {/* Aurora Background with smooth fade */}
       <div className="absolute inset-0">
-        <Aurora intensity={0.4} speed={1.2} className="aurora-background" />
+        <Aurora 
+          intensity={0.4} 
+          speed={1.2} 
+          className="aurora-background"
+          fadeHeight={300}
+          fadeDirection="bottom"
+        />
       </div>
       
       <main className="relative flex-1 pt-24 pb-16">

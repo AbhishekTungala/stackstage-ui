@@ -6,6 +6,8 @@ interface AuroraProps {
   intensity?: number;
   speed?: number;
   className?: string;
+  fadeHeight?: number;
+  fadeDirection?: 'bottom' | 'top' | 'both';
 }
 
 const Aurora: React.FC<AuroraProps> = ({
@@ -18,11 +20,26 @@ const Aurora: React.FC<AuroraProps> = ({
   ],
   intensity = 0.4,
   speed = 1.2,
-  className = ""
+  className = "",
+  fadeHeight = 200,
+  fadeDirection = 'bottom'
 }) => {
+  // Create fade mask based on direction
+  const getFadeMask = () => {
+    switch (fadeDirection) {
+      case 'top':
+        return `linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) ${fadeHeight}px, rgba(0,0,0,1) 100%)`;
+      case 'both':
+        return `linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) ${fadeHeight}px, rgba(0,0,0,1) calc(100% - ${fadeHeight}px), transparent 100%)`;
+      case 'bottom':
+      default:
+        return `linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - ${fadeHeight}px), transparent 100%)`;
+    }
+  };
+
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
-      {/* Primary Aurora with professional softness */}
+      {/* Primary Aurora with professional softness and fade */}
       <motion.div
         className="absolute inset-0 z-[-1] pointer-events-none mix-blend-screen"
         style={{
@@ -33,6 +50,8 @@ const Aurora: React.FC<AuroraProps> = ({
           `,
           filter: 'blur(100px)',
           opacity: 0.6,
+          maskImage: getFadeMask(),
+          WebkitMaskImage: getFadeMask(),
         }}
         animate={{
           background: [
@@ -65,7 +84,7 @@ const Aurora: React.FC<AuroraProps> = ({
         }}
       />
       
-      {/* Subtle floating orbs with reduced intensity */}
+      {/* Subtle floating orbs with reduced intensity and fade */}
       {[...Array(3)].map((_, i) => (
         <motion.div
           key={i}
@@ -75,6 +94,8 @@ const Aurora: React.FC<AuroraProps> = ({
             filter: 'blur(80px)',
             width: '400px',
             height: '400px',
+            maskImage: getFadeMask(),
+            WebkitMaskImage: getFadeMask(),
           }}
           animate={{
             x: [0, 60, 0],
@@ -95,7 +116,7 @@ const Aurora: React.FC<AuroraProps> = ({
         />
       ))}
       
-      {/* Very subtle center breathing glow */}
+      {/* Very subtle center breathing glow with fade */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center z-[-3]"
       >
@@ -106,6 +127,8 @@ const Aurora: React.FC<AuroraProps> = ({
             filter: 'blur(120px)',
             width: '800px',
             height: '800px',
+            maskImage: getFadeMask(),
+            WebkitMaskImage: getFadeMask(),
           }}
           animate={{
             scale: [1, 1.2, 1],

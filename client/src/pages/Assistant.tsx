@@ -240,7 +240,13 @@ Shall I provide step-by-step implementation guides for these fixes?`,
       
       {/* Aurora Background */}
       <div className="absolute inset-0">
-        <Aurora intensity={0.3} speed={1.5} className="aurora-background" />
+        <Aurora 
+          intensity={0.3} 
+          speed={1.5} 
+          className="aurora-background"
+          fadeHeight={300}
+          fadeDirection="bottom"
+        />
       </div>
 
       <main className="relative flex-1 pt-20 pb-8">

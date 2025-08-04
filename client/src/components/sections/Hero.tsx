@@ -8,11 +8,13 @@ import TrueFocus from "@/components/ui/true-focus";
 const Hero = () => {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Aurora Background */}
+      {/* Aurora Background with smooth fade */}
       <Aurora 
         intensity={0.3}
         speed={1.2}
         className="aurora-background"
+        fadeHeight={300}
+        fadeDirection="bottom"
       />
       
       {/* Content */}
