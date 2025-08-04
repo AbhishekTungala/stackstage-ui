@@ -74,7 +74,7 @@ export default {
 				}
 			},
 			fontFamily: {
-				sans: ['Inter', 'system-ui', 'sans-serif'],
+				sans: ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
 				mono: ['JetBrains Mono', 'Monaco', 'monospace']
 			},
 			backdropBlur: {

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Github, Zap } from "lucide-react";
+import { Menu, X, Github, Zap, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const navigation = [
     { name: "Analyze", href: "/analyze" },
@@ -41,6 +43,18 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="rounded-full"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
             <Button variant="ghost" asChild>
               <Link to="/login">Login</Link>
             </Button>
@@ -73,6 +87,21 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Theme</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleTheme}
+                    className="rounded-full h-8 w-8"
+                  >
+                    {theme === 'dark' ? (
+                      <Sun className="h-4 w-4" />
+                    ) : (
+                      <Moon className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
                 <Button variant="ghost" asChild className="justify-start">
                   <Link to="/login">Login</Link>
                 </Button>
