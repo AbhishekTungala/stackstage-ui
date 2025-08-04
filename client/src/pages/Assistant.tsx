@@ -59,29 +59,21 @@ const Assistant = () => {
     {
       id: '1',
       type: 'assistant',
-      content: `Welcome to StackStage Enterprise AI – your dedicated cloud architecture intelligence platform. I'm powered by advanced ML models trained on thousands of production environments and industry best practices.
+      content: `Welcome to StackStage AI Assistant! I'm here to help you with cloud architecture analysis, optimization, and best practices. I can:
 
-**🚀 Enterprise Capabilities:**
-• **Real-time Infrastructure Analysis** – Deep scanning of AWS, Azure, GCP environments
-• **Predictive Cost Intelligence** – AI-driven cost forecasting and optimization recommendations  
-• **Zero-Trust Security Assessment** – Advanced threat modeling and compliance validation
-• **Performance Optimization Engine** – Automated bottleneck detection and scaling recommendations
-• **Regulatory Compliance Suite** – SOC 2, ISO 27001, GDPR, HIPAA compliance verification
+• Analyze your infrastructure configurations
+• Provide security recommendations
+• Suggest cost optimization strategies
+• Answer questions about cloud best practices
+• Help with compliance requirements
 
-**💡 Advanced Features:**
-• Multi-cloud architecture reviews with deployment blueprints
-• Real-time anomaly detection with automated remediation suggestions
-• Custom policy enforcement and drift detection
-• Infrastructure-as-Code generation and validation
-• Executive-ready reports with ROI analysis
-
-Ready to optimize your cloud infrastructure? Let's start with your specific challenges.`,
+How can I assist you today?`,
       timestamp: new Date(),
       suggestions: [
-        "Perform comprehensive security audit of my production environment",
-        "Generate cost optimization roadmap with ROI projections",
-        "Create multi-cloud disaster recovery strategy",
-        "Assess compliance readiness for SOC 2 certification"
+        "Analyze my AWS setup for security issues",
+        "How can I reduce my cloud costs?",
+        "Best practices for Kubernetes security",
+        "Explain Infrastructure as Code benefits"
       ]
     }
   ]);
@@ -103,73 +95,43 @@ Ready to optimize your cloud infrastructure? Let's start with your specific chal
   const conversationTemplates = [
     {
       id: "security",
-      title: "Enterprise Security Audit",
-      description: "Zero-trust security assessment with threat modeling",
+      title: "Security Analysis",
+      description: "Get security recommendations for your infrastructure",
       icon: Shield,
-      prompt: "Conduct a comprehensive enterprise security audit of my cloud infrastructure, including zero-trust architecture assessment, threat modeling, and advanced persistent threat detection. Provide executive summary with risk scores and remediation roadmap.",
-      color: "red",
-      badge: "Critical",
-      stats: "99.9% threat detection"
+      prompt: "Please analyze my cloud infrastructure for potential security vulnerabilities and provide detailed recommendations.",
+      color: "green"
     },
     {
       id: "cost",
-      title: "Cost Intelligence & ROI",
-      description: "AI-powered cost optimization with forecasting",
+      title: "Cost Optimization",
+      description: "Reduce cloud spending with AI insights",
       icon: TrendingUp,
-      prompt: "Perform advanced cost intelligence analysis including predictive forecasting, rightsizing recommendations, reserved instance optimization, and multi-cloud cost comparison. Generate executive dashboard with 12-month ROI projections.",
-      color: "green",
-      badge: "High Impact",
-      stats: "Average 35% savings"
+      prompt: "Help me identify cost optimization opportunities in my cloud infrastructure and provide specific recommendations to reduce expenses.",
+      color: "blue"
     },
     {
       id: "performance",
-      title: "Performance Engineering",
-      description: "Advanced performance optimization and scaling",
+      title: "Performance Tuning",
+      description: "Optimize infrastructure performance",
       icon: Cpu,
-      prompt: "Execute comprehensive performance engineering analysis including auto-scaling optimization, database performance tuning, CDN configuration, and microservices architecture review. Provide performance benchmarks and SLA improvements.",
-      color: "blue",
-      badge: "Enterprise",
-      stats: "Up to 10x performance"
+      prompt: "Analyze my infrastructure performance and suggest optimizations for better efficiency and response times.",
+      color: "purple"
     },
     {
       id: "compliance",
-      title: "Regulatory Compliance Suite",
-      description: "Multi-framework compliance validation",
+      title: "Compliance Check",
+      description: "Ensure regulatory compliance",
       icon: CheckCircle,
-      prompt: "Comprehensive compliance assessment across SOC 2 Type II, ISO 27001, GDPR, HIPAA, PCI DSS, and industry-specific regulations. Generate audit-ready documentation and remediation timeline with priority matrix.",
-      color: "purple",
-      badge: "Audit Ready",
-      stats: "100% compliance score"
-    },
-    {
-      id: "architecture",
-      title: "Cloud Architecture Review",
-      description: "Enterprise architecture patterns and modernization",
-      icon: Cloud,
-      prompt: "Deep architectural review including microservices migration strategy, cloud-native transformation roadmap, serverless opportunities, and technology stack modernization. Provide architectural decision records and implementation timeline.",
-      color: "indigo",
-      badge: "Strategic",
-      stats: "Future-proof design"
-    },
-    {
-      id: "disaster",
-      title: "Business Continuity & DR",
-      description: "Multi-region disaster recovery planning",
-      icon: AlertTriangle,
-      prompt: "Design comprehensive business continuity and disaster recovery strategy including RTO/RPO analysis, multi-region failover architecture, data backup strategies, and crisis management procedures. Include tabletop exercise scenarios.",
-      color: "orange",
-      badge: "Mission Critical",
-      stats: "99.99% uptime target"
+      prompt: "Review my infrastructure for compliance with industry standards like SOC 2, GDPR, and HIPAA.",
+      color: "orange"
     }
   ];
 
   const quickActions = [
-    { label: "Upload Infrastructure Config", icon: FileText, description: "Terraform, ARM, CloudFormation" },
-    { label: "Real-time Infrastructure Scan", icon: BarChart3, description: "Live environment analysis" },
-    { label: "Executive Summary Report", icon: Download, description: "C-suite ready insights" },
-    { label: "Secure Team Collaboration", icon: Share, description: "Enterprise sharing & access" },
-    { label: "Custom Policy Validation", icon: CheckCircle, description: "Governance & compliance" },
-    { label: "Cost Anomaly Detection", icon: AlertTriangle, description: "Automated monitoring" }
+    { label: "Upload Config", icon: FileText },
+    { label: "Scan Infrastructure", icon: BarChart3 },
+    { label: "Generate Report", icon: Download },
+    { label: "Share Analysis", icon: Share }
   ];
 
   const handleSendMessage = async () => {
@@ -191,94 +153,50 @@ Ready to optimize your cloud infrastructure? Let's start with your specific chal
     setTimeout(() => {
       const responses = [
         {
-          content: `## 🎯 Enterprise Analysis Complete
+          content: `I've analyzed your request about "${inputMessage.slice(0, 50)}...". Here's my detailed analysis:
 
-I've conducted a comprehensive deep-dive analysis of your request: "${inputMessage.slice(0, 60)}..."
+**Key Findings:**
+• Identified 3 potential security improvements
+• Found 2 cost optimization opportunities
+• Detected 1 performance bottleneck
 
-### 📊 Executive Summary
-**Risk Score: 7.2/10** | **Potential Savings: $847K annually** | **Implementation Timeline: 90 days**
+**Recommendations:**
+1. **Security**: Enable MFA for all admin accounts
+2. **Cost**: Consider reserved instances for stable workloads
+3. **Performance**: Implement auto-scaling for dynamic loads
 
-### 🔍 Key Findings & Strategic Recommendations
-
-**🛡️ SECURITY ARCHITECTURE (Priority: Critical)**
-• **Zero-Trust Implementation Gap**: 67% of services lack proper segmentation
-• **Identity & Access Management**: 23 over-privileged accounts detected
-• **Data Encryption**: 4 databases with encryption at rest disabled
-• **Network Security**: Missing WAF rules for 3 critical endpoints
-
-**💰 COST INTELLIGENCE (ROI: 312%)**
-• **Reserved Instance Optimization**: $234K annual savings opportunity
-• **Auto-scaling Inefficiencies**: $156K in over-provisioned compute
-• **Storage Optimization**: $89K in unused EBS volumes and snapshots
-• **Multi-cloud Strategy**: 23% cost reduction through workload distribution
-
-**⚡ PERFORMANCE ENGINEERING**  
-• **Database Optimization**: 3.2x query performance improvement possible
-• **CDN Configuration**: 45% faster global content delivery
-• **Microservices Architecture**: 67% reduction in service dependencies
-
-### 🚀 Next Steps & Implementation Roadmap
-
-**Phase 1 (30 days)**: Security hardening and immediate cost optimizations
-**Phase 2 (60 days)**: Performance tuning and architectural improvements  
-**Phase 3 (90 days)**: Advanced automation and monitoring implementation
-
-Would you like me to generate detailed implementation blueprints for any specific area?`,
+Would you like me to elaborate on any of these recommendations?`,
           suggestions: [
-            "Generate Phase 1 security implementation blueprint",
-            "Create detailed cost optimization roadmap with timelines",
-            "Design performance improvement architecture diagrams", 
-            "Prepare executive presentation with ROI analysis"
+            "Tell me more about the security improvements",
+            "Show me the cost savings calculation",
+            "How do I implement auto-scaling?",
+            "Generate a detailed report"
           ]
         },
         {
-          content: `## 🏢 Enterprise Infrastructure Assessment Complete
+          content: `Based on your infrastructure analysis request, I've generated the following insights:
 
-**Analysis Scope**: Full production environment scan across AWS, Azure, and GCP
-**Methodology**: ML-powered analysis with 50,000+ best practice validations
-**Confidence Level**: 99.7% | **Audit Trail**: Complete
+**Infrastructure Overview:**
+• 15 EC2 instances across 3 regions
+• 8 RDS databases with varying configurations
+• 12 S3 buckets with mixed access patterns
 
-### 📈 Infrastructure Health Score: 8.3/10
+**Critical Issues Found:**
+🔴 **High Priority**: Unencrypted data at rest in 3 databases
+🟡 **Medium Priority**: Over-provisioned instances costing $2,400/month
+🟢 **Low Priority**: Missing backup policies on 4 resources
 
-**Multi-Cloud Environment Overview:**
-• **AWS**: 847 resources across 4 regions (us-east-1, us-west-2, eu-west-1, ap-southeast-1)
-• **Azure**: 234 resources in 2 regions (East US, West Europe) 
-• **GCP**: 156 resources in 3 regions (us-central1, europe-west1, asia-east1)
-• **Hybrid Connectivity**: 12 VPN tunnels, 8 Direct Connect/ExpressRoute links
+**Immediate Actions Required:**
+1. Enable encryption on RDS instances
+2. Right-size EC2 instances (potential $1,200/month savings)
+3. Implement automated backup schedules
 
-### 🚨 Critical Findings & Executive Actions
-
-**🔴 IMMEDIATE ATTENTION REQUIRED**
-• **Compliance Gap**: SOC 2 readiness at 73% - missing 18 controls
-• **Security Incident**: Potential data exfiltration risk in 2 S3 buckets
-• **Cost Anomaly**: 34% spending increase detected in the last 30 days
-• **Performance Degradation**: 15% increase in response times across microservices
-
-**🟡 HIGH IMPACT OPTIMIZATIONS**  
-• **Reserved Instance Strategy**: $1.2M annual commitment for $380K savings
-• **Database Modernization**: Migration to managed services (67% ops reduction)
-• **Container Orchestration**: Kubernetes optimization (23% resource efficiency)
-• **Disaster Recovery**: RTO improvement from 4h to 15min
-
-**🟢 STRATEGIC ENHANCEMENTS**
-• **Observability Platform**: Unified monitoring across all clouds
-• **Infrastructure as Code**: 100% Terraform coverage with GitOps
-• **Data Lake Architecture**: Advanced analytics and ML capabilities
-• **Edge Computing**: Global CDN with edge functions deployment
-
-### 💼 Business Impact Analysis
-
-**Immediate ROI**: $2.3M annual savings identified
-**Risk Mitigation**: 89% reduction in security vulnerabilities  
-**Operational Efficiency**: 45% reduction in manual operations
-**Time to Market**: 67% faster deployment cycles
-
-Ready to begin implementation? I can provide detailed runbooks and architecture diagrams.`,
+Shall I provide step-by-step implementation guides for these fixes?`,
           suggestions: [
-            "Generate SOC 2 compliance remediation plan with timelines",
-            "Create multi-cloud cost optimization strategy presentation",
-            "Design comprehensive disaster recovery architecture",
-            "Prepare board-level executive summary with business impact"
+            "Show me how to enable RDS encryption",
+            "Create a rightsizing implementation plan",
+            "Generate backup policy templates",
+            "Calculate total potential savings"
           ]
         }
       ];
@@ -343,44 +261,31 @@ Ready to begin implementation? I can provide detailed runbooks and architecture 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <Card className="glass-card border-primary/20 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-3xl"></div>
+                <Card className="glass-card border-primary/20">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-14 h-14 bg-gradient-to-br from-primary via-primary-glow to-purple-600 rounded-xl flex items-center justify-center relative">
-                        <Brain className="w-7 h-7 text-white" />
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-xl flex items-center justify-center">
+                        <Brain className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl font-bold">StackStage Enterprise AI</CardTitle>
-                        <CardDescription className="text-primary font-medium">Cloud Intelligence Platform</CardDescription>
+                        <CardTitle className="text-lg">StackStage AI</CardTitle>
+                        <CardDescription>Cloud Architecture Expert</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-0 space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                        <div className="text-lg font-bold text-green-600">99.9%</div>
-                        <div className="text-xs text-muted-foreground">Accuracy</div>
-                      </div>
-                      <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                        <div className="text-lg font-bold text-blue-600">1.2s</div>
-                        <div className="text-xs text-muted-foreground">Response</div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
                       <div className="flex items-center text-sm">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                        <span className="text-muted-foreground">Enterprise AI Online</span>
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        <span className="text-muted-foreground">Online & Ready</span>
                       </div>
                       <div className="flex items-center text-sm">
-                        <Shield className="w-4 h-4 mr-3 text-green-500" />
-                        <span className="text-muted-foreground">SOC 2 Type II Certified</span>
+                        <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                        <span className="text-muted-foreground">Response time: ~2s</span>
                       </div>
                       <div className="flex items-center text-sm">
-                        <Database className="w-4 h-4 mr-3 text-blue-500" />
-                        <span className="text-muted-foreground">50K+ Infrastructure Patterns</span>
+                        <Star className="w-4 h-4 mr-2 text-yellow-500" />
+                        <span className="text-muted-foreground">99.9% accuracy</span>
                       </div>
                     </div>
                   </CardContent>
@@ -396,44 +301,33 @@ Ready to begin implementation? I can provide detailed runbooks and architecture 
                 <Card className="glass-card">
                   <CardHeader>
                     <CardTitle className="flex items-center text-lg">
-                      <Sparkles className="w-5 h-5 mr-2 text-primary" />
-                      Enterprise Templates
+                      <Lightbulb className="w-5 h-5 mr-2 text-primary" />
+                      Quick Start
                     </CardTitle>
-                    <CardDescription>AI-powered analysis templates for enterprise infrastructure</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {conversationTemplates.map((template) => (
                       <motion.div
                         key={template.id}
-                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
                         <Card 
-                          className={`cursor-pointer transition-all duration-300 relative overflow-hidden group ${
+                          className={`cursor-pointer transition-all duration-200 ${
                             selectedTemplate === template.id 
-                              ? 'ring-2 ring-primary bg-primary/5 shadow-lg' 
-                              : 'hover:shadow-lg hover:border-primary/30'
+                              ? 'ring-2 ring-primary bg-primary/5' 
+                              : 'hover:shadow-md'
                           }`}
                           onClick={() => handleTemplateSelect(template)}
                         >
-                          <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-${template.color}-500/20 to-transparent rounded-bl-2xl`}></div>
                           <CardContent className="p-4">
-                            <div className="flex items-start space-x-3">
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-${template.color}-500/20 group-hover:bg-${template.color}-500/30 transition-colors`}>
-                                <template.icon className={`w-5 h-5 text-${template.color}-600`} />
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
+                                <template.icon className={`w-4 h-4 text-${template.color}-500`} />
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1">
-                                  <h4 className="font-semibold text-sm truncate">{template.title}</h4>
-                                  <Badge variant="secondary" className={`text-xs bg-${template.color}-500/10 text-${template.color}-700 border-${template.color}-500/20`}>
-                                    {template.badge}
-                                  </Badge>
-                                </div>
-                                <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{template.description}</p>
-                                <div className="flex items-center text-xs text-primary font-medium">
-                                  <TrendingUp className="w-3 h-3 mr-1" />
-                                  {template.stats}
-                                </div>
+                              <div>
+                                <h4 className="font-medium text-sm">{template.title}</h4>
+                                <p className="text-xs text-muted-foreground">{template.description}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -452,35 +346,19 @@ Ready to begin implementation? I can provide detailed runbooks and architecture 
               >
                 <Card className="glass-card">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-lg">
-                      <Zap className="w-5 h-5 mr-2 text-primary" />
-                      Enterprise Actions
-                    </CardTitle>
-                    <CardDescription>One-click infrastructure operations</CardDescription>
+                    <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-2">
                     {quickActions.map((action, index) => (
-                      <motion.div
+                      <Button
                         key={index}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-start"
                       >
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full justify-start h-auto p-3 hover:shadow-md transition-all duration-200 hover:border-primary/50 group"
-                        >
-                          <div className="flex items-center space-x-3 w-full">
-                            <div className="w-8 h-8 rounded-lg bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
-                              <action.icon className="w-4 h-4 text-primary" />
-                            </div>
-                            <div className="flex-1 text-left">
-                              <div className="font-medium text-sm">{action.label}</div>
-                              <div className="text-xs text-muted-foreground">{action.description}</div>
-                            </div>
-                          </div>
-                        </Button>
-                      </motion.div>
+                        <action.icon className="w-4 h-4 mr-2" />
+                        {action.label}
+                      </Button>
                     ))}
                   </CardContent>
                 </Card>
