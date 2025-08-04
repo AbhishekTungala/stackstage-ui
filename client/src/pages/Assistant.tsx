@@ -235,7 +235,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Header />
       
       {/* Aurora Background */}
@@ -244,7 +244,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
       </div>
 
       <main className="relative flex-1 pt-20 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-12rem)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
             
             {/* Sidebar */}
@@ -425,7 +425,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                                     message.type === 'user'
                                       ? 'bg-primary text-primary-foreground ml-auto'
                                       : 'bg-muted'
-                                  }`}
+                                  } ${message.id === '1' && message.type === 'assistant' ? 'max-h-96 overflow-auto' : ''}`}
                                 >
                                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                                     {message.content}
@@ -569,9 +569,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
         </div>
       </main>
 
-      <div className="relative">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
