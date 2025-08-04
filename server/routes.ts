@@ -1,12 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import OpenAI from "openai";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY 
-});
+// Mock implementation - no OpenAI API key required
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Infrastructure Analysis Endpoint
@@ -18,21 +14,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Content is required for analysis" });
       }
 
-      const systemPrompt = buildAnalysisPrompt(analysisMode, cloudProvider);
+      // Simulate analysis processing time
+      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
       
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: content }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3,
-        max_tokens: 4000
-      });
-
-      const result = JSON.parse(response.choices[0].message.content || '{}');
-      const formattedResult = formatAnalysisResult(result);
+      const formattedResult = generateMockAnalysis(analysisMode, cloudProvider, content);
 
       // Store analysis result
       const analysisId = `analysis_${Date.now()}`;
@@ -62,38 +47,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Messages array is required" });
       }
 
-      const systemPrompt = `You are an expert cloud infrastructure consultant with deep knowledge of AWS, Azure, GCP, and modern DevOps practices. 
-
-Provide detailed, actionable advice on:
-- Cloud architecture design and optimization
-- Security best practices and compliance
-- Cost optimization strategies
-- Performance tuning and scalability
-- Infrastructure as Code (Terraform, CloudFormation)
-- Containerization and orchestration
-- CI/CD pipeline optimization
-- Monitoring and observability
-
-Always provide specific, implementable recommendations with:
-- Step-by-step instructions when appropriate
-- Code examples or configuration snippets
-- Best practices and industry standards
-- Potential risks and mitigation strategies
-- Cost implications and ROI considerations
-
-Keep responses professional, detailed, and focused on practical solutions.`;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages
-        ],
-        temperature: 0.7,
-        max_tokens: 2000
-      });
-
-      const assistantResponse = response.choices[0].message.content;
+      // Simulate AI thinking time
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+      
+      const assistantResponse = generateMockChatResponse(messages);
 
       res.json({ 
         success: true, 
@@ -182,17 +139,226 @@ Required JSON structure:
   return basePrompt + (modeSpecific[mode as keyof typeof modeSpecific] || modeSpecific.comprehensive) + providerSpecific;
 }
 
-function formatAnalysisResult(rawResult: any) {
+function generateMockAnalysis(mode: string, provider?: string, content?: string) {
+  const scores = generateScoresBasedOnMode(mode);
+  
   return {
-    overallScore: Math.min(100, Math.max(0, rawResult.overallScore || 0)),
-    securityScore: Math.min(100, Math.max(0, rawResult.securityScore || 0)),
-    costScore: Math.min(100, Math.max(0, rawResult.costScore || 0)),
-    performanceScore: Math.min(100, Math.max(0, rawResult.performanceScore || 0)),
-    criticalIssues: rawResult.criticalIssues || [],
-    warnings: rawResult.warnings || [],
-    recommendations: rawResult.recommendations || [],
-    estimatedSavings: rawResult.estimatedSavings || 0,
-    diagramCode: rawResult.diagramCode || 'graph TD\n    A[No Architecture Detected] --> B[Please provide valid configuration]',
-    summary: rawResult.summary || 'Analysis completed successfully.'
+    overallScore: scores.overall,
+    securityScore: scores.security,
+    costScore: scores.cost,
+    performanceScore: scores.performance,
+    criticalIssues: generateMockIssues('critical', provider),
+    warnings: generateMockIssues('warning', provider),
+    recommendations: generateMockRecommendations(provider),
+    estimatedSavings: Math.floor(Math.random() * 5000) + 1000,
+    diagramCode: generateMockDiagram(provider),
+    summary: generateMockSummary(mode, provider, scores.overall)
   };
+}
+
+function generateScoresBasedOnMode(mode: string) {
+  const base = {
+    overall: 65 + Math.floor(Math.random() * 25),
+    security: 70 + Math.floor(Math.random() * 20),
+    cost: 60 + Math.floor(Math.random() * 30),
+    performance: 75 + Math.floor(Math.random() * 20)
+  };
+  
+  switch (mode) {
+    case 'security':
+      base.security -= 10;
+      break;
+    case 'cost':
+      base.cost -= 15;
+      break;
+    case 'performance':
+      base.performance -= 10;
+      break;
+  }
+  
+  base.overall = Math.floor((base.security + base.cost + base.performance) / 3);
+  return base;
+}
+
+function generateMockIssues(type: 'critical' | 'warning', provider?: string) {
+  const issues: any[] = [];
+  const count = type === 'critical' ? Math.floor(Math.random() * 3) + 1 : Math.floor(Math.random() * 4) + 2;
+  
+  const templates = {
+    security: [
+      { title: 'Exposed Database', category: 'security', description: 'Database instance has public access enabled', severity: 9 },
+      { title: 'Weak IAM Policies', category: 'security', description: 'Overly permissive IAM roles detected', severity: 7 },
+      { title: 'Unencrypted Storage', category: 'security', description: 'S3 buckets without encryption', severity: 8 }
+    ],
+    cost: [
+      { title: 'Oversized Instances', category: 'cost', description: 'EC2 instances are over-provisioned', severity: 6 },
+      { title: 'Unused Resources', category: 'cost', description: 'Idle load balancers detected', severity: 5 },
+      { title: 'No Reserved Instances', category: 'cost', description: 'Missing cost optimization opportunities', severity: 4 }
+    ],
+    performance: [
+      { title: 'Database Bottleneck', category: 'performance', description: 'High CPU utilization on RDS', severity: 7 },
+      { title: 'No CDN', category: 'performance', description: 'Static assets served without CDN', severity: 5 },
+      { title: 'Single AZ Deployment', category: 'performance', description: 'No redundancy across availability zones', severity: 6 }
+    ]
+  };
+  
+  for (let i = 0; i < count; i++) {
+    const categoryTemplates = templates[Object.keys(templates)[Math.floor(Math.random() * 3)] as keyof typeof templates];
+    const template = categoryTemplates[Math.floor(Math.random() * categoryTemplates.length)];
+    
+    issues.push({
+      id: `${type}_${i + 1}`,
+      type,
+      category: template.category,
+      title: template.title,
+      description: template.description,
+      impact: `This issue could lead to ${type === 'critical' ? 'significant' : 'moderate'} ${template.category} problems`,
+      severity: template.severity,
+      resource: `${provider || 'AWS'}-resource-${i + 1}`
+    });
+  }
+  
+  return issues;
+}
+
+function generateMockRecommendations(provider?: string) {
+  return [
+    {
+      id: 'rec_1',
+      title: 'Implement Multi-AZ Deployment',
+      description: 'Deploy resources across multiple availability zones for better resilience',
+      category: 'performance',
+      priority: 'high',
+      effort: 'medium',
+      impact: 'Improved availability and disaster recovery capabilities',
+      estimatedSavings: 0,
+      implementation: ['Configure auto-scaling groups', 'Update load balancer settings', 'Test failover procedures']
+    },
+    {
+      id: 'rec_2', 
+      title: 'Enable Cost Optimization',
+      description: 'Implement reserved instances and right-sizing recommendations',
+      category: 'cost',
+      priority: 'high',
+      effort: 'low',
+      impact: 'Reduce monthly infrastructure costs by 20-30%',
+      estimatedSavings: Math.floor(Math.random() * 2000) + 500,
+      implementation: ['Analyze usage patterns', 'Purchase reserved instances', 'Implement auto-scaling policies']
+    },
+    {
+      id: 'rec_3',
+      title: 'Enhance Security Posture',
+      description: 'Implement comprehensive security monitoring and access controls',
+      category: 'security',
+      priority: 'medium',
+      effort: 'high',
+      impact: 'Significantly improved security compliance and threat detection',
+      estimatedSavings: 0,
+      implementation: ['Enable CloudTrail logging', 'Configure VPC Flow Logs', 'Implement IAM best practices']
+    }
+  ];
+}
+
+function generateMockDiagram(provider?: string) {
+  return `graph TB
+    subgraph "Cloud Infrastructure - ${provider || 'AWS'}"
+        LB[Load Balancer]
+        WEB1[Web Server 1]
+        WEB2[Web Server 2]
+        DB[(Database)]
+        CACHE[Redis Cache]
+        
+        LB --> WEB1
+        LB --> WEB2
+        WEB1 --> DB
+        WEB2 --> DB
+        WEB1 --> CACHE
+        WEB2 --> CACHE
+    end
+    
+    classDef warning fill:#fff3cd,stroke:#856404
+    classDef critical fill:#f8d7da,stroke:#721c24
+    
+    class DB critical
+    class CACHE warning`;
+}
+
+function generateMockSummary(mode: string, provider?: string, overallScore?: number) {
+  const grade = (overallScore || 65) >= 80 ? 'excellent' : (overallScore || 65) >= 60 ? 'good' : 'needs improvement';
+  
+  return `Infrastructure analysis completed for ${provider || 'AWS'} environment. 
+  Overall architecture shows ${grade} implementation with ${overallScore || 65}/100 score. 
+  ${mode === 'security' ? 'Security-focused analysis reveals several areas for improvement in access controls and data protection.' : ''}
+  ${mode === 'cost' ? 'Cost optimization analysis identifies significant potential savings through rightsizing and reserved instances.' : ''}
+  ${mode === 'performance' ? 'Performance review shows opportunities for latency reduction and scalability improvements.' : ''}
+  Key recommendations include multi-AZ deployment, enhanced monitoring, and cost optimization strategies.`;
+}
+
+function generateMockChatResponse(messages: any[]) {
+  const lastMessage = messages[messages.length - 1];
+  const userMessage = lastMessage?.content || '';
+  
+  const responses = [
+    `Based on your question about "${userMessage.substring(0, 50)}...", I'd recommend implementing a multi-layered approach. Here are the key steps:
+
+1. **Assessment Phase**: Start by analyzing your current infrastructure using tools like AWS Config or CloudFormation drift detection.
+
+2. **Security Implementation**: Implement least-privilege IAM policies and enable comprehensive logging with CloudTrail.
+
+3. **Performance Optimization**: Consider implementing auto-scaling groups and Application Load Balancers for better distribution.
+
+4. **Cost Management**: Use AWS Cost Explorer to identify optimization opportunities and consider Reserved Instances for predictable workloads.
+
+Would you like me to elaborate on any of these areas or help you with specific implementation details?`,
+
+    `Great question! For ${userMessage.toLowerCase().includes('security') ? 'security' : userMessage.toLowerCase().includes('cost') ? 'cost optimization' : 'infrastructure'} best practices, here's what I recommend:
+
+**Immediate Actions:**
+- Enable multi-factor authentication across all admin accounts
+- Implement network segmentation with VPCs and security groups
+- Set up automated backup and disaster recovery procedures
+
+**Medium-term Goals:**
+- Establish Infrastructure as Code using Terraform or CloudFormation
+- Implement comprehensive monitoring with CloudWatch and custom metrics
+- Create automated compliance reporting and alerting
+
+**Long-term Strategy:**
+- Consider containerization with EKS or ECS for better scalability
+- Implement blue-green deployment strategies
+- Establish cost governance policies and budget alerts
+
+The key is to prioritize based on your current risk profile and business requirements. What's your primary concern right now?`,
+
+    `Excellent point about infrastructure optimization. Here's a comprehensive approach:
+
+**Architecture Review:**
+- Assess current resource utilization and identify bottlenecks
+- Evaluate data flow patterns and API dependencies
+- Review security boundaries and access patterns
+
+**Implementation Strategy:**
+\`\`\`yaml
+# Example Terraform configuration
+resource "aws_autoscaling_group" "web_asg" {
+  name               = "web-servers"
+  vpc_zone_identifier = var.private_subnet_ids
+  target_group_arns   = [aws_lb_target_group.web.arn]
+  health_check_type   = "ELB"
+  
+  min_size         = 2
+  max_size         = 10
+  desired_capacity = 3
+}
+\`\`\`
+
+**Monitoring Setup:**
+- CloudWatch dashboards for real-time visibility
+- Custom metrics for business-specific KPIs
+- Automated alerting with SNS and Lambda integration
+
+This approach typically reduces operational overhead by 40-60% while improving reliability. Would you like me to dive deeper into any specific area?`
+  ];
+
+  return responses[Math.floor(Math.random() * responses.length)];
 }
