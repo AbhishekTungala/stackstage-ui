@@ -292,54 +292,47 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                 </Card>
               </motion.div>
 
-              {/* Conversation Templates */}
+              {/* Quick Start Templates */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
+                className="space-y-3"
               >
-                <Card className="glass-card">
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-lg">
-                      <Lightbulb className="w-5 h-5 mr-2 text-primary" />
-                      Quick Start
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ScrollArea className="h-72 -mx-6 px-6">
-                      <div className="space-y-3">
-                        {conversationTemplates.map((template) => (
-                          <motion.div
-                            key={template.id}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <Card 
-                              className={`cursor-pointer transition-all duration-200 ${
-                                selectedTemplate === template.id 
-                                  ? 'ring-2 ring-primary bg-primary/5' 
-                                  : 'hover:shadow-md'
-                              }`}
-                              onClick={() => handleTemplateSelect(template)}
-                            >
-                              <CardContent className="p-3">
-                                <div className="flex items-center space-x-3">
-                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
-                                    <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-medium text-sm">{template.title}</h4>
-                                    <p className="text-xs text-muted-foreground">{template.description}</p>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CardContent>
-                </Card>
+                <h3 className="text-lg font-semibold text-foreground flex items-center">
+                  <Lightbulb className="w-5 h-5 mr-2 text-primary" />
+                  Quick Start
+                </h3>
+                <div className="space-y-3">
+                  {conversationTemplates.map((template) => (
+                    <motion.div
+                      key={template.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Card 
+                        className={`cursor-pointer transition-all duration-200 glass-card ${
+                          selectedTemplate === template.id 
+                            ? 'ring-2 ring-primary bg-primary/5' 
+                            : 'hover:shadow-md'
+                        }`}
+                        onClick={() => handleTemplateSelect(template)}
+                      >
+                        <CardContent className="p-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
+                              <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm">{template.title}</h4>
+                              <p className="text-xs text-muted-foreground">{template.description}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
 
               {/* Quick Actions */}
