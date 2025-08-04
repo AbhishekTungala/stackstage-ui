@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AnalysisLoading } from "@/components/ui/loading-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GeoRegionSelector from "@/components/ui/geo-region-selector";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Upload, 
@@ -59,6 +60,8 @@ const Analyze = () => {
   const [validationResults, setValidationResults] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("upload");
   const [analysisMode, setAnalysisMode] = useState("comprehensive");
+  const [selectedRegion, setSelectedRegion] = useState("us-east-1");
+  const [regionalImpact, setRegionalImpact] = useState<any>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -147,7 +150,8 @@ const Analyze = () => {
           content,
           analysisMode,
           cloudProvider,
-          userRegion: 'us-east-1' // Could be detected or user-selected
+          userRegion: selectedRegion,
+          regionalImpact
         }),
       });
 
@@ -664,6 +668,22 @@ resource "aws_instance" "web_server" {
                 </Tabs>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Geo-Region Configuration */}
+          <motion.div
+            className="mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <GeoRegionSelector
+              selectedRegion={selectedRegion}
+              onRegionChange={setSelectedRegion}
+              onRegionalImpact={setRegionalImpact}
+              showAutoDetect={true}
+              showImpactPreview={true}
+            />
           </motion.div>
 
           {/* Analysis Control Panel */}

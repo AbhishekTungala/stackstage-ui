@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import GeoRegionSelector from "@/components/ui/geo-region-selector";
 import {
   Send,
   Bot,
@@ -38,6 +39,7 @@ import {
   Code,
   Database,
   Cloud,
+  Globe,
   FileText,
   CheckCircle,
   AlertTriangle,
@@ -49,7 +51,8 @@ import {
   X,
   Upload,
   Search,
-  Share2
+  Share2,
+  MapPin
 } from "lucide-react";
 import { ChatLoading } from "@/components/ui/loading-skeleton";
 
@@ -100,6 +103,9 @@ How can I assist you today?`,
     realTimeAnalysis: true,
     complianceMode: false
   });
+  const [selectedRegion, setSelectedRegion] = useState("us-east-1");
+  const [regionalImpact, setRegionalImpact] = useState<any>(null);
+  const [showRegionSelector, setShowRegionSelector] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -183,7 +189,9 @@ How can I assist you today?`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: messageHistory
+          messages: messageHistory,
+          userRegion: selectedRegion,
+          regionalImpact
         }),
       });
 
@@ -328,6 +336,71 @@ How can I assist you today?`,
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Geo-Region Configuration */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-foreground flex items-center">
+                    <Globe className="w-5 h-5 mr-2 text-primary" />
+                    Target Region
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowRegionSelector(!showRegionSelector)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {showRegionSelector ? (
+                      <X className="w-4 h-4" />
+                    ) : (
+                      <MapPin className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                
+                {showRegionSelector ? (
+                  <GeoRegionSelector
+                    selectedRegion={selectedRegion}
+                    onRegionChange={setSelectedRegion}
+                    onRegionalImpact={setRegionalImpact}
+                    showAutoDetect={true}
+                    showImpactPreview={false}
+                    className="mb-0"
+                  />
+                ) : (
+                  <Card className="glass-card border-white/10">
+                    <CardContent className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">
+                            {selectedRegion === "us-east-1" ? "🇺🇸" : 
+                             selectedRegion === "eu-west-1" ? "🇮🇪" : 
+                             selectedRegion === "ap-south-1" ? "🇮🇳" : "🌍"}
+                          </span>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {selectedRegion === "us-east-1" ? "US East" : 
+                               selectedRegion === "eu-west-1" ? "Europe" : 
+                               selectedRegion === "ap-south-1" ? "Asia Pacific" : "Global"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {regionalImpact?.latency || "Baseline latency"}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowRegionSelector(true)}
+                          className="h-6 text-xs px-2 glass-button"
+                        >
+                          Change
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
 
               {/* Quick Start Templates */}

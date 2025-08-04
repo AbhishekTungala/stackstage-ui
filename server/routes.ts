@@ -8,7 +8,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Infrastructure Analysis Endpoint
   app.post("/api/analyze", async (req, res) => {
     try {
-      const { content, analysisMode = 'comprehensive', cloudProvider, userRegion } = req.body;
+      const { content, analysisMode = 'comprehensive', cloudProvider, userRegion, regionalImpact } = req.body;
 
       if (!content) {
         return res.status(400).json({ error: "Content is required for analysis" });
@@ -17,7 +17,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simulate analysis processing time
       await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
       
-      const formattedResult = generateMockAnalysis(analysisMode, cloudProvider, content);
+      const formattedResult = generateMockAnalysis(analysisMode, cloudProvider, content, userRegion, regionalImpact);
 
       // Store analysis result
       const analysisId = `analysis_${Date.now()}`;
@@ -41,7 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Assistant Chat Endpoint
   app.post("/api/chat", async (req, res) => {
     try {
-      const { messages } = req.body;
+      const { messages, userRegion, regionalImpact } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ error: "Messages array is required" });
@@ -50,7 +50,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simulate AI thinking time
       await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
       
-      const assistantResponse = generateMockChatResponse(messages);
+      const assistantResponse = generateMockChatResponse(messages, userRegion, regionalImpact);
 
       res.json({ 
         success: true, 
@@ -139,7 +139,36 @@ Required JSON structure:
   return basePrompt + (modeSpecific[mode as keyof typeof modeSpecific] || modeSpecific.comprehensive) + providerSpecific;
 }
 
-function generateMockAnalysis(mode: string, provider?: string, content?: string) {
+function getRegionContext(userRegion: string, regionalImpact?: any): string {
+  const regionInfo = {
+    'us-east-1': 'US East (N. Virginia)',
+    'us-west-2': 'US West (Oregon)', 
+    'eu-west-1': 'Europe (Ireland)',
+    'eu-central-1': 'Europe (Frankfurt)',
+    'ap-south-1': 'Asia Pacific (Mumbai)',
+    'ap-southeast-1': 'Asia Pacific (Singapore)',
+    'ap-northeast-1': 'Asia Pacific (Tokyo)'
+  };
+
+  const regionName = regionInfo[userRegion as keyof typeof regionInfo] || userRegion;
+  let context = `\n\n**Regional Optimization for ${regionName}:**\n`;
+  
+  if (regionalImpact) {
+    if (regionalImpact.latency) {
+      context += `- Latency Impact: ${regionalImpact.latency}\n`;
+    }
+    if (regionalImpact.cost) {
+      context += `- Cost Impact: ${regionalImpact.cost}\n`;
+    }
+    if (regionalImpact.recommendation) {
+      context += `- Recommendation: ${regionalImpact.recommendation}\n`;
+    }
+  }
+  
+  return context;
+}
+
+function generateMockAnalysis(mode: string, provider?: string, content?: string, userRegion?: string, regionalImpact?: any) {
   const scores = generateScoresBasedOnMode(mode);
   
   return {
@@ -294,9 +323,12 @@ function generateMockSummary(mode: string, provider?: string, overallScore?: num
   Key recommendations include multi-AZ deployment, enhanced monitoring, and cost optimization strategies.`;
 }
 
-function generateMockChatResponse(messages: any[]) {
+function generateMockChatResponse(messages: any[], userRegion?: string, regionalImpact?: any) {
   const lastMessage = messages[messages.length - 1];
   const userMessage = lastMessage?.content || '';
+  
+  // Include regional context in responses when available
+  const regionContext = userRegion ? getRegionContext(userRegion, regionalImpact) : '';
   
   const responses = [
     `Based on your question about "${userMessage.substring(0, 50)}...", I'd recommend implementing a multi-layered approach. Here are the key steps:
@@ -360,5 +392,6 @@ resource "aws_autoscaling_group" "web_asg" {
 This approach typically reduces operational overhead by 40-60% while improving reliability. Would you like me to dive deeper into any specific area?`
   ];
 
-  return responses[Math.floor(Math.random() * responses.length)];
+  const baseResponse = responses[Math.floor(Math.random() * responses.length)];
+  return baseResponse + regionContext;
 }
