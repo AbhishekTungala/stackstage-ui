@@ -31,7 +31,8 @@ const Hero = () => {
               manualMode={false}
               blurAmount={5}
               borderColor="#6366f1"
-              animationDuration={2}
+              glowColor="rgba(99, 102, 241, 0.6)"
+              animationDuration={0.7}
               pauseBetweenAnimations={1}
             />
           </div>

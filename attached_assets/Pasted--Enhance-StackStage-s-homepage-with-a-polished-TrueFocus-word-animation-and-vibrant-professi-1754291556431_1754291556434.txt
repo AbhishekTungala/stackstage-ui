@@ -1,0 +1,86 @@
+👨‍💻 Enhance StackStage’s homepage with a polished `TrueFocus` word animation and vibrant, professional Aurora gradient background.
+
+---
+
+## ✅ 1. Fix & Enhance 🔍 `TrueFocus` Animated Component
+
+Replace or enhance the current `TrueFocus` with the following behaviors:
+
+### 🔁 Requirements:
+- Highlight **one word at a time** from the `sentence` prop
+- Apply **blur** to inactive words
+- Show a **glow border box** around the active word using `motion.div`
+- Add **configurable props**:
+  - `sentence: string`
+  - `manualMode: boolean`
+  - `blurAmount: number`
+  - `borderColor: string`
+  - `glowColor: string`
+  - `animationDuration: number`
+  - `pauseBetweenAnimations: number`
+- Add support for **hover mode** if `manualMode = true`
+- Animate word change using `setInterval` if `manualMode = false`
+- Make sure blur & animation is smooth, polished
+
+### ✅ Example Usage:
+```tsx
+<TrueFocus 
+  sentence="Build with Confidence"
+  manualMode={false}
+  blurAmount={5}
+  borderColor="#6366f1"
+  glowColor="rgba(99, 102, 241, 0.6)"
+  animationDuration={0.7}
+  pauseBetweenAnimations={1}
+/>
+📦 Dependencies:
+bash
+Copy
+Edit
+npm install framer-motion
+Use this as a hero center element with font-black text-4xl md:text-6xl leading-tight
+
+✅ 2. Aurora Gradient Background Enhancement (Professional Theme)
+🎨 Theme Palette:
+
+Primary Blue: #3b82f6 (blue-500)
+
+Dark: #0f172a (slate-900)
+
+Accent: #06b6d4 (cyan-500), #7c3aed (violet-600)
+
+White text: #ffffff
+
+🎇 Instructions:
+Position Aurora background absolutely or fixed behind all sections
+
+Blend smoothly with mix-blend-screen
+
+Add blurred radial gradients or moving SVG blobs with filter: blur(120px)
+
+Add subtle pulsing motion using framer-motion or CSS animation
+
+Example combination of gradients:
+
+css
+Copy
+Edit
+background: radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 60%),
+            radial-gradient(circle at 70% 70%, #7c3aed 0%, transparent 60%),
+            radial-gradient(circle at 50% 90%, #06b6d4 0%, transparent 60%);
+Layer with opacity-40, z-[-10], and animate using CSS keyframes or framer-motion
+
+💡 Optional: Add a toggle in top-right corner for Dark/Light theme with Tailwind class toggler
+
+✅ Final UX Goals:
+“Build with Confidence” feels alive — animated word by word
+
+Aurora blends subtly in background and glows professionally
+
+Everything flows with motion — Vercel + Framer + Apple-inspired
+
+📌 Deliver a professional, modern, and visually magnetic homepage for StackStage. Users should feel like this is a $100M SaaS experience on first visit.
+
+yaml
+Copy
+Edit

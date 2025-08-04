@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 interface AuroraProps {
   colorStops?: string[];
@@ -9,118 +10,116 @@ interface AuroraProps {
 
 const Aurora: React.FC<AuroraProps> = ({
   colorStops = [
+    "#3b82f6", // Primary Blue
     "#7c3aed", // Violet
-    "#4f46e5", // Indigo
     "#06b6d4", // Cyan
-    "#f43f5e", // Rose
-    "#facc15"  // Amber
+    "#6366f1", // Indigo  
+    "#8b5cf6"  // Purple
   ],
-  intensity = 0.6,
-  speed = 0.8,
+  intensity = 0.4,
+  speed = 1.2,
   className = ""
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationId: number;
-    let time = 0;
-
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      
-      ctx.scale(dpr, dpr);
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
-    };
-
-    const createGradientBlob = (centerX: number, centerY: number, radius: number, color: string, alpha: number) => {
-      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-      gradient.addColorStop(0, `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`);
-      gradient.addColorStop(0.5, `${color}${Math.round(alpha * 0.5 * 255).toString(16).padStart(2, '0')}`);
-      gradient.addColorStop(1, `${color}00`);
-      return gradient;
-    };
-
-    const animate = () => {
-      time += speed * 0.01;
-      
-      const width = canvas.width / (window.devicePixelRatio || 1);
-      const height = canvas.height / (window.devicePixelRatio || 1);
-      
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalCompositeOperation = 'screen';
-
-      // Create multiple flowing gradient blobs
-      colorStops.forEach((color, index) => {
-        const baseX = width * (0.2 + (index * 0.15));
-        const baseY = height * 0.5;
-        
-        // Primary blob with slow, large movement
-        const primaryX = baseX + Math.sin(time + index * 2) * width * 0.15;
-        const primaryY = baseY + Math.cos(time * 0.7 + index * 1.5) * height * 0.1;
-        const primaryRadius = Math.min(width, height) * (0.25 + Math.sin(time * 0.5 + index) * 0.05);
-        
-        ctx.fillStyle = createGradientBlob(primaryX, primaryY, primaryRadius, color, intensity * 0.7);
-        ctx.fillRect(0, 0, width, height);
-        
-        // Secondary blob with different movement pattern
-        const secondaryX = baseX + Math.sin(time * 1.3 + index * 2.5) * width * 0.1;
-        const secondaryY = baseY + Math.cos(time * 0.9 + index * 1.8) * height * 0.15;
-        const secondaryRadius = Math.min(width, height) * (0.15 + Math.sin(time * 0.8 + index * 1.2) * 0.03);
-        
-        ctx.fillStyle = createGradientBlob(secondaryX, secondaryY, secondaryRadius, color, intensity * 0.5);
-        ctx.fillRect(0, 0, width, height);
-        
-        // Tertiary blob for extra depth
-        const tertiaryX = baseX + Math.sin(time * 0.6 + index * 3) * width * 0.2;
-        const tertiaryY = baseY + Math.cos(time * 1.1 + index * 2.2) * height * 0.08;
-        const tertiaryRadius = Math.min(width, height) * (0.3 + Math.sin(time * 0.4 + index * 0.8) * 0.07);
-        
-        ctx.fillStyle = createGradientBlob(tertiaryX, tertiaryY, tertiaryRadius, color, intensity * 0.3);
-        ctx.fillRect(0, 0, width, height);
-      });
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    resize();
-    animate();
-
-    window.addEventListener('resize', resize);
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationId);
-    };
-  }, [colorStops, intensity, speed]);
-
   return (
-    <canvas
-      ref={canvasRef}
-      className={`aurora-bg ${className}`}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        pointerEvents: 'none',
-        zIndex: -10,
-        filter: 'blur(120px)',
-        opacity: 0.4,
-        mixBlendMode: 'screen',
-      }}
-    />
+    <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+      {/* Primary Aurora with motion blur */}
+      <motion.div
+        className="absolute inset-0 opacity-40 mix-blend-screen"
+        style={{
+          background: `
+            radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 60%),
+            radial-gradient(circle at 70% 70%, #7c3aed 0%, transparent 60%),
+            radial-gradient(circle at 50% 90%, #06b6d4 0%, transparent 60%)
+          `,
+          filter: 'blur(120px)',
+          zIndex: -10,
+        }}
+        animate={{
+          background: [
+            `
+              radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, #7c3aed 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, #06b6d4 0%, transparent 60%)
+            `,
+            `
+              radial-gradient(circle at 70% 20%, #7c3aed 0%, transparent 60%),
+              radial-gradient(circle at 30% 80%, #06b6d4 0%, transparent 60%),
+              radial-gradient(circle at 90% 50%, #6366f1 0%, transparent 60%)
+            `,
+            `
+              radial-gradient(circle at 20% 70%, #06b6d4 0%, transparent 60%),
+              radial-gradient(circle at 80% 30%, #8b5cf6 0%, transparent 60%),
+              radial-gradient(circle at 40% 10%, #3b82f6 0%, transparent 60%)
+            `,
+            `
+              radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, #7c3aed 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, #06b6d4 0%, transparent 60%)
+            `,
+          ],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+      
+      {/* Additional subtle floating orbs */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            background: `radial-gradient(circle, ${colorStops[i % colorStops.length]}40, transparent)`,
+            filter: 'blur(60px)',
+            width: '300px',
+            height: '300px',
+          }}
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 10 + i * 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 2,
+          }}
+          initial={{
+            x: `${20 + i * 30}%`,
+            y: `${30 + i * 20}%`,
+          }}
+        />
+      ))}
+      
+      {/* Pulsing center glow */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ zIndex: -5 }}
+      >
+        <motion.div
+          className="rounded-full"
+          style={{
+            background: `radial-gradient(circle, #6366f130, transparent)`,
+            filter: 'blur(100px)',
+            width: '600px',
+            height: '600px',
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.div>
+    </div>
   );
 };
 
