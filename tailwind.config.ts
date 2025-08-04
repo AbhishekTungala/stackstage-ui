@@ -70,7 +70,8 @@ export default {
 				glass: {
 					DEFAULT: 'hsl(var(--glass))',
 					border: 'hsl(var(--glass-border))',
-					shadow: 'hsl(var(--glass-shadow))'
+					shadow: 'hsl(var(--glass-shadow))',
+					subtle: 'hsl(var(--glass-subtle))'
 				}
 			},
 			fontFamily: {
