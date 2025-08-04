@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Aurora from "@/components/ui/aurora";
+import AnimatedList from "@/components/ui/AnimatedList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -362,19 +363,22 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                 className="space-y-3"
               >
                 <h3 className="text-lg font-semibold text-foreground">Quick Actions</h3>
-                <div className="space-y-1">
-                  {quickActions.map((action, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-center glass-card h-7 px-1.5 text-sm"
-                    >
-                      <action.icon className="w-2.5 h-2.5 mr-1" />
-                      {action.label}
-                    </Button>
-                  ))}
-                </div>
+                <AnimatedList
+                  items={[
+                    "🔍 Analyze Infrastructure",
+                    "💰 Cost Optimization Review", 
+                    "🔐 Security Assessment",
+                    "📊 Performance Metrics",
+                    "📁 Upload Configuration",
+                    "⚡ Real-time Monitoring"
+                  ]}
+                  onItemSelect={(item, index) => console.log(`Selected action: ${item}`)}
+                  showGradients={true}
+                  enableArrowNavigation={true}
+                  displayScrollbar={false}
+                  className="max-h-60"
+                  itemClassName="text-sm font-medium"
+                />
               </motion.div>
             </div>
 

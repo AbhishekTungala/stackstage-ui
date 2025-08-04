@@ -7,6 +7,7 @@ import { Check, X, Zap, Shield, Users, Building2, Crown, Sparkles } from "lucide
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Aurora from "@/components/ui/aurora";
+import AnimatedList from "@/components/ui/AnimatedList";
 
 const pricingPlans = [
   {
@@ -210,31 +211,23 @@ const Pricing = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
                 <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
-                  <div className="glass-card">
-                    <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
-                    <p className="text-muted-foreground">
-                      Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately with prorated billing.
-                    </p>
-                  </div>
-                  <div className="glass-card">
-                    <h3 className="font-semibold mb-2">Is there a free trial?</h3>
-                    <p className="text-muted-foreground">
-                      All plans come with a 14-day free trial. No credit card required to get started.
-                    </p>
-                  </div>
-                  <div className="glass-card">
-                    <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
-                    <p className="text-muted-foreground">
-                      We accept all major credit cards, PayPal, and wire transfers for Enterprise customers.
-                    </p>
-                  </div>
-                  <div className="glass-card">
-                    <h3 className="font-semibold mb-2">Do you offer custom enterprise solutions?</h3>
-                    <p className="text-muted-foreground">
-                      Yes, we provide custom solutions for large enterprises. Contact our sales team for more details.
-                    </p>
-                  </div>
+                <div className="max-w-4xl mx-auto">
+                  <AnimatedList
+                    items={[
+                      "Can I change plans anytime? • Yes, upgrade or downgrade anytime with prorated billing",
+                      "Is there a free trial? • 14-day free trial, no credit card required to get started",
+                      "What payment methods do you accept? • All major credit cards, PayPal, and wire transfers",
+                      "Do you offer custom enterprise solutions? • Yes, custom solutions available for large enterprises",
+                      "What happens if I exceed my limits? • We'll notify you and offer seamless upgrade options",
+                      "Is my data secure? • Enterprise-grade encryption with SOC 2 Type II compliance"
+                    ]}
+                    onItemSelect={(item, index) => console.log(`Selected FAQ: ${item}`)}
+                    showGradients={true}
+                    enableArrowNavigation={false}
+                    displayScrollbar={true}
+                    className="max-w-2xl mx-auto"
+                    itemClassName="text-left"
+                  />
                 </div>
               </motion.div>
             </div>
