@@ -546,7 +546,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                           className="h-[60px] px-6"
                           variant="hero"
                         >
-                          <Send className="w-5 h-5" />
+                          <Send className="w-5 h-5 text-white" />
                         </Button>
                       </motion.div>
                     </div>
