@@ -5,7 +5,7 @@ import Features from "@/components/sections/Features";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen">
       <Header />
       <main>
         <Hero />

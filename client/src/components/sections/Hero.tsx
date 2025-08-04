@@ -38,7 +38,7 @@ const Hero = () => {
           </div>
           
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-12 leading-relaxed">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
             Analyze your cloud infrastructure for security vulnerabilities, 
             cost optimization opportunities, and performance improvements.
           </p>
@@ -81,8 +81,8 @@ const Hero = () => {
                 <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <stat.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">{stat.value}</h3>
-                <p className="text-slate-400">{stat.label}</p>
+                <h3 className="text-2xl font-bold text-foreground mb-2">{stat.value}</h3>
+                <p className="text-muted-foreground">{stat.label}</p>
               </motion.div>
             ))}
           </motion.div>
