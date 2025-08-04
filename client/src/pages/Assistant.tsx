@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Aurora from "@/components/ui/aurora";
-import AnimatedList from "@/components/ui/AnimatedList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -276,11 +274,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
             {/* Sidebar */}
             <div className="lg:col-span-1 space-y-6">
               {/* AI Assistant Info */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-              >
+              <div>
                 <Card className="glass-card border-primary/20">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-3">
@@ -310,26 +304,17 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
 
               {/* Quick Start Templates */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="space-y-3"
-              >
+              <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-foreground flex items-center">
                   <Lightbulb className="w-5 h-5 mr-2 text-primary" />
                   Quick Start
                 </h3>
                 <div className="space-y-2">
                   {conversationTemplates.map((template) => (
-                    <motion.div
-                      key={template.id}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                    >
+                    <div key={template.id}>
                       <Card 
                         className={`cursor-pointer transition-all duration-200 glass-card border-border/30 ${
                           selectedTemplate === template.id 
@@ -350,46 +335,35 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                           </div>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
 
               {/* Quick Actions */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="space-y-3"
-              >
+              <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-foreground">Quick Actions</h3>
-                <AnimatedList
-                  items={[
+                <div className="space-y-2">
+                  {[
                     "🔍 Analyze Infrastructure",
                     "💰 Cost Optimization Review", 
                     "🔐 Security Assessment",
-                    "📊 Performance Metrics",
-                    "📁 Upload Configuration",
-                    "⚡ Real-time Monitoring"
-                  ]}
-                  onItemSelect={(item, index) => console.log(`Selected action: ${item}`)}
-                  showGradients={true}
-                  enableArrowNavigation={true}
-                  displayScrollbar={false}
-                  className="max-h-60"
-                  itemClassName="text-sm font-medium"
-                />
-              </motion.div>
+                    "📊 Performance Metrics"
+                  ].map((action, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-2 rounded-lg bg-background/50 border border-border/30 text-sm font-medium cursor-pointer hover:bg-background/80 transition-colors"
+                    >
+                      {action}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Main Chat Interface */}
             <div className="lg:col-span-3">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="h-full"
-              >
+              <div className="h-full">
                 <Card className="glass-card border-primary/20 h-full flex flex-col">
                   {/* Chat Header */}
                   <CardHeader className="border-b border-border/50 py-3">
@@ -404,7 +378,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         <div>
                           <h3 className="font-medium text-sm">StackStage AI Assistant</h3>
                           <div className="flex items-center text-xs text-muted-foreground">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2"></div>
                             <span>Active now</span>
                           </div>
                         </div>
@@ -425,11 +399,8 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   <ScrollArea className="flex-1 p-4">
                     <div className="space-y-4">
                       {messages.map((message) => (
-                        <motion.div
+                        <div
                           key={message.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.2 }}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
@@ -504,35 +475,28 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                               )}
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
                       
                       {/* Typing Indicator */}
-                      <AnimatePresence>
-                        {isTyping && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="flex justify-start"
-                          >
-                            <div className="flex items-start space-x-2">
-                              <Avatar className="w-6 h-6 mt-1">
-                                <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                  <Bot className="w-3 h-3" />
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="bg-muted rounded-lg px-3 py-2">
-                                <div className="flex space-x-1">
-                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
-                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                </div>
+                      {isTyping && (
+                        <div className="flex justify-start">
+                          <div className="flex items-start space-x-2">
+                            <Avatar className="w-6 h-6 mt-1">
+                              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
+                                <Bot className="w-3 h-3" />
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="bg-muted rounded-lg px-3 py-2">
+                              <div className="flex space-x-1">
+                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                               </div>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                          </div>
+                        </div>
+                      )}
                       
                       <div ref={messagesEndRef} />
                     </div>
@@ -559,10 +523,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                           </Button>
                         </div>
                       </div>
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
+                      <div>
                         <Button
                           onClick={handleSendMessage}
                           disabled={!inputMessage.trim() || isTyping}
@@ -571,7 +532,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         >
                           <Send className="w-4 h-4 text-white" />
                         </Button>
-                      </motion.div>
+                      </div>
                     </div>
                     
                     <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
@@ -586,7 +547,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
