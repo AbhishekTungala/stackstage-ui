@@ -8,6 +8,7 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Pricing from "./pages/Pricing";
+import Assistant from "./pages/Assistant";
 import Analyze from "./pages/Analyze";
 import Results from "./pages/Results";
 import Fixes from "./pages/Fixes";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
             <Route path="/pricing" component={Pricing} />
+            <Route path="/assistant" component={Assistant} />
             <Route path="/analyze" component={Analyze} />
             <Route path="/results" component={Results} />
             <Route path="/results/fixes" component={Fixes} />
