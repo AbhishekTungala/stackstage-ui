@@ -316,10 +316,10 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   {conversationTemplates.map((template) => (
                     <div key={template.id}>
                       <Card 
-                        className={`cursor-pointer transition-all duration-200 glass-card border-0 ${
+                        className={`cursor-pointer transition-all duration-200 glass-card border border-white/10 ${
                           selectedTemplate === template.id 
-                            ? 'ring-1 ring-primary bg-primary/5' 
-                            : 'hover:shadow-sm hover:bg-background/80'
+                            ? 'ring-1 ring-primary bg-primary/5 border-primary/20' 
+                            : 'hover:shadow-sm hover:bg-background/80 hover:border-white/20'
                         }`}
                         onClick={() => handleTemplateSelect(template)}
                       >
@@ -352,7 +352,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   ].map((action, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-2 rounded-lg bg-background/50 border-0 text-sm font-medium cursor-pointer hover:bg-background/80 transition-colors"
+                      className="flex items-center p-2 rounded-lg bg-background/50 border border-white/10 text-sm font-medium cursor-pointer hover:bg-background/80 hover:border-white/20 transition-all duration-200"
                     >
                       {action}
                     </div>
