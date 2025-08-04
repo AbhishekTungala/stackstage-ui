@@ -51,6 +51,7 @@ import {
   Search,
   Share2
 } from "lucide-react";
+import { ChatLoading } from "@/components/ui/loading-skeleton";
 
 interface Message {
   id: string;
@@ -164,74 +165,97 @@ How can I assist you today?`,
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputMessage;
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        {
-          content: `I've analyzed your request about "${inputMessage.slice(0, 50)}...". Here's my detailed analysis:
+    try {
+      // Prepare message history for OpenAI
+      const messageHistory = [...messages, userMessage].map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
 
-**Key Findings:**
-• Identified 3 potential security improvements
-• Found 2 cost optimization opportunities
-• Detected 1 performance bottleneck
-
-**Recommendations:**
-1. **Security**: Enable MFA for all admin accounts
-2. **Cost**: Consider reserved instances for stable workloads
-3. **Performance**: Implement auto-scaling for dynamic loads
-
-Would you like me to elaborate on any of these recommendations?`,
-          suggestions: [
-            "Tell me more about the security improvements",
-            "Show me the cost savings calculation",
-            "How do I implement auto-scaling?",
-            "Generate a detailed report"
-          ]
+      // Call real OpenAI API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          content: `Based on your infrastructure analysis request, I've generated the following insights:
+        body: JSON.stringify({
+          messages: messageHistory
+        }),
+      });
 
-**Infrastructure Overview:**
-• 15 EC2 instances across 3 regions
-• 8 RDS databases with varying configurations
-• 12 S3 buckets with mixed access patterns
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get AI response');
+      }
 
-**Critical Issues Found:**
-🔴 **High Priority**: Unencrypted data at rest in 3 databases
-🟡 **Medium Priority**: Over-provisioned instances costing $2,400/month
-🟢 **Low Priority**: Missing backup policies on 4 resources
-
-**Immediate Actions Required:**
-1. Enable encryption on RDS instances
-2. Right-size EC2 instances (potential $1,200/month savings)
-3. Implement automated backup schedules
-
-Shall I provide step-by-step implementation guides for these fixes?`,
-          suggestions: [
-            "Show me how to enable RDS encryption",
-            "Create a rightsizing implementation plan",
-            "Generate backup policy templates",
-            "Calculate total potential savings"
-          ]
-        }
-      ];
-
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      const data = await response.json();
+      
+      // Generate contextual suggestions based on the response
+      const suggestions = generateSuggestions(data.message, currentInput);
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: randomResponse.content,
+        content: data.message,
         timestamp: new Date(),
-        suggestions: randomResponse.suggestions
+        suggestions
       };
 
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
-    }, 2000 + Math.random() * 1000);
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      setIsTyping(false);
+      
+      // Professional error handling
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: `I apologize, but I'm experiencing technical difficulties. ${error instanceof Error ? error.message : 'Please try again in a moment.'}\n\nIn the meantime, you can:\n• Check your internet connection\n• Try rephrasing your question\n• Use one of the quick start templates above`,
+        timestamp: new Date(),
+        suggestions: [
+          "Try the Security Analysis template",
+          "Use the Cost Optimization template",
+          "Ask about performance tuning",
+          "Contact support if issues persist"
+        ]
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
+  // Generate contextual suggestions based on AI response and user input
+  const generateSuggestions = (aiResponse: string, userInput: string): string[] => {
+    const suggestions = [];
+    
+    // Based on response content
+    if (aiResponse.toLowerCase().includes('security')) {
+      suggestions.push("Show me specific security recommendations");
+      suggestions.push("How do I implement these security fixes?");
+    }
+    
+    if (aiResponse.toLowerCase().includes('cost')) {
+      suggestions.push("Calculate potential cost savings");
+      suggestions.push("Show me a cost optimization roadmap");
+    }
+    
+    if (aiResponse.toLowerCase().includes('performance')) {
+      suggestions.push("How can I monitor these performance improvements?");
+      suggestions.push("What are the performance benchmarks?");
+    }
+    
+    // Generic helpful suggestions
+    suggestions.push("Generate a detailed implementation plan");
+    suggestions.push("Create a report I can share with my team");
+    
+    // Return 4 most relevant suggestions
+    return suggestions.slice(0, 4);
   };
 
   const handleTemplateSelect = (template: any) => {
@@ -478,25 +502,8 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         </div>
                       ))}
                       
-                      {/* Typing Indicator */}
-                      {isTyping && (
-                        <div className="flex justify-start">
-                          <div className="flex items-start space-x-2">
-                            <Avatar className="w-6 h-6 mt-1">
-                              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                <Bot className="w-3 h-3" />
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="bg-muted rounded-lg px-3 py-2">
-                              <div className="flex space-x-1">
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      {/* Professional AI Typing Indicator */}
+                      {isTyping && <ChatLoading className="ml-8" />}
                       
                       <div ref={messagesEndRef} />
                     </div>

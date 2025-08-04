@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { AnalysisLoading } from "@/components/ui/loading-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -97,30 +98,88 @@ const Analyze = () => {
   };
 
   const handleAnalyze = async () => {
+    if (!textInput.trim() && selectedFiles.length === 0) {
+      alert("Please provide infrastructure configuration or upload files to analyze.");
+      return;
+    }
+
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     setCurrentStep("validating");
 
-    // Simulate progressive analysis steps
-    const steps = [
-      { step: "validating", progress: 20, delay: 800 },
-      { step: "parsing", progress: 40, delay: 1200 },
-      { step: "analyzing", progress: 70, delay: 1500 },
-      { step: "optimizing", progress: 90, delay: 1000 },
-      { step: "complete", progress: 100, delay: 500 }
-    ];
+    try {
+      // Progressive UI updates for professional feel
+      const steps = [
+        { step: "validating", progress: 15, delay: 500 },
+        { step: "parsing", progress: 30, delay: 800 },
+        { step: "analyzing", progress: 60, delay: 1000 },
+        { step: "optimizing", progress: 85, delay: 1200 }
+      ];
 
-    for (const { step, progress, delay } of steps) {
+      // Update UI progressively
+      steps.forEach(({ step, progress, delay }) => {
+        setTimeout(() => {
+          setCurrentStep(step);
+          setAnalysisProgress(progress);
+        }, delay);
+      });
+
+      // Prepare analysis content
+      let content = textInput.trim();
+      if (selectedFiles.length > 0) {
+        // In a real app, you'd read file contents here
+        content += `\n\nFiles uploaded: ${selectedFiles.map(f => f.name).join(', ')}`;
+        // For demo, we'll use the text input or a sample if files are selected
+        if (!content.trim()) {
+          content = `# Infrastructure Configuration
+# Files: ${selectedFiles.map(f => f.name).join(', ')}
+# Please provide actual file contents for real analysis`;
+        }
+      }
+
+      // Call real OpenAI API
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content,
+          analysisMode,
+          cloudProvider,
+          userRegion: 'us-east-1' // Could be detected or user-selected
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Analysis failed');
+      }
+
+      const data = await response.json();
+      
+      // Complete the progress
+      setCurrentStep("complete");
+      setAnalysisProgress(100);
+      
+      // Store result in localStorage for Results page
+      localStorage.setItem('analysisResult', JSON.stringify(data.result));
+      localStorage.setItem('analysisId', data.analysisId);
+
       setTimeout(() => {
-        setCurrentStep(step);
-        setAnalysisProgress(progress);
-      }, delay);
-    }
+        setIsAnalyzing(false);
+        window.location.href = "/results";
+      }, 1000);
 
-    setTimeout(() => {
+    } catch (error) {
+      console.error('Analysis error:', error);
       setIsAnalyzing(false);
-      window.location.href = "/results";
-    }, 5000);
+      setCurrentStep("error");
+      
+      // Professional error handling
+      const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
+      alert(`Analysis failed: ${errorMessage}\n\nPlease check your configuration and try again.`);
+    }
   };
 
   useEffect(() => {
