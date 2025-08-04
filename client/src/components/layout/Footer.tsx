@@ -2,7 +2,6 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
   Github, 
-  Twitter, 
   Linkedin, 
   Zap, 
   Building2,
@@ -20,6 +19,7 @@ import {
   Heart,
   ExternalLink
 } from "lucide-react";
+import { SiSlack } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -99,7 +99,8 @@ const Footer = () => {
                 <div className="flex space-x-1.5">
                   {[
                     { icon: Github, href: "https://github.com", label: "GitHub" },
-                    { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+                    { icon: Mail, href: "mailto:hello@stackstage.com", label: "Email" },
+                    { icon: SiSlack, href: "https://slack.stackstage.com", label: "Slack" },
                     { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" }
                   ].map(({ icon: Icon, href, label }) => (
                     <motion.a
