@@ -318,13 +318,13 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         }`}
                         onClick={() => handleTemplateSelect(template)}
                       >
-                        <CardContent className="p-2.5">
-                          <div className="flex items-start space-x-2.5">
+                        <CardContent className="p-2">
+                          <div className="flex items-start space-x-2">
                             <div className={`w-5 h-5 rounded-md flex items-center justify-center bg-${template.color}-500/20 flex-shrink-0 mt-0.5`}>
                               <template.icon className={`w-3 h-3 text-${template.color}-500`} />
                             </div>
                             <div className="min-w-0 flex-1">
-                              <h4 className="font-medium text-xs leading-tight">{template.title}</h4>
+                              <h4 className="font-medium text-sm leading-tight">{template.title}</h4>
                               <p className="text-xs text-muted-foreground leading-tight mt-0.5 line-clamp-2">{template.description}</p>
                             </div>
                           </div>
