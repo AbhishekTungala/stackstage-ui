@@ -99,9 +99,9 @@ const Footer = () => {
                 <div className="flex space-x-1.5">
                   {[
                     { icon: Github, href: "https://github.com", label: "GitHub" },
-                    { icon: Mail, href: "mailto:hello@stackstage.com", label: "Email" },
+                    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
                     { icon: SiSlack, href: "https://slack.stackstage.com", label: "Slack" },
-                    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" }
+                    { icon: Mail, href: "mailto:hello@stackstage.com", label: "Email" }
                   ].map(({ icon: Icon, href, label }) => (
                     <motion.a
                       key={label}
