@@ -29,6 +29,7 @@ StackStage is a modern cloud architecture analysis platform that helps users ana
   - Removed problematic animations from AI Assistant page sidebar and chat interface
   - Cleaned up Framer Motion components that weren't displaying properly
   - Enhanced user experience by removing distracting animations from status indicators
+  - Removed white borders from Quick Start templates and Quick Actions cards for cleaner appearance
   - Application now runs smoothly without animation interference
 
 - **2025-01-04**: Successfully migrated from Lovable to Replit
