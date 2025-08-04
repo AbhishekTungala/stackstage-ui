@@ -69,24 +69,83 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
             {word}
           </motion.span>
           
-          {/* Glow border box around active word */}
+          {/* Camera focus corners around active word */}
           {focusedIndex === index && (
             <motion.div
-              className="absolute -inset-2 rounded-xl pointer-events-none z-0"
-              style={{
-                border: `2px solid ${borderColor}`,
-                background: `linear-gradient(135deg, ${glowColor}, transparent)`,
-                boxShadow: `
-                  0 0 20px ${glowColor},
-                  0 0 40px ${glowColor}40,
-                  inset 0 1px 0 rgba(255,255,255,0.1)
-                `,
-              }}
+              className="absolute -inset-3 pointer-events-none z-0"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: animationDuration, ease: "easeOut" }}
-            />
+            >
+              {/* Top Left Corner */}
+              <motion.div
+                className="absolute top-0 left-0 w-6 h-6"
+                style={{
+                  borderTop: `3px solid ${borderColor}`,
+                  borderLeft: `3px solid ${borderColor}`,
+                  borderTopLeftRadius: '4px',
+                  boxShadow: `0 0 10px ${glowColor}`,
+                }}
+                initial={{ x: -5, y: -5 }}
+                animate={{ x: 0, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              
+              {/* Top Right Corner */}
+              <motion.div
+                className="absolute top-0 right-0 w-6 h-6"
+                style={{
+                  borderTop: `3px solid ${borderColor}`,
+                  borderRight: `3px solid ${borderColor}`,
+                  borderTopRightRadius: '4px',
+                  boxShadow: `0 0 10px ${glowColor}`,
+                }}
+                initial={{ x: 5, y: -5 }}
+                animate={{ x: 0, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              
+              {/* Bottom Left Corner */}
+              <motion.div
+                className="absolute bottom-0 left-0 w-6 h-6"
+                style={{
+                  borderBottom: `3px solid ${borderColor}`,
+                  borderLeft: `3px solid ${borderColor}`,
+                  borderBottomLeftRadius: '4px',
+                  boxShadow: `0 0 10px ${glowColor}`,
+                }}
+                initial={{ x: -5, y: 5 }}
+                animate={{ x: 0, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              
+              {/* Bottom Right Corner */}
+              <motion.div
+                className="absolute bottom-0 right-0 w-6 h-6"
+                style={{
+                  borderBottom: `3px solid ${borderColor}`,
+                  borderRight: `3px solid ${borderColor}`,
+                  borderBottomRightRadius: '4px',
+                  boxShadow: `0 0 10px ${glowColor}`,
+                }}
+                initial={{ x: 5, y: 5 }}
+                animate={{ x: 0, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              
+              {/* Subtle background glow */}
+              <motion.div
+                className="absolute inset-0 rounded-lg pointer-events-none"
+                style={{
+                  background: `linear-gradient(135deg, ${glowColor}20, transparent)`,
+                  boxShadow: `inset 0 0 20px ${glowColor}30`,
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              />
+            </motion.div>
           )}
         </motion.div>
       ))}
