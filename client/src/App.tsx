@@ -15,6 +15,14 @@ import Fixes from "./pages/Fixes";
 import Diagram from "./pages/Diagram";
 import Share from "./pages/Share";
 import Docs from "./pages/Docs";
+import Enterprise from "./pages/Enterprise";
+import About from "./pages/About";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Support from "./pages/Support";
+import Status from "./pages/Status";
+import Community from "./pages/Community";
+import Changelog from "./pages/Changelog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +46,14 @@ const App = () => (
             <Route path="/results/diagram" component={Diagram} />
             <Route path="/results/share" component={Share} />
             <Route path="/docs" component={Docs} />
+            <Route path="/enterprise" component={Enterprise} />
+            <Route path="/about" component={About} />
+            <Route path="/privacy" component={Privacy} />
+            <Route path="/terms" component={Terms} />
+            <Route path="/support" component={Support} />
+            <Route path="/status" component={Status} />
+            <Route path="/community" component={Community} />
+            <Route path="/changelog" component={Changelog} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route component={NotFound} />
           </Switch>
