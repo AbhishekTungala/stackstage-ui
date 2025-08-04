@@ -7,6 +7,89 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  :root {
+    /* StackStage Light Mode - Default */
+    --background: 0 0% 99%;
+    --foreground: 220 9% 9%;
+
+    /* Light glass morphism */
+    --glass: 0 0% 100% / 0.8;
+    --glass-border: 220 13% 91%;
+    --glass-shadow: 220 43% 11% / 0.1;
+    --glass-subtle: 0 0% 100% / 0.6;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 9% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 9% 9%;
+
+    /* Premium brand colors */
+    --primary: 220 91% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 220 100% 70%;
+    --primary-subtle: 220 91% 56% / 0.1;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 9%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
+
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 9% 9%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
+    --success-subtle: 142 71% 45% / 0.1;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    --warning-subtle: 38 92% 50% / 0.1;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 91% 56%;
+
+    --radius: 20px;
+
+    /* Premium gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 91% 56%), hsl(220 100% 70%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.25), hsl(0 0% 100% / 0.05));
+    --gradient-hero: linear-gradient(135deg, hsl(220 91% 56% / 0.1), hsl(220 100% 70% / 0.05));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(220 91% 56% / 0.3) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(220 100% 70% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(220 91% 56% / 0.2) 0px, transparent 50%);
+
+    /* Premium shadows */
+    --shadow-glass: 0 8px 32px hsl(220 43% 11% / 0.12);
+    --shadow-elevated: 0 20px 25px -5px hsl(220 43% 11% / 0.1), 0 10px 10px -5px hsl(220 43% 11% / 0.04);
+    --shadow-glow: 0 0 40px hsl(220 91% 56% / 0.4);
+    --shadow-premium: 0 25px 50px -12px hsl(220 43% 11% / 0.25);
+
+    /* Animation timing */
+    --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Aurora colors for light mode */
+    --aurora-primary: 99 102 241;
+    --aurora-secondary: 236 72 153;
+    --aurora-tertiary: 20 184 166;
+  }
+
   .dark {
     /* StackStage Dark Mode - Default */
     --background: 222 47% 2%;
@@ -90,97 +173,9 @@ All colors MUST be HSL.
     --sidebar-ring: 220 91% 65%;
 
     /* Aurora colors for dark mode */
-    --aurora-primary: 58 41 255;
-    --aurora-secondary: 255 148 180;
-    --aurora-tertiary: 255 50 50;
-  }
-
-  :root {
-    /* StackStage Light Mode */
-    --background: 0 0% 99%;
-    --foreground: 220 9% 9%;
-
-    /* Light glass morphism */
-    --glass: 0 0% 100% / 0.8;
-    --glass-border: 220 13% 91%;
-    --glass-shadow: 220 43% 11% / 0.1;
-    --glass-subtle: 0 0% 100% / 0.6;
-
-    --card: 0 0% 100%;
-    --card-foreground: 220 9% 9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 9% 9%;
-
-    /* Premium brand colors */
-    --primary: 220 91% 56%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 100% 70%;
-    --primary-subtle: 220 91% 56% / 0.1;
-
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 9%;
-
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 8% 46%;
-
-    --accent: 220 14% 96%;
-    --accent-foreground: 220 9% 9%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 98%;
-    --success-subtle: 142 71% 45% / 0.1;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
-    --warning-subtle: 38 92% 50% / 0.1;
-
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 91% 56%;
-
-    --radius: 20px;
-
-    /* Swiss design tokens */
-    --steel: 220 9% 15%;
-    --slate: 220 14% 71%;
-    --graphite: 220 9% 20%;
-
-    /* Advanced gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 91% 56%), hsl(220 100% 70%));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.25), hsl(0 0% 100% / 0.05));
-    --gradient-hero: linear-gradient(135deg, hsl(220 91% 56% / 0.1), hsl(220 100% 70% / 0.05));
-    --gradient-mesh: radial-gradient(at 40% 20%, hsl(220 91% 56% / 0.3) 0px, transparent 50%),
-                     radial-gradient(at 80% 0%, hsl(220 100% 70% / 0.2) 0px, transparent 50%),
-                     radial-gradient(at 0% 50%, hsl(220 91% 56% / 0.2) 0px, transparent 50%);
-
-    /* Premium shadows */
-    --shadow-glass: 0 8px 32px hsl(220 43% 11% / 0.12);
-    --shadow-elevated: 0 20px 25px -5px hsl(220 43% 11% / 0.1), 0 10px 10px -5px hsl(220 43% 11% / 0.04);
-    --shadow-glow: 0 0 40px hsl(220 91% 56% / 0.4);
-    --shadow-premium: 0 25px 50px -12px hsl(220 43% 11% / 0.25);
-
-    /* Animation timing */
-    --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Aurora colors for light mode */
-    --aurora-primary: 58 41 255;
-    --aurora-secondary: 255 148 180;
-    --aurora-tertiary: 255 50 50;
+    --aurora-primary: 99 102 241;
+    --aurora-secondary: 236 72 153;
+    --aurora-tertiary: 20 184 166;
   }
 }
 
@@ -192,6 +187,12 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Smooth theme transitions */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
 }
 
