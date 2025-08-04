@@ -305,35 +305,39 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                       Quick Start
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    {conversationTemplates.map((template) => (
-                      <motion.div
-                        key={template.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Card 
-                          className={`cursor-pointer transition-all duration-200 ${
-                            selectedTemplate === template.id 
-                              ? 'ring-2 ring-primary bg-primary/5' 
-                              : 'hover:shadow-md'
-                          }`}
-                          onClick={() => handleTemplateSelect(template)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-3">
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
-                                <template.icon className={`w-4 h-4 text-${template.color}-500`} />
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm">{template.title}</h4>
-                                <p className="text-xs text-muted-foreground">{template.description}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    ))}
+                  <CardContent className="p-0">
+                    <ScrollArea className="h-72 px-6 pb-6">
+                      <div className="space-y-3">
+                        {conversationTemplates.map((template) => (
+                          <motion.div
+                            key={template.id}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Card 
+                              className={`cursor-pointer transition-all duration-200 ${
+                                selectedTemplate === template.id 
+                                  ? 'ring-2 ring-primary bg-primary/5' 
+                                  : 'hover:shadow-md'
+                              }`}
+                              onClick={() => handleTemplateSelect(template)}
+                            >
+                              <CardContent className="p-3">
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
+                                    <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium text-sm">{template.title}</h4>
+                                    <p className="text-xs text-muted-foreground">{template.description}</p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -348,18 +352,22 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   <CardHeader>
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2">
-                    {quickActions.map((action, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        <action.icon className="w-4 h-4 mr-2" />
-                        {action.label}
-                      </Button>
-                    ))}
+                  <CardContent className="p-0">
+                    <ScrollArea className="h-48 px-6 pb-6">
+                      <div className="space-y-2">
+                        {quickActions.map((action, index) => (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                          >
+                            <action.icon className="w-4 h-4 mr-2" />
+                            {action.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -375,63 +383,63 @@ Shall I provide step-by-step implementation guides for these fixes?`,
               >
                 <Card className="glass-card border-primary/20 h-full flex flex-col">
                   {/* Chat Header */}
-                  <CardHeader className="border-b border-border/50">
+                  <CardHeader className="border-b border-border/50 py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <Avatar className="w-10 h-10">
+                        <Avatar className="w-8 h-8">
                           <AvatarImage src="/ai-avatar.png" />
                           <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                            <Bot className="w-5 h-5" />
+                            <Bot className="w-4 h-4" />
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-semibold">StackStage AI Assistant</h3>
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                          <h3 className="font-medium text-sm">StackStage AI Assistant</h3>
+                          <div className="flex items-center text-xs text-muted-foreground">
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                             <span>Active now</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                          <Sparkles className="w-3 h-3 mr-1" />
+                      <div className="flex items-center space-x-1">
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 text-xs py-0">
+                          <Sparkles className="w-2.5 h-2.5 mr-1" />
                           AI Powered
                         </Badge>
                         <Button variant="outline" size="sm">
-                          <Settings className="w-4 h-4" />
+                          <Settings className="w-3.5 h-3.5" />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
 
                   {/* Messages Area */}
-                  <ScrollArea className="flex-1 p-6">
-                    <div className="space-y-6">
+                  <ScrollArea className="flex-1 p-4">
+                    <div className="space-y-4">
                       {messages.map((message) => (
                         <motion.div
                           key={message.id}
-                          initial={{ opacity: 0, y: 20 }}
+                          initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.2 }}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[80%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
-                            <div className="flex items-start space-x-3">
+                          <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
+                            <div className="flex items-start space-x-2">
                               {message.type === 'assistant' && (
-                                <Avatar className="w-8 h-8">
+                                <Avatar className="w-6 h-6 mt-1">
                                   <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                    <Bot className="w-4 h-4" />
+                                    <Bot className="w-3 h-3" />
                                   </AvatarFallback>
                                 </Avatar>
                               )}
                               
                               <div className="space-y-2 flex-1">
                                 <div
-                                  className={`rounded-2xl px-4 py-3 ${
+                                  className={`rounded-lg px-3 py-2 ${
                                     message.type === 'user'
                                       ? 'bg-primary text-primary-foreground ml-auto'
                                       : 'bg-muted'
-                                  } ${message.id === '1' && message.type === 'assistant' ? 'max-h-96 overflow-auto' : ''}`}
+                                  } ${message.id === '1' && message.type === 'assistant' ? 'max-h-64 overflow-auto' : ''}`}
                                 >
                                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                                     {message.content}
@@ -440,34 +448,34 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                                 
                                 {/* Message Actions */}
                                 {message.type === 'assistant' && (
-                                  <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                                     <span>{message.timestamp.toLocaleTimeString()}</span>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <Copy className="w-3 h-3" />
+                                    <Button variant="ghost" size="sm" className="h-5 px-1.5">
+                                      <Copy className="w-2.5 h-2.5" />
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <ThumbsUp className="w-3 h-3" />
+                                    <Button variant="ghost" size="sm" className="h-5 px-1.5">
+                                      <ThumbsUp className="w-2.5 h-2.5" />
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <ThumbsDown className="w-3 h-3" />
+                                    <Button variant="ghost" size="sm" className="h-5 px-1.5">
+                                      <ThumbsDown className="w-2.5 h-2.5" />
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <RefreshCw className="w-3 h-3" />
+                                    <Button variant="ghost" size="sm" className="h-5 px-1.5">
+                                      <RefreshCw className="w-2.5 h-2.5" />
                                     </Button>
                                   </div>
                                 )}
                                 
                                 {/* Suggestions */}
                                 {message.suggestions && (
-                                  <div className="space-y-2">
+                                  <div className="space-y-1.5">
                                     <p className="text-xs text-muted-foreground">Suggested follow-ups:</p>
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-1.5">
                                       {message.suggestions.map((suggestion, index) => (
                                         <Button
                                           key={index}
                                           variant="outline"
                                           size="sm"
-                                          className="text-xs h-7"
+                                          className="text-xs h-6 px-2"
                                           onClick={() => handleSuggestionClick(suggestion)}
                                         >
                                           {suggestion}
@@ -479,9 +487,9 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                               </div>
                               
                               {message.type === 'user' && (
-                                <Avatar className="w-8 h-8">
+                                <Avatar className="w-6 h-6 mt-1">
                                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                                    <User className="w-4 h-4" />
+                                    <User className="w-3 h-3" />
                                   </AvatarFallback>
                                 </Avatar>
                               )}
@@ -494,22 +502,22 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                       <AnimatePresence>
                         {isTyping && (
                           <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            exit={{ opacity: 0, y: -10 }}
                             className="flex justify-start"
                           >
-                            <div className="flex items-start space-x-3">
-                              <Avatar className="w-8 h-8">
+                            <div className="flex items-start space-x-2">
+                              <Avatar className="w-6 h-6 mt-1">
                                 <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                  <Bot className="w-4 h-4" />
+                                  <Bot className="w-3 h-3" />
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="bg-muted rounded-2xl px-4 py-3">
+                              <div className="bg-muted rounded-lg px-3 py-2">
                                 <div className="flex space-x-1">
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                                 </div>
                               </div>
                             </div>
@@ -522,48 +530,48 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   </ScrollArea>
 
                   {/* Input Area */}
-                  <div className="border-t border-border/50 p-4">
-                    <div className="flex items-end space-x-3">
+                  <div className="border-t border-border/50 p-3">
+                    <div className="flex items-end space-x-2">
                       <div className="flex-1 relative">
                         <Textarea
                           ref={textareaRef}
                           value={inputMessage}
                           onChange={(e) => setInputMessage(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          placeholder="Ask me anything about cloud architecture, security, optimization..."
-                          className="min-h-[60px] max-h-32 resize-none pr-20"
+                          placeholder="Ask about cloud architecture, security, costs..."
+                          className="min-h-[44px] max-h-24 resize-none pr-16 text-sm"
                         />
-                        <div className="absolute bottom-3 right-3 flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <PaperclipIcon className="w-4 h-4" />
+                        <div className="absolute bottom-2 right-2 flex items-center space-x-0.5">
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <PaperclipIcon className="w-3.5 h-3.5" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Mic className="w-4 h-4" />
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <Mic className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         <Button
                           onClick={handleSendMessage}
                           disabled={!inputMessage.trim() || isTyping}
-                          className="h-[60px] px-6"
+                          className="h-[44px] px-4"
                           variant="hero"
                         >
-                          <Send className="w-5 h-5 text-white" />
+                          <Send className="w-4 h-4 text-white" />
                         </Button>
                       </motion.div>
                     </div>
                     
-                    <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
-                      <p>Press Enter to send, Shift+Enter for new line</p>
-                      <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                      <p>Press Enter to send</p>
+                      <div className="flex items-center space-x-3">
                         <span>Powered by StackStage AI</span>
                         <div className="flex items-center space-x-1">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span>Secure & Private</span>
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                          <span>Secure</span>
                         </div>
                       </div>
                     </div>
