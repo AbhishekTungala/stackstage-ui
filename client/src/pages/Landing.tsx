@@ -5,9 +5,9 @@ import Features from "@/components/sections/Features";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main>
+      <main className="flex-1">
         <Hero />
         <Features />
       </main>

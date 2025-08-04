@@ -185,7 +185,7 @@ const Analyze = () => {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative flex flex-col">
       <Header />
       
       {/* Aurora Background */}
@@ -193,7 +193,7 @@ const Analyze = () => {
         <Aurora intensity={0.4} speed={1.2} className="aurora-background" />
       </div>
       
-      <main className="relative pt-24 pb-16">
+      <main className="relative flex-1 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <motion.div 
@@ -835,7 +835,9 @@ resource "aws_instance" "web_server" {
         </div>
       </main>
 
-      <Footer />
+      <div className="relative">
+        <Footer />
+      </div>
     </div>
   );
 };

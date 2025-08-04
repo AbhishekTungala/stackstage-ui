@@ -235,7 +235,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative flex flex-col">
       <Header />
       
       {/* Aurora Background */}
@@ -243,8 +243,8 @@ Shall I provide step-by-step implementation guides for these fixes?`,
         <Aurora intensity={0.3} speed={1.5} className="aurora-background" />
       </div>
 
-      <main className="relative pt-20 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-8rem)]">
+      <main className="relative flex-1 pt-20 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-12rem)]">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
             
             {/* Sidebar */}
@@ -569,7 +569,9 @@ Shall I provide step-by-step implementation guides for these fixes?`,
         </div>
       </main>
 
-      <Footer />
+      <div className="relative">
+        <Footer />
+      </div>
     </div>
   );
 };

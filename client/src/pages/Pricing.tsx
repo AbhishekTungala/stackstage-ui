@@ -76,15 +76,16 @@ const pricingPlans = [
 
 const Pricing = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
       {/* Aurora Background */}
-      <div className="relative">
+      <div className="absolute inset-0">
         <Aurora intensity={0.3} speed={1.5} className="aurora-background" />
+      </div>
         
-        <main className="relative">
-          {/* Hero Section */}
+      <main className="relative flex-1">
+        {/* Hero Section */}
           <section className="pt-32 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-16">
@@ -231,9 +232,8 @@ const Pricing = () => {
                 </div>
               </motion.div>
             </div>
-          </section>
-        </main>
-      </div>
+        </section>
+      </main>
       
       <Footer />
     </div>
