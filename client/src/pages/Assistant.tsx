@@ -303,29 +303,29 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                   <Lightbulb className="w-5 h-5 mr-2 text-primary" />
                   Quick Start
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {conversationTemplates.map((template) => (
                     <motion.div
                       key={template.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                     >
                       <Card 
-                        className={`cursor-pointer transition-all duration-200 glass-card ${
+                        className={`cursor-pointer transition-all duration-200 glass-card border-border/30 ${
                           selectedTemplate === template.id 
-                            ? 'ring-2 ring-primary bg-primary/5' 
-                            : 'hover:shadow-md'
+                            ? 'ring-1 ring-primary bg-primary/5' 
+                            : 'hover:shadow-sm hover:border-primary/20'
                         }`}
                         onClick={() => handleTemplateSelect(template)}
                       >
-                        <CardContent className="p-3">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
-                              <template.icon className={`w-3.5 h-3.5 text-${template.color}-500`} />
+                        <CardContent className="p-2.5">
+                          <div className="flex items-start space-x-2.5">
+                            <div className={`w-5 h-5 rounded-md flex items-center justify-center bg-${template.color}-500/20 flex-shrink-0 mt-0.5`}>
+                              <template.icon className={`w-3 h-3 text-${template.color}-500`} />
                             </div>
-                            <div>
-                              <h4 className="font-medium text-sm">{template.title}</h4>
-                              <p className="text-xs text-muted-foreground">{template.description}</p>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-medium text-xs leading-tight">{template.title}</h4>
+                              <p className="text-xs text-muted-foreground leading-tight mt-0.5 line-clamp-2">{template.description}</p>
                             </div>
                           </div>
                         </CardContent>
