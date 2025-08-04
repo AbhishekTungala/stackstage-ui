@@ -78,12 +78,26 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
+              {/* Gradient blur shadow background */}
+              <motion.div
+                className="absolute inset-0 rounded-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${glowColor}40, ${glowColor}20, transparent)`,
+                  filter: 'blur(8px)',
+                  boxShadow: `0 0 24px ${glowColor}60`,
+                }}
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+              
               {/* Top Left Corner */}
               <motion.div
-                className="absolute top-0 left-0 w-5 h-5"
+                className="absolute top-0 left-0 w-5 h-5 z-10"
                 style={{
                   borderTop: `2px solid ${borderColor}`,
                   borderLeft: `2px solid ${borderColor}`,
+                  filter: `drop-shadow(0 0 4px ${glowColor})`,
                 }}
                 initial={{ x: -3, y: -3 }}
                 animate={{ x: 0, y: 0 }}
@@ -92,10 +106,11 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
               
               {/* Top Right Corner */}
               <motion.div
-                className="absolute top-0 right-0 w-5 h-5"
+                className="absolute top-0 right-0 w-5 h-5 z-10"
                 style={{
                   borderTop: `2px solid ${borderColor}`,
                   borderRight: `2px solid ${borderColor}`,
+                  filter: `drop-shadow(0 0 4px ${glowColor})`,
                 }}
                 initial={{ x: 3, y: -3 }}
                 animate={{ x: 0, y: 0 }}
@@ -104,10 +119,11 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
               
               {/* Bottom Left Corner */}
               <motion.div
-                className="absolute bottom-0 left-0 w-5 h-5"
+                className="absolute bottom-0 left-0 w-5 h-5 z-10"
                 style={{
                   borderBottom: `2px solid ${borderColor}`,
                   borderLeft: `2px solid ${borderColor}`,
+                  filter: `drop-shadow(0 0 4px ${glowColor})`,
                 }}
                 initial={{ x: -3, y: 3 }}
                 animate={{ x: 0, y: 0 }}
@@ -116,10 +132,11 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
               
               {/* Bottom Right Corner */}
               <motion.div
-                className="absolute bottom-0 right-0 w-5 h-5"
+                className="absolute bottom-0 right-0 w-5 h-5 z-10"
                 style={{
                   borderBottom: `2px solid ${borderColor}`,
                   borderRight: `2px solid ${borderColor}`,
+                  filter: `drop-shadow(0 0 4px ${glowColor})`,
                 }}
                 initial={{ x: 3, y: 3 }}
                 animate={{ x: 0, y: 0 }}
