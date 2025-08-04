@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { motion } from "framer-motion";
 import { Zap, ArrowRight, Shield, DollarSign, TrendingUp } from "lucide-react";
 import Aurora from "@/components/ui/aurora";
+import TrueFocus from "@/components/ui/true-focus";
 
 const Hero = () => {
   return (
@@ -22,11 +24,17 @@ const Hero = () => {
             Cloud Architecture Analysis Platform
           </div>
           
-          {/* Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Build with
-            <span className="text-gradient block">Confidence</span>
-          </h1>
+          {/* Animated Heading */}
+          <div className="mb-8">
+            <TrueFocus 
+              sentence="Build with Confidence"
+              manualMode={false}
+              blurAmount={5}
+              borderColor="#6366f1"
+              animationDuration={2}
+              pauseBetweenAnimations={1}
+            />
+          </div>
           
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
@@ -49,30 +57,34 @@ const Hero = () => {
             </Link>
           </div>
           
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">99.9%</h3>
-              <p className="text-muted-foreground">Security Detection Rate</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
-                <DollarSign className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">30%</h3>
-              <p className="text-muted-foreground">Average Cost Savings</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4">
-                <TrendingUp className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">2x</h3>
-              <p className="text-muted-foreground">Performance Improvement</p>
-            </div>
-          </div>
+          {/* Animated Stats */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            {[
+              { icon: Shield, value: "99.9%", label: "Security Detection Rate", delay: 0.9 },
+              { icon: DollarSign, value: "30%", label: "Average Cost Savings", delay: 1.0 },
+              { icon: TrendingUp, value: "2x", label: "Performance Improvement", delay: 1.1 }
+            ].map((stat, index) => (
+              <motion.div 
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: stat.delay, duration: 0.5 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+              >
+                <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <stat.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-2">{stat.value}</h3>
+                <p className="text-muted-foreground">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

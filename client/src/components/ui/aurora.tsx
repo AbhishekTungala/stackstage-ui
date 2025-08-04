@@ -9,13 +9,13 @@ interface AuroraProps {
 
 const Aurora: React.FC<AuroraProps> = ({
   colorStops = [
-    "#6366f1", // Indigo
-    "#9333ea", // Purple  
-    "#14b8a6", // Teal
-    "#ec4899", // Pink
-    "#f59e0b"  // Amber
+    "#7c3aed", // Violet
+    "#4f46e5", // Indigo
+    "#06b6d4", // Cyan
+    "#f43f5e", // Rose
+    "#facc15"  // Amber
   ],
-  intensity = 0.4,
+  intensity = 0.6,
   speed = 0.8,
   className = ""
 }) => {
