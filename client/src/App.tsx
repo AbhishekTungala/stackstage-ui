@@ -14,6 +14,7 @@ import Results from "./pages/Results";
 import Fixes from "./pages/Fixes";
 import Diagram from "./pages/Diagram";
 import Share from "./pages/Share";
+import Docs from "./pages/Docs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/results/fixes" component={Fixes} />
             <Route path="/results/diagram" component={Diagram} />
             <Route path="/results/share" component={Share} />
+            <Route path="/docs" component={Docs} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route component={NotFound} />
           </Switch>
