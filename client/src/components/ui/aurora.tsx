@@ -27,34 +27,34 @@ const Aurora: React.FC<AuroraProps> = ({
         className="absolute inset-0 z-[-1] pointer-events-none mix-blend-screen"
         style={{
           background: `
-            radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
-            radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.2) 0%, transparent 60%),
-            radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.15) 0%, transparent 60%)
+            radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+            radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+            radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
           `,
           filter: 'blur(100px)',
-          opacity: 0.4,
+          opacity: 0.6,
         }}
         animate={{
           background: [
             `
-              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
-              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.2) 0%, transparent 60%),
-              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.15) 0%, transparent 60%)
+              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 70% 20%, rgba(124, 58, 237, 0.25) 0%, transparent 60%),
-              radial-gradient(circle at 30% 80%, rgba(6, 182, 212, 0.2) 0%, transparent 60%),
-              radial-gradient(circle at 90% 50%, rgba(99, 102, 241, 0.18) 0%, transparent 60%)
+              radial-gradient(circle at 70% 20%, rgba(124, 58, 237, 0.4) 0%, transparent 60%),
+              radial-gradient(circle at 30% 80%, rgba(6, 182, 212, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 90% 50%, rgba(99, 102, 241, 0.32) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 20% 70%, rgba(6, 182, 212, 0.22) 0%, transparent 60%),
-              radial-gradient(circle at 80% 30%, rgba(139, 92, 246, 0.18) 0%, transparent 60%),
-              radial-gradient(circle at 40% 10%, rgba(59, 130, 246, 0.2) 0%, transparent 60%)
+              radial-gradient(circle at 20% 70%, rgba(6, 182, 212, 0.38) 0%, transparent 60%),
+              radial-gradient(circle at 80% 30%, rgba(139, 92, 246, 0.32) 0%, transparent 60%),
+              radial-gradient(circle at 40% 10%, rgba(59, 130, 246, 0.35) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
-              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.2) 0%, transparent 60%),
-              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.15) 0%, transparent 60%)
+              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
             `,
           ],
         }}
@@ -71,7 +71,7 @@ const Aurora: React.FC<AuroraProps> = ({
           key={i}
           className="absolute rounded-full z-[-2]"
           style={{
-            background: `radial-gradient(circle, rgba(${i === 0 ? '59, 130, 246' : i === 1 ? '124, 58, 237' : '6, 182, 212'}, 0.08), transparent)`,
+            background: `radial-gradient(circle, rgba(${i === 0 ? '59, 130, 246' : i === 1 ? '124, 58, 237' : '6, 182, 212'}, 0.15), transparent)`,
             filter: 'blur(80px)',
             width: '400px',
             height: '400px',
@@ -80,7 +80,7 @@ const Aurora: React.FC<AuroraProps> = ({
             x: [0, 60, 0],
             y: [0, -30, 0],
             scale: [1, 1.1, 1],
-            opacity: [0.15, 0.25, 0.15],
+            opacity: [0.25, 0.4, 0.25],
           }}
           transition={{
             duration: 12 + i * 3,
@@ -102,14 +102,14 @@ const Aurora: React.FC<AuroraProps> = ({
         <motion.div
           className="rounded-full"
           style={{
-            background: `radial-gradient(circle, rgba(99, 102, 241, 0.05), transparent)`,
+            background: `radial-gradient(circle, rgba(99, 102, 241, 0.12), transparent)`,
             filter: 'blur(120px)',
             width: '800px',
             height: '800px',
           }}
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.2, 0.35, 0.2],
           }}
           transition={{
             duration: 10,
