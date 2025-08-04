@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Github, Mail, Eye, EyeOff, Shield, Users, Star, ArrowRight, CheckCircle2, ArrowLeft, Home } from "lucide-react";
+import { Zap, Github, Mail, Eye, EyeOff, Shield, Users, Star, ArrowRight, CheckCircle2, ArrowLeft } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import Aurora from "@/components/ui/aurora";
 
@@ -181,21 +181,9 @@ const Login = () => {
               </Button>
             </Link>
           </div>
-          
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center justify-center mt-4">
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground bg-background/30 backdrop-blur-sm rounded-full px-3 py-2 border border-border/20">
-              <Link to="/" className="hover:text-foreground transition-colors duration-200 flex items-center">
-                <Home className="w-3 h-3 mr-1" />
-                Home
-              </Link>
-              <span>/</span>
-              <span className="text-foreground font-medium">Sign In</span>
-            </div>
-          </div>
         </motion.div>
 
-        <div className="w-full max-w-md space-y-8 mt-20">
+        <div className="w-full max-w-md space-y-8 mt-16">
 
           {/* Login Card */}
           <motion.div
