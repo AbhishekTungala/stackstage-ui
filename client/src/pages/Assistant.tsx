@@ -347,29 +347,22 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
+                className="space-y-3"
               >
-                <Card className="glass-card">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ScrollArea className="h-48 -mx-6 px-6">
-                      <div className="space-y-2">
-                        {quickActions.map((action, index) => (
-                          <Button
-                            key={index}
-                            variant="outline"
-                            size="sm"
-                            className="w-full justify-start"
-                          >
-                            <action.icon className="w-4 h-4 mr-2" />
-                            {action.label}
-                          </Button>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CardContent>
-                </Card>
+                <h3 className="text-lg font-semibold text-foreground">Quick Actions</h3>
+                <div className="space-y-2">
+                  {quickActions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      className="w-full justify-start glass-card"
+                    >
+                      <action.icon className="w-4 h-4 mr-2" />
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
               </motion.div>
             </div>
 
