@@ -319,8 +319,8 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         onClick={() => handleTemplateSelect(template)}
                       >
                         <CardContent className="p-1">
-                          <div className="flex items-start space-x-1">
-                            <div className={`w-3.5 h-3.5 rounded flex items-center justify-center bg-${template.color}-500/20 flex-shrink-0 mt-0.5`}>
+                          <div className="flex items-center space-x-1">
+                            <div className={`w-3.5 h-3.5 rounded flex items-center justify-center bg-${template.color}-500/20 flex-shrink-0`}>
                               <template.icon className={`w-2 h-2 text-${template.color}-500`} />
                             </div>
                             <div className="min-w-0 flex-1">
@@ -349,7 +349,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                       key={index}
                       variant="outline"
                       size="sm"
-                      className="w-full justify-start glass-card h-8 px-2 text-sm"
+                      className="w-full justify-center glass-card h-8 px-2 text-sm"
                     >
                       <action.icon className="w-3 h-3 mr-1.5" />
                       {action.label}
