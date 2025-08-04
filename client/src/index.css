@@ -222,6 +222,30 @@ All colors MUST be HSL.
     background: var(--gradient-mesh);
   }
 
+  .aurora-background {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  /* Ensure aurora renders behind all content */
+  .aurora-bg {
+    isolation: isolate;
+  }
+
+  /* Enhance glass effect to work beautifully with aurora */
+  .glass {
+    backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  .glass-card {
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+
+  .glass-subtle {
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+
   .text-gradient {
     background: var(--gradient-primary);
     -webkit-background-clip: text;

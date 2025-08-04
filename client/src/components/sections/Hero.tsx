@@ -1,12 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Zap, ArrowRight, Shield, DollarSign, TrendingUp } from "lucide-react";
+import Aurora from "@/components/ui/aurora";
 
 const Hero = () => {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 mesh-bg" />
+      {/* Aurora Background */}
+      <Aurora 
+        intensity={0.3}
+        speed={1.2}
+        className="aurora-background"
+      />
       
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

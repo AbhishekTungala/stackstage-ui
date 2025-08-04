@@ -2,17 +2,21 @@ import React, { useEffect, useRef } from 'react';
 
 interface AuroraProps {
   colorStops?: string[];
-  blend?: number;
-  amplitude?: number;
+  intensity?: number;
   speed?: number;
   className?: string;
 }
 
 const Aurora: React.FC<AuroraProps> = ({
-  colorStops = ["#3A29FF", "#FF94B4", "#FF3232"],
-  blend = 0.5,
-  amplitude = 1.0,
-  speed = 0.5,
+  colorStops = [
+    "#6366f1", // Indigo
+    "#9333ea", // Purple  
+    "#14b8a6", // Teal
+    "#ec4899", // Pink
+    "#f59e0b"  // Amber
+  ],
+  intensity = 0.4,
+  speed = 0.8,
   className = ""
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -28,45 +32,64 @@ const Aurora: React.FC<AuroraProps> = ({
     let time = 0;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      ctx.scale(dpr, dpr);
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    };
+
+    const createGradientBlob = (centerX: number, centerY: number, radius: number, color: string, alpha: number) => {
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+      gradient.addColorStop(0, `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`);
+      gradient.addColorStop(0.5, `${color}${Math.round(alpha * 0.5 * 255).toString(16).padStart(2, '0')}`);
+      gradient.addColorStop(1, `${color}00`);
+      return gradient;
     };
 
     const animate = () => {
-      time += speed;
+      time += speed * 0.01;
       
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
       
-      // Create gradient
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'screen';
+
+      // Create multiple flowing gradient blobs
       colorStops.forEach((color, index) => {
-        const offset = (index / (colorStops.length - 1)) + Math.sin(time * 0.01) * 0.1;
-        gradient.addColorStop(Math.max(0, Math.min(1, offset)), color);
-      });
-      
-      ctx.globalAlpha = blend;
-      ctx.fillStyle = gradient;
-      
-      // Draw flowing shapes
-      ctx.beginPath();
-      for (let x = 0; x <= canvas.width; x += 20) {
-        const y = canvas.height * 0.5 + 
-                 Math.sin((x * 0.01) + (time * 0.02)) * amplitude * 100 +
-                 Math.sin((x * 0.02) + (time * 0.01)) * amplitude * 50;
+        const baseX = width * (0.2 + (index * 0.15));
+        const baseY = height * 0.5;
         
-        if (x === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      }
-      
-      ctx.lineTo(canvas.width, canvas.height);
-      ctx.lineTo(0, canvas.height);
-      ctx.closePath();
-      ctx.fill();
-      
+        // Primary blob with slow, large movement
+        const primaryX = baseX + Math.sin(time + index * 2) * width * 0.15;
+        const primaryY = baseY + Math.cos(time * 0.7 + index * 1.5) * height * 0.1;
+        const primaryRadius = Math.min(width, height) * (0.25 + Math.sin(time * 0.5 + index) * 0.05);
+        
+        ctx.fillStyle = createGradientBlob(primaryX, primaryY, primaryRadius, color, intensity * 0.7);
+        ctx.fillRect(0, 0, width, height);
+        
+        // Secondary blob with different movement pattern
+        const secondaryX = baseX + Math.sin(time * 1.3 + index * 2.5) * width * 0.1;
+        const secondaryY = baseY + Math.cos(time * 0.9 + index * 1.8) * height * 0.15;
+        const secondaryRadius = Math.min(width, height) * (0.15 + Math.sin(time * 0.8 + index * 1.2) * 0.03);
+        
+        ctx.fillStyle = createGradientBlob(secondaryX, secondaryY, secondaryRadius, color, intensity * 0.5);
+        ctx.fillRect(0, 0, width, height);
+        
+        // Tertiary blob for extra depth
+        const tertiaryX = baseX + Math.sin(time * 0.6 + index * 3) * width * 0.2;
+        const tertiaryY = baseY + Math.cos(time * 1.1 + index * 2.2) * height * 0.08;
+        const tertiaryRadius = Math.min(width, height) * (0.3 + Math.sin(time * 0.4 + index * 0.8) * 0.07);
+        
+        ctx.fillStyle = createGradientBlob(tertiaryX, tertiaryY, tertiaryRadius, color, intensity * 0.3);
+        ctx.fillRect(0, 0, width, height);
+      });
+
       animationId = requestAnimationFrame(animate);
     };
 
@@ -79,7 +102,7 @@ const Aurora: React.FC<AuroraProps> = ({
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationId);
     };
-  }, [colorStops, blend, amplitude, speed]);
+  }, [colorStops, intensity, speed]);
 
   return (
     <canvas
@@ -92,7 +115,10 @@ const Aurora: React.FC<AuroraProps> = ({
         width: '100vw',
         height: '100vh',
         pointerEvents: 'none',
-        zIndex: 0,
+        zIndex: -10,
+        filter: 'blur(120px)',
+        opacity: 0.4,
+        mixBlendMode: 'screen',
       }}
     />
   );
