@@ -244,163 +244,199 @@ Shall I provide step-by-step implementation guides for these fixes?`,
       </div>
 
       <main className="relative flex-1 pt-20 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 h-[calc(100vh-160px)]">
             
-            {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* AI Assistant Info */}
+            {/* Enhanced Sidebar */}
+            <div className="lg:col-span-1 space-y-6 overflow-y-auto">
+              {/* AI Assistant Info - Enhanced */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <Card className="glass-card border-primary/20">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-xl flex items-center justify-center">
-                        <Brain className="w-6 h-6 text-white" />
+                <Card className="glass-card border-primary/20 bg-gradient-to-br from-primary/5 to-primary-glow/5">
+                  <CardContent className="p-6">
+                    <div className="text-center space-y-4">
+                      <div className="relative">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary via-primary-glow to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                          <Brain className="w-8 h-8 text-white" />
+                        </div>
+                        <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                        </div>
                       </div>
+                      
                       <div>
-                        <CardTitle className="text-lg">StackStage AI</CardTitle>
-                        <CardDescription>Cloud Architecture Expert</CardDescription>
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                          StackStage AI
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-medium">Cloud Architecture Expert</p>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex items-center text-sm">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                        <span className="text-muted-foreground">Online & Ready</span>
-                      </div>
-                      <div className="flex items-center text-sm">
-                        <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
-                        <span className="text-muted-foreground">Response time: ~2s</span>
-                      </div>
-                      <div className="flex items-center text-sm">
-                        <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                        <span className="text-muted-foreground">99.9% accuracy</span>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-center space-x-2 text-sm">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-green-600 dark:text-green-400 font-medium">Online & Ready</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                          <div className="text-center">
+                            <div className="text-lg font-bold text-primary">~2s</div>
+                            <div className="text-xs text-muted-foreground">Response</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-lg font-bold text-yellow-500">99.9%</div>
+                            <div className="text-xs text-muted-foreground">Accuracy</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {/* Conversation Templates */}
+              {/* Quick Start Templates - Compact & Premium */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <Card className="glass-card">
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-lg">
-                      <Lightbulb className="w-5 h-5 mr-2 text-primary" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center text-base">
+                      <Lightbulb className="w-4 h-4 mr-2 text-primary" />
                       Quick Start
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-2">
                     {conversationTemplates.map((template) => (
                       <motion.div
                         key={template.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <Card 
-                          className={`cursor-pointer transition-all duration-200 ${
+                        <div 
+                          className={`group cursor-pointer p-3 rounded-xl border transition-all duration-200 ${
                             selectedTemplate === template.id 
-                              ? 'ring-2 ring-primary bg-primary/5' 
-                              : 'hover:shadow-md'
+                              ? 'ring-2 ring-primary bg-primary/10 border-primary/30' 
+                              : 'hover:shadow-md hover:border-primary/20 border-border/50'
                           }`}
                           onClick={() => handleTemplateSelect(template)}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-3">
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${template.color}-500/20`}>
-                                <template.icon className={`w-4 h-4 text-${template.color}-500`} />
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm">{template.title}</h4>
-                                <p className="text-xs text-muted-foreground">{template.description}</p>
-                              </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${
+                              template.color === 'green' ? 'from-green-500/20 to-green-600/20' :
+                              template.color === 'blue' ? 'from-blue-500/20 to-blue-600/20' :
+                              template.color === 'purple' ? 'from-purple-500/20 to-purple-600/20' :
+                              'from-orange-500/20 to-orange-600/20'
+                            }`}>
+                              <template.icon className={`w-4 h-4 ${
+                                template.color === 'green' ? 'text-green-600' :
+                                template.color === 'blue' ? 'text-blue-600' :
+                                template.color === 'purple' ? 'text-purple-600' :
+                                'text-orange-600'
+                              }`} />
                             </div>
-                          </CardContent>
-                        </Card>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-sm">{template.title}</h4>
+                              <p className="text-xs text-muted-foreground line-clamp-1">{template.description}</p>
+                            </div>
+                          </div>
+                        </div>
                       </motion.div>
                     ))}
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {/* Quick Actions */}
+              {/* Quick Actions - Premium Style */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <Card className="glass-card">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {quickActions.map((action, index) => (
-                      <Button
+                      <motion.div
                         key={index}
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <action.icon className="w-4 h-4 mr-2" />
-                        {action.label}
-                      </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start h-10 hover:bg-primary/5 hover:border-primary/30 group"
+                        >
+                          <action.icon className="w-4 h-4 mr-3 group-hover:text-primary transition-colors" />
+                          <span className="font-medium">{action.label}</span>
+                        </Button>
+                      </motion.div>
                     ))}
                   </CardContent>
                 </Card>
               </motion.div>
             </div>
 
-            {/* Main Chat Interface */}
-            <div className="lg:col-span-3">
+            {/* Main Chat Interface - Optimized Proportions */}
+            <div className="lg:col-span-4">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="h-full"
               >
-                <Card className="glass-card border-primary/20 h-full flex flex-col">
-                  {/* Chat Header */}
-                  <CardHeader className="border-b border-border/50">
+                <Card className="glass-card border-primary/20 h-full flex flex-col shadow-xl">
+                  {/* Enhanced Chat Header */}
+                  <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 via-primary-glow/5 to-purple-500/5">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src="/ai-avatar.png" />
-                          <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                            <Bot className="w-5 h-5" />
-                          </AvatarFallback>
-                        </Avatar>
+                      <div className="flex items-center space-x-4">
+                        <div className="relative">
+                          <Avatar className="w-12 h-12 ring-2 ring-primary/20">
+                            <AvatarImage src="/ai-avatar.png" />
+                            <AvatarFallback className="bg-gradient-to-br from-primary via-primary-glow to-purple-600 text-white">
+                              <Bot className="w-6 h-6" />
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
                         <div>
-                          <h3 className="font-semibold">StackStage AI Assistant</h3>
+                          <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                            StackStage AI Assistant
+                          </h3>
                           <div className="flex items-center text-sm text-muted-foreground">
                             <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                            <span>Active now</span>
+                            <span className="font-medium">Active & Learning</span>
+                            <span className="mx-2">•</span>
+                            <span>Enterprise Grade</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700">
                           <Sparkles className="w-3 h-3 mr-1" />
                           AI Powered
                         </Badge>
-                        <Button variant="outline" size="sm">
+                        <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700">
+                          <Shield className="w-3 h-3 mr-1" />
+                          Secure
+                        </Badge>
+                        <Button variant="outline" size="sm" className="hover:bg-primary/5">
                           <Settings className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
 
-                  {/* Messages Area */}
+                  {/* Optimized Messages Area */}
                   <ScrollArea className="flex-1 p-6">
-                    <div className="space-y-6">
+                    <div className="space-y-6 max-w-4xl mx-auto">
                       {messages.map((message) => (
                         <motion.div
                           key={message.id}
@@ -409,63 +445,84 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                           transition={{ duration: 0.3 }}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[80%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
+                          <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
                             <div className="flex items-start space-x-3">
                               {message.type === 'assistant' && (
-                                <Avatar className="w-8 h-8">
+                                <Avatar className="w-10 h-10 ring-2 ring-primary/20">
                                   <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                    <Bot className="w-4 h-4" />
+                                    <Bot className="w-5 h-5" />
                                   </AvatarFallback>
                                 </Avatar>
                               )}
                               
-                              <div className="space-y-2 flex-1">
+                              <div className="space-y-3 flex-1">
                                 <div
-                                  className={`rounded-2xl px-4 py-3 ${
+                                  className={`rounded-2xl px-5 py-4 shadow-sm ${
                                     message.type === 'user'
-                                      ? 'bg-primary text-primary-foreground ml-auto'
-                                      : 'bg-muted'
-                                  } ${message.id === '1' && message.type === 'assistant' ? 'max-h-96 overflow-auto' : ''}`}
+                                      ? 'bg-gradient-to-r from-primary to-primary-glow text-primary-foreground ml-auto shadow-primary/20'
+                                      : 'bg-gradient-to-br from-muted/80 to-muted/40 backdrop-blur-sm border border-border/50'
+                                  } ${message.id === '1' && message.type === 'assistant' ? 'max-h-80 overflow-y-auto' : ''}`}
                                 >
                                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                                     {message.content}
                                   </div>
                                 </div>
                                 
-                                {/* Message Actions */}
+                                {/* Enhanced Message Actions */}
                                 {message.type === 'assistant' && (
-                                  <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                                    <span>{message.timestamp.toLocaleTimeString()}</span>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <Copy className="w-3 h-3" />
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <ThumbsUp className="w-3 h-3" />
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <ThumbsDown className="w-3 h-3" />
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2">
-                                      <RefreshCw className="w-3 h-3" />
-                                    </Button>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-muted-foreground font-medium">
+                                      {message.timestamp.toLocaleTimeString()} • AI Response
+                                    </span>
+                                    <div className="flex items-center space-x-1">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/10">
+                                          <Copy className="w-3 h-3" />
+                                        </Button>
+                                      </motion.div>
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-green-100 dark:hover:bg-green-900">
+                                          <ThumbsUp className="w-3 h-3" />
+                                        </Button>
+                                      </motion.div>
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900">
+                                          <ThumbsDown className="w-3 h-3" />
+                                        </Button>
+                                      </motion.div>
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/10">
+                                          <RefreshCw className="w-3 h-3" />
+                                        </Button>
+                                      </motion.div>
+                                    </div>
                                   </div>
                                 )}
                                 
-                                {/* Suggestions */}
+                                {/* Enhanced Suggestions */}
                                 {message.suggestions && (
-                                  <div className="space-y-2">
-                                    <p className="text-xs text-muted-foreground">Suggested follow-ups:</p>
-                                    <div className="flex flex-wrap gap-2">
+                                  <div className="space-y-3">
+                                    <div className="flex items-center space-x-2">
+                                      <Target className="w-4 h-4 text-primary" />
+                                      <p className="text-sm font-medium text-primary">Suggested Actions:</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       {message.suggestions.map((suggestion, index) => (
-                                        <Button
+                                        <motion.div
                                           key={index}
-                                          variant="outline"
-                                          size="sm"
-                                          className="text-xs h-7"
-                                          onClick={() => handleSuggestionClick(suggestion)}
+                                          whileHover={{ scale: 1.02 }}
+                                          whileTap={{ scale: 0.98 }}
                                         >
-                                          {suggestion}
-                                        </Button>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-xs h-9 w-full justify-start bg-gradient-to-r from-primary/5 to-primary-glow/5 hover:from-primary/10 hover:to-primary-glow/10 border-primary/20"
+                                            onClick={() => handleSuggestionClick(suggestion)}
+                                          >
+                                            <Zap className="w-3 h-3 mr-2 text-primary" />
+                                            {suggestion}
+                                          </Button>
+                                        </motion.div>
                                       ))}
                                     </div>
                                   </div>
@@ -473,9 +530,9 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                               </div>
                               
                               {message.type === 'user' && (
-                                <Avatar className="w-8 h-8">
+                                <Avatar className="w-10 h-10 ring-2 ring-blue-500/20">
                                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                                    <User className="w-4 h-4" />
+                                    <User className="w-5 h-5" />
                                   </AvatarFallback>
                                 </Avatar>
                               )}
@@ -484,7 +541,7 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         </motion.div>
                       ))}
                       
-                      {/* Typing Indicator */}
+                      {/* Enhanced Typing Indicator */}
                       <AnimatePresence>
                         {isTyping && (
                           <motion.div
@@ -494,16 +551,19 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                             className="flex justify-start"
                           >
                             <div className="flex items-start space-x-3">
-                              <Avatar className="w-8 h-8">
+                              <Avatar className="w-10 h-10 ring-2 ring-primary/20">
                                 <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                                  <Bot className="w-4 h-4" />
+                                  <Bot className="w-5 h-5" />
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="bg-muted rounded-2xl px-4 py-3">
-                                <div className="flex space-x-1">
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                              <div className="bg-gradient-to-br from-muted/80 to-muted/40 backdrop-blur-sm border border-border/50 rounded-2xl px-5 py-4">
+                                <div className="flex items-center space-x-2">
+                                  <div className="flex space-x-1">
+                                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                  </div>
+                                  <span className="text-xs text-muted-foreground ml-2">AI is thinking...</span>
                                 </div>
                               </div>
                             </div>
@@ -515,25 +575,29 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                     </div>
                   </ScrollArea>
 
-                  {/* Input Area */}
-                  <div className="border-t border-border/50 p-4">
-                    <div className="flex items-end space-x-3">
+                  {/* Premium Input Area */}
+                  <div className="border-t border-border/50 p-6 bg-gradient-to-r from-muted/30 to-muted/10">
+                    <div className="flex items-end space-x-4 max-w-4xl mx-auto">
                       <div className="flex-1 relative">
                         <Textarea
                           ref={textareaRef}
                           value={inputMessage}
                           onChange={(e) => setInputMessage(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          placeholder="Ask me anything about cloud architecture, security, optimization..."
-                          className="min-h-[60px] max-h-32 resize-none pr-20"
+                          placeholder="Ask me anything about cloud architecture, security, optimization, compliance..."
+                          className="min-h-[60px] max-h-32 resize-none pr-24 border-primary/20 focus:border-primary/40 bg-background/80 backdrop-blur-sm"
                         />
                         <div className="absolute bottom-3 right-3 flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <PaperclipIcon className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Mic className="w-4 h-4" />
-                          </Button>
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/10">
+                              <PaperclipIcon className="w-4 h-4" />
+                            </Button>
+                          </motion.div>
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/10">
+                              <Mic className="w-4 h-4" />
+                            </Button>
+                          </motion.div>
                         </div>
                       </div>
                       <motion.div
@@ -543,21 +607,28 @@ Shall I provide step-by-step implementation guides for these fixes?`,
                         <Button
                           onClick={handleSendMessage}
                           disabled={!inputMessage.trim() || isTyping}
-                          className="h-[60px] px-6"
+                          className="h-[60px] px-8 bg-gradient-to-r from-primary via-primary-glow to-purple-600 hover:from-primary/90 hover:via-primary-glow/90 hover:to-purple-600/90 shadow-lg shadow-primary/20"
                           variant="hero"
                         >
-                          <Send className="w-5 h-5" />
+                          <Send className="w-5 h-5 mr-2" />
+                          Send
                         </Button>
                       </motion.div>
                     </div>
                     
-                    <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
-                      <p>Press Enter to send, Shift+Enter for new line</p>
+                    <div className="flex items-center justify-between mt-4 text-xs text-muted-foreground max-w-4xl mx-auto">
                       <div className="flex items-center space-x-4">
-                        <span>Powered by StackStage AI</span>
+                        <p className="font-medium">Press Enter to send, Shift+Enter for new line</p>
                         <div className="flex items-center space-x-1">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span>Secure & Private</span>
+                          <Shield className="w-3 h-3 text-green-500" />
+                          <span>End-to-End Encrypted</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <span className="font-medium">Powered by StackStage AI</span>
+                        <div className="flex items-center space-x-1">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span>Enterprise Ready</span>
                         </div>
                       </div>
                     </div>
