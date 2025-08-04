@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Github, Mail, Eye, EyeOff, Shield, Users, Star, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Zap, Github, Mail, Eye, EyeOff, Shield, Users, Star, ArrowRight, CheckCircle2, ArrowLeft, Home } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import Aurora from "@/components/ui/aurora";
 
@@ -137,18 +137,65 @@ const Login = () => {
 
       {/* Right Side - Login Form */}
       <div className="flex-1 flex items-center justify-center p-8 relative">
-        <div className="w-full max-w-md space-y-8">
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center">
-            <Link to="/" className="inline-flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                StackStage
-              </span>
+        {/* Navigation Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="absolute top-0 left-0 right-0 p-6 z-10"
+        >
+          <div className="flex items-center justify-between">
+            {/* Back to Home Button */}
+            <Link to="/" className="group">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform duration-200" />
+                Back to Home
+              </Button>
+            </Link>
+
+            {/* Mobile Logo - Centered */}
+            <div className="lg:hidden">
+              <Link to="/" className="inline-flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                  StackStage
+                </span>
+              </Link>
+            </div>
+
+            {/* Sign Up Link */}
+            <Link to="/signup" className="group">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="glass-subtle border-border/50 hover:border-primary/30 transition-all duration-300"
+              >
+                Create account
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform duration-200" />
+              </Button>
             </Link>
           </div>
+          
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center justify-center mt-4">
+            <div className="flex items-center space-x-2 text-xs text-muted-foreground bg-background/30 backdrop-blur-sm rounded-full px-3 py-2 border border-border/20">
+              <Link to="/" className="hover:text-foreground transition-colors duration-200 flex items-center">
+                <Home className="w-3 h-3 mr-1" />
+                Home
+              </Link>
+              <span>/</span>
+              <span className="text-foreground font-medium">Sign In</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="w-full max-w-md space-y-8 mt-20">
 
           {/* Login Card */}
           <motion.div
