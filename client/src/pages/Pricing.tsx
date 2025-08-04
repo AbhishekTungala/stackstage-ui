@@ -100,7 +100,7 @@ const Pricing = () => {
                   <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent leading-tight">
                     Simple, Scalable Pricing
                   </h1>
-                  <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-normal py-2">
                     Choose the perfect plan for your cloud infrastructure needs. 
                     Start with a 14-day free trial, no credit card required.
                   </p>
