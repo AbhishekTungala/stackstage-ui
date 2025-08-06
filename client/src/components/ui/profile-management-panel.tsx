@@ -69,8 +69,8 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
 
   return (
     <div className="w-full space-y-6">
-      {/* Glass Card Container */}
-      <Card className="bg-white/10 dark:bg-black/20 backdrop-blur-xl border-white/20 dark:border-white/10 shadow-2xl">
+      {/* Glass Card Container - optimized for both light and dark modes */}
+      <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-xl border-white/30 dark:border-white/20 shadow-2xl text-slate-900 dark:text-white">
         <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="p-2 rounded-full bg-primary/20">
@@ -87,14 +87,14 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
 
         <CardContent>
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white/10 dark:bg-black/20">
-              <TabsTrigger value="personal" className="data-[state=active]:bg-white/20">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-200/50 dark:bg-white/10 text-slate-700 dark:text-white">
+              <TabsTrigger value="personal" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Personal Info
               </TabsTrigger>
-              <TabsTrigger value="professional" className="data-[state=active]:bg-white/20">
+              <TabsTrigger value="professional" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Professional
               </TabsTrigger>
-              <TabsTrigger value="security" className="data-[state=active]:bg-white/20">
+              <TabsTrigger value="security" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Security
               </TabsTrigger>
             </TabsList>
@@ -108,7 +108,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     variant="outline" 
                     size="sm" 
                     onClick={() => setIsEditing(true)}
-                    className="bg-white/10 border-white/20 hover:bg-white/20"
+                    className="bg-slate-200/50 dark:bg-white/10 border-slate-300/50 dark:border-white/20 hover:bg-slate-300/50 dark:hover:bg-white/20 text-slate-700 dark:text-white"
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
                     Edit
@@ -119,7 +119,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                       variant="outline" 
                       size="sm" 
                       onClick={handleCancel}
-                      className="bg-white/10 border-white/20 hover:bg-white/20"
+                      className="bg-slate-200/50 dark:bg-white/10 border-slate-300/50 dark:border-white/20 hover:bg-slate-300/50 dark:hover:bg-white/20 text-slate-700 dark:text-white"
                     >
                       <X className="h-4 w-4 mr-2" />
                       Cancel
@@ -144,7 +144,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     value={formData.firstName}
                     onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                     disabled={!isEditing}
-                    className="bg-white/10 border-white/20 focus:bg-white/20"
+                    className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60"
                     data-testid="input-first-name"
                   />
                 </div>
@@ -155,7 +155,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     value={formData.lastName}
                     onChange={(e) => setFormData({...formData, lastName: e.target.value})}
                     disabled={!isEditing}
-                    className="bg-white/10 border-white/20 focus:bg-white/20"
+                    className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60"
                     data-testid="input-last-name"
                   />
                 </div>
@@ -168,7 +168,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                   value={formData.bio}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
                   disabled={!isEditing}
-                  className="bg-white/10 border-white/20 focus:bg-white/20 min-h-[100px]"
+                  className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60 min-h-[100px]"
                   placeholder="Tell us about yourself..."
                   data-testid="textarea-bio"
                 />
@@ -190,7 +190,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     value={formData.jobTitle}
                     onChange={(e) => setFormData({...formData, jobTitle: e.target.value})}
                     disabled={!isEditing}
-                    className="bg-white/10 border-white/20 focus:bg-white/20"
+                    className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60"
                     data-testid="input-job-title"
                   />
                 </div>
@@ -204,7 +204,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     value={formData.company}
                     onChange={(e) => setFormData({...formData, company: e.target.value})}
                     disabled={!isEditing}
-                    className="bg-white/10 border-white/20 focus:bg-white/20"
+                    className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60"
                     data-testid="input-company"
                   />
                 </div>
@@ -220,7 +220,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                   value={formData.location}
                   onChange={(e) => setFormData({...formData, location: e.target.value})}
                   disabled={!isEditing}
-                  className="bg-white/10 border-white/20 focus:bg-white/20"
+                  className="bg-slate-100/70 dark:bg-white/10 border-slate-300/50 dark:border-white/20 focus:bg-white dark:focus:bg-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/60"
                   data-testid="input-location"
                 />
               </div>

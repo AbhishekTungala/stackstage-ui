@@ -77,16 +77,20 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-black/40 backdrop-blur-sm">
-                {/* Enhanced Aurora Background with increased brightness */}
-                <Aurora 
-                  className="absolute inset-0 pointer-events-none"
-                  intensity={0.8}
-                  fadeHeight={80}
-                  fadeDirection="bottom"
-                />
-                {/* Additional overlay for better text visibility */}
-                <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-slate-950 dark:bg-black">
+                {/* Custom Profile Dialog Aurora Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  {/* Dark base with profile-specific aurora gradients */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
+                  
+                  {/* Profile Aurora Effects */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/30 via-transparent to-blue-900/25" />
+                  <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-indigo-900/20 to-cyan-900/15" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-violet-800/10 to-transparent" />
+                  
+                  {/* Smooth bottom fade */}
+                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+                </div>
                 
                 <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
                   {/* Centered Profile Card */}
