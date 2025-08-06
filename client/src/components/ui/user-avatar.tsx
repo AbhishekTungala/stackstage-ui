@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { User as UserIcon, Settings, LogOut, Shield, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Settings, LogOut, Shield, Camera } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,178 +9,117 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import ProfileCard from "@/components/ui/profile-card";
-import UserProfileDialog from "@/components/ui/user-profile-dialog";
 import { useAuth } from "@/hooks/useAuth";
+import ProfileCard from "./profile-card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
-const UserAvatar = () => {
-  const { user, isAuthenticated } = useAuth();
-  const [showProfileCard, setShowProfileCard] = useState(false);
-  const [showProfileEdit, setShowProfileEdit] = useState(false);
+export default function UserAvatar() {
+  const { user, isLoading } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  if (!isAuthenticated || !user) {
+  if (isLoading) {
+    return (
+      <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+    );
+  }
+
+  if (!user) {
     return null;
   }
 
-  const getInitials = (firstName?: string, lastName?: string) => {
-    if (!firstName && !lastName) return "U";
-    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
-  };
-
-  const getFullName = () => {
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    if (user.firstName) return user.firstName;
-    if (user.lastName) return user.lastName;
-    return user.email?.split("@")[0] || "User";
-  };
-
-  const getStatus = () => {
-    const verificationCount = [user.isEmailVerified, user.isPhoneVerified]
-      .filter(v => v === "true").length;
-    
-    if (verificationCount === 2) return "Verified";
-    if (verificationCount === 1) return "Partially Verified";
-    return "Unverified";
-  };
-
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
-  };
+  const userInitials = user.firstName && user.lastName 
+    ? `${user.firstName[0]}${user.lastName[0]}`
+    : user.email?.[0]?.toUpperCase() || "U";
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="ghost" 
-            className="relative h-10 w-10 rounded-full hover:bg-white/10"
+          <button 
+            className="relative h-8 w-8 rounded-full ring-2 ring-white/10 hover:ring-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50"
             data-testid="user-avatar-trigger"
           >
-            <Avatar className="h-10 w-10 border border-white/20">
+            <Avatar className="h-8 w-8">
               <AvatarImage 
                 src={user.profileImageUrl || undefined} 
-                alt={getFullName()}
-                className="object-cover"
+                alt={user.firstName ? `${user.firstName} ${user.lastName}` : "User avatar"} 
               />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white font-semibold">
-                {getInitials(user.firstName || undefined, user.lastName || undefined)}
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-xs font-semibold">
+                {userInitials}
               </AvatarFallback>
             </Avatar>
-            {user.isEmailVerified === "true" && (
-              <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-white" />
-            )}
-          </Button>
+          </button>
         </DropdownMenuTrigger>
         
-        <DropdownMenuContent className="w-64 glass border-glass-border" align="end">
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-12 w-12 border border-white/20">
-                  <AvatarImage 
-                    src={user.profileImageUrl || undefined} 
-                    alt={getFullName()}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-white">
-                    {getInitials(user.firstName || undefined, user.lastName || undefined)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-semibold text-white">
-                    {getFullName()}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate max-w-[120px]">
-                    {user.email}
-                  </p>
-                  <Badge 
-                    variant={getStatus() === "Verified" ? "default" : "secondary"}
-                    className="text-xs w-fit"
-                  >
-                    {getStatus()}
-                  </Badge>
-                </div>
-              </div>
+        <DropdownMenuContent 
+          align="end" 
+          className="w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-white/20 dark:border-gray-800/50"
+          data-testid="user-dropdown-menu"
+        >
+          <DropdownMenuLabel className="font-medium">
+            <div className="flex flex-col space-y-1">
+              <span data-testid="user-name">
+                {user.firstName || user.lastName 
+                  ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+                  : "User"
+                }
+              </span>
+              <span className="text-xs text-muted-foreground" data-testid="user-email">
+                {user.email}
+              </span>
             </div>
           </DropdownMenuLabel>
           
-          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuSeparator className="bg-white/20 dark:bg-gray-800/50" />
           
-          <Dialog open={showProfileCard} onOpenChange={setShowProfileCard}>
+          <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem 
                 onSelect={(e) => e.preventDefault()}
-                className="cursor-pointer hover:bg-white/10"
-                data-testid="profile-card-trigger"
+                className="cursor-pointer"
+                data-testid="menu-view-profile"
               >
-                <UserIcon className="mr-2 h-4 w-4" />
-                View Profile Card
+                <User className="mr-2 h-4 w-4" />
+                <span>View Profile</span>
               </DropdownMenuItem>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-transparent border-none shadow-none">
-              <div className="flex justify-center">
-                <ProfileCard
-                  name={getFullName()}
-                  title={user.jobTitle || "Professional"}
-                  handle={user.email?.split("@")[0] || "user"}
-                  status={getStatus()}
-                  avatarUrl={user.profileImageUrl || "/placeholder-avatar.jpg"}
-                  miniAvatarUrl={user.profileImageUrl || "/placeholder-avatar.jpg"}
-                  contactText="Edit Profile"
-                  onContactClick={() => {
-                    setShowProfileCard(false);
-                    setShowProfileEdit(true);
-                  }}
-                  enableTilt={true}
-                  enableMobileTilt={false}
-                />
-              </div>
+            <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+              <ProfileCard 
+                avatarUrl={user.profileImageUrl || ""}
+                name={user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : "User"}
+                title={user.jobTitle || "Professional"}
+                handle={user.email?.split('@')[0] || "user"}
+                status="Online"
+                contactText="Edit Profile"
+                onContactClick={() => setIsProfileOpen(false)}
+                showUserInfo={true}
+                enableTilt={true}
+              />
             </DialogContent>
           </Dialog>
 
-          <DropdownMenuItem 
-            onClick={() => setShowProfileEdit(true)}
-            className="cursor-pointer hover:bg-white/10"
-            data-testid="edit-profile-trigger"
-          >
+          <DropdownMenuItem data-testid="menu-settings">
             <Settings className="mr-2 h-4 w-4" />
-            Edit Profile
+            <span>Settings</span>
           </DropdownMenuItem>
-
-          <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
+          
+          <DropdownMenuItem data-testid="menu-privacy">
             <Shield className="mr-2 h-4 w-4" />
-            Security Settings
+            <span>Privacy & Security</span>
           </DropdownMenuItem>
-
-          <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
-            <Bell className="mr-2 h-4 w-4" />
-            Notifications
-          </DropdownMenuItem>
-
-          <DropdownMenuSeparator className="bg-white/10" />
-
+          
+          <DropdownMenuSeparator className="bg-white/20 dark:bg-gray-800/50" />
+          
           <DropdownMenuItem 
-            onClick={handleLogout}
-            className="cursor-pointer hover:bg-red-500/20 text-red-400"
-            data-testid="logout-btn"
+            className="text-red-600 dark:text-red-400 cursor-pointer"
+            onClick={() => window.location.href = '/api/logout'}
+            data-testid="menu-logout"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            <span>Sign out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <UserProfileDialog 
-        open={showProfileEdit} 
-        onOpenChange={setShowProfileEdit}
-        user={user}
-      />
     </>
   );
-};
-
-export default UserAvatar;
+}
