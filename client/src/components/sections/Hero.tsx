@@ -77,11 +77,11 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-black">
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-white dark:bg-black">
                 {/* Cool Profile Dialog Background with Moving Blurred Spots */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  {/* Full black background */}
-                  <div className="absolute inset-0 bg-black" />
+                  {/* Dynamic background - black for dark mode, white for light mode */}
+                  <div className="absolute inset-0 bg-white dark:bg-black" />
                   
                   {/* Ultra bright animated gradient spots covering entire dialog */}
                   <div 
