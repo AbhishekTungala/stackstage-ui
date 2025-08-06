@@ -3,11 +3,14 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Github, Zap, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/hooks/useAuth";
+import UserAvatar from "@/components/ui/user-avatar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const navigation = [
     { name: "Analyze", href: "/analyze" },
@@ -56,12 +59,21 @@ const Header = () => {
                 <Moon className="h-4 w-4" />
               )}
             </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="hero" asChild className="text-white">
-              <Link to="/analyze">Try Free</Link>
-            </Button>
+            
+            {!isLoading && (
+              isAuthenticated ? (
+                <UserAvatar />
+              ) : (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/api/login">Login</Link>
+                  </Button>
+                  <Button variant="hero" asChild className="text-white">
+                    <Link to="/analyze">Try Free</Link>
+                  </Button>
+                </>
+              )
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -103,12 +115,23 @@ const Header = () => {
                     )}
                   </Button>
                 </div>
-                <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button variant="hero" asChild className="text-white">
-                  <Link to="/analyze">Try Free</Link>
-                </Button>
+                
+                {!isLoading && (
+                  !isAuthenticated ? (
+                    <>
+                      <Button variant="ghost" asChild className="justify-start">
+                        <Link to="/api/login">Login</Link>
+                      </Button>
+                      <Button variant="hero" asChild className="text-white">
+                        <Link to="/analyze">Try Free</Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="flex justify-center py-4">
+                      <UserAvatar />
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>

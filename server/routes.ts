@@ -1,10 +1,106 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth, isAuthenticated } from "./replitAuth";
+import { updateUserProfileSchema, type UpdateUserProfile } from "@shared/schema";
 
 // Mock implementation - no OpenAI API key required
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup Replit Authentication
+  await setupAuth(app);
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Update user profile
+  app.patch('/api/users/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+      
+      // Ensure users can only update their own profiles
+      if (id !== userId) {
+        return res.status(403).json({ message: "Forbidden: Cannot update other user's profile" });
+      }
+
+      const result = updateUserProfileSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: result.error.format() 
+        });
+      }
+
+      const updatedUser = await storage.updateUserProfile(id, result.data);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Mock verification endpoints (would integrate with real services)
+  app.post('/api/users/:id/verify-email', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+      
+      if (id !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // Mock email verification - would send real email in production
+      res.json({ message: "Verification email sent" });
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+      res.status(500).json({ message: "Failed to send verification email" });
+    }
+  });
+
+  app.post('/api/users/:id/verify-phone', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+      
+      if (id !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // Mock phone verification - would send real SMS in production
+      res.json({ message: "Verification SMS sent" });
+    } catch (error) {
+      console.error("Error sending verification SMS:", error);
+      res.status(500).json({ message: "Failed to send verification SMS" });
+    }
+  });
+
+  // Mock avatar upload endpoint
+  app.post('/api/users/:id/avatar', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+      
+      if (id !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // Mock avatar upload - would handle file upload in production
+      res.json({ message: "Avatar uploaded successfully" });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      res.status(500).json({ message: "Failed to upload avatar" });
+    }
+  });
   // Infrastructure Analysis Endpoint
   app.post("/api/analyze", async (req, res) => {
     try {
