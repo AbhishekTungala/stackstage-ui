@@ -83,74 +83,74 @@ const Hero = () => {
                   {/* Dynamic background - black for dark mode, white for light mode */}
                   <div className="absolute inset-0 bg-white dark:bg-black" />
                   
-                  {/* Ultra bright animated gradient spots covering entire dialog */}
+                  {/* Maximum brightness animated gradient spots covering entire dialog */}
                   <div 
-                    className="absolute w-96 h-96 rounded-full opacity-80 blur-3xl"
+                    className="absolute w-96 h-96 rounded-full opacity-90 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(147, 51, 234, 1) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(147, 51, 234, 1.2) 0%, rgba(147, 51, 234, 0.3) 40%, transparent 70%)',
                       top: '5%',
                       left: '15%',
                       animation: 'float-1 8s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-80 h-80 rounded-full opacity-75 blur-3xl"
+                    className="absolute w-80 h-80 rounded-full opacity-85 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(59, 130, 246, 1) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(59, 130, 246, 1.2) 0%, rgba(59, 130, 246, 0.3) 40%, transparent 70%)',
                       top: '60%',
                       right: '10%',
                       animation: 'float-2 10s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-72 h-72 rounded-full opacity-70 blur-3xl"
+                    className="absolute w-72 h-72 rounded-full opacity-80 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.9) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(99, 102, 241, 1.1) 0%, rgba(99, 102, 241, 0.3) 40%, transparent 70%)',
                       bottom: '15%',
                       left: '5%',
                       animation: 'float-3 12s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-64 h-64 rounded-full opacity-65 blur-3xl"
+                    className="absolute w-64 h-64 rounded-full opacity-75 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(6, 182, 212, 0.9) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(6, 182, 212, 1.1) 0%, rgba(6, 182, 212, 0.3) 40%, transparent 70%)',
                       top: '25%',
                       right: '35%',
                       animation: 'float-4 9s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-88 h-88 rounded-full opacity-60 blur-3xl"
+                    className="absolute w-88 h-88 rounded-full opacity-70 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(168, 85, 247, 1) 0%, rgba(168, 85, 247, 0.3) 40%, transparent 70%)',
                       top: '45%',
                       left: '60%',
                       animation: 'float-5 11s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-56 h-56 rounded-full opacity-55 blur-3xl"
+                    className="absolute w-56 h-56 rounded-full opacity-65 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(34, 197, 94, 0.8) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(34, 197, 94, 1) 0%, rgba(34, 197, 94, 0.3) 40%, transparent 70%)',
                       bottom: '45%',
                       right: '5%',
                       animation: 'float-6 7s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-68 h-68 rounded-full opacity-50 blur-3xl"
+                    className="absolute w-68 h-68 rounded-full opacity-60 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(236, 72, 153, 0.7) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(236, 72, 153, 0.9) 0%, rgba(236, 72, 153, 0.3) 40%, transparent 70%)',
                       top: '75%',
                       left: '40%',
                       animation: 'float-7 13s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-52 h-52 rounded-full opacity-45 blur-3xl"
+                    className="absolute w-52 h-52 rounded-full opacity-55 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(251, 146, 60, 0.7) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(251, 146, 60, 0.9) 0%, rgba(251, 146, 60, 0.3) 40%, transparent 70%)',
                       top: '15%',
                       left: '75%',
                       animation: 'float-8 6s ease-in-out infinite reverse'
@@ -158,36 +158,36 @@ const Hero = () => {
                   />
                   {/* Additional bright spots for full coverage */}
                   <div 
-                    className="absolute w-60 h-60 rounded-full opacity-40 blur-3xl"
+                    className="absolute w-60 h-60 rounded-full opacity-50 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(217, 70, 239, 0.6) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(217, 70, 239, 0.8) 0%, rgba(217, 70, 239, 0.2) 40%, transparent 70%)',
                       top: '35%',
                       left: '2%',
                       animation: 'float-9 14s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-75 h-75 rounded-full opacity-35 blur-3xl"
+                    className="absolute w-75 h-75 rounded-full opacity-45 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(14, 165, 233, 0.6) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(14, 165, 233, 0.8) 0%, rgba(14, 165, 233, 0.2) 40%, transparent 70%)',
                       bottom: '5%',
                       right: '30%',
                       animation: 'float-10 8s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-48 h-48 rounded-full opacity-30 blur-3xl"
+                    className="absolute w-48 h-48 rounded-full opacity-40 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(16, 185, 129, 0.7) 0%, rgba(16, 185, 129, 0.2) 40%, transparent 70%)',
                       top: '50%',
                       left: '85%',
                       animation: 'float-11 15s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-84 h-84 rounded-full opacity-25 blur-3xl"
+                    className="absolute w-84 h-84 rounded-full opacity-35 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(245, 101, 101, 0.5) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(245, 101, 101, 0.7) 0%, rgba(245, 101, 101, 0.2) 40%, transparent 70%)',
                       bottom: '60%',
                       left: '30%',
                       animation: 'float-12 9s ease-in-out infinite reverse'
@@ -195,45 +195,45 @@ const Hero = () => {
                   />
                   {/* Additional downward spots for complete bottom coverage */}
                   <div 
-                    className="absolute w-76 h-76 rounded-full opacity-45 blur-3xl"
+                    className="absolute w-76 h-76 rounded-full opacity-55 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(139, 92, 246, 0.7) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(139, 92, 246, 0.9) 0%, rgba(139, 92, 246, 0.2) 40%, transparent 70%)',
                       bottom: '5%',
                       left: '15%',
                       animation: 'float-13 10s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-64 h-64 rounded-full opacity-40 blur-3xl"
+                    className="absolute w-64 h-64 rounded-full opacity-50 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(34, 211, 238, 0.6) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(34, 211, 238, 0.8) 0%, rgba(34, 211, 238, 0.2) 40%, transparent 70%)',
                       bottom: '8%',
                       right: '50%',
                       animation: 'float-14 12s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-58 h-58 rounded-full opacity-35 blur-3xl"
+                    className="absolute w-58 h-58 rounded-full opacity-45 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(248, 113, 113, 0.5) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(248, 113, 113, 0.7) 0%, rgba(248, 113, 113, 0.2) 40%, transparent 70%)',
                       bottom: '2%',
                       left: '70%',
                       animation: 'float-15 11s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-72 h-72 rounded-full opacity-30 blur-3xl"
+                    className="absolute w-72 h-72 rounded-full opacity-40 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(192, 132, 252, 0.5) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(192, 132, 252, 0.7) 0%, rgba(192, 132, 252, 0.2) 40%, transparent 70%)',
                       bottom: '12%',
                       left: '45%',
                       animation: 'float-16 13s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-56 h-56 rounded-full opacity-25 blur-3xl"
+                    className="absolute w-56 h-56 rounded-full opacity-35 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(74, 222, 128, 0.4) 0%, transparent 50%)',
+                      background: 'radial-gradient(circle, rgba(74, 222, 128, 0.6) 0%, rgba(74, 222, 128, 0.2) 40%, transparent 70%)',
                       bottom: '25%',
                       right: '85%',
                       animation: 'float-17 8s ease-in-out infinite'
