@@ -193,6 +193,52 @@ const Hero = () => {
                       animation: 'float-12 9s ease-in-out infinite reverse'
                     }}
                   />
+                  {/* Additional downward spots for complete bottom coverage */}
+                  <div 
+                    className="absolute w-76 h-76 rounded-full opacity-45 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(139, 92, 246, 0.7) 0%, transparent 50%)',
+                      bottom: '5%',
+                      left: '15%',
+                      animation: 'float-13 10s ease-in-out infinite'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-64 h-64 rounded-full opacity-40 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(34, 211, 238, 0.6) 0%, transparent 50%)',
+                      bottom: '8%',
+                      right: '50%',
+                      animation: 'float-14 12s ease-in-out infinite reverse'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-58 h-58 rounded-full opacity-35 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(248, 113, 113, 0.5) 0%, transparent 50%)',
+                      bottom: '2%',
+                      left: '70%',
+                      animation: 'float-15 11s ease-in-out infinite'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-72 h-72 rounded-full opacity-30 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(192, 132, 252, 0.5) 0%, transparent 50%)',
+                      bottom: '12%',
+                      left: '45%',
+                      animation: 'float-16 13s ease-in-out infinite reverse'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-56 h-56 rounded-full opacity-25 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(74, 222, 128, 0.4) 0%, transparent 50%)',
+                      bottom: '25%',
+                      right: '85%',
+                      animation: 'float-17 8s ease-in-out infinite'
+                    }}
+                  />
                 </div>
                 
                 {/* CSS animations for floating spots */}
@@ -256,6 +302,28 @@ const Hero = () => {
                     0%, 100% { transform: translate(0, 0) scale(1); }
                     40% { transform: translate(35px, 25px) scale(1.25); }
                     80% { transform: translate(-40px, -30px) scale(0.75); }
+                  }
+                  @keyframes float-13 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    50% { transform: translate(30px, -20px) scale(1.2); }
+                  }
+                  @keyframes float-14 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    33% { transform: translate(-25px, 15px) scale(1.1); }
+                    66% { transform: translate(20px, -25px) scale(0.9); }
+                  }
+                  @keyframes float-15 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    50% { transform: translate(-35px, 30px) scale(1.3); }
+                  }
+                  @keyframes float-16 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    25% { transform: translate(40px, -15px) scale(1.15); }
+                    75% { transform: translate(-30px, 25px) scale(0.85); }
+                  }
+                  @keyframes float-17 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    60% { transform: translate(25px, 35px) scale(1.1); }
                   }
                 `}</style>
                 
