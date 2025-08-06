@@ -83,77 +83,114 @@ const Hero = () => {
                   {/* Full black background */}
                   <div className="absolute inset-0 bg-black" />
                   
-                  {/* Brighter animated gradient spots all over the dialog */}
+                  {/* Ultra bright animated gradient spots covering entire dialog */}
                   <div 
-                    className="absolute w-96 h-96 rounded-full opacity-60 blur-3xl"
+                    className="absolute w-96 h-96 rounded-full opacity-80 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(147, 51, 234, 0.9) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(147, 51, 234, 1) 0%, transparent 50%)',
                       top: '5%',
                       left: '15%',
                       animation: 'float-1 8s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-80 h-80 rounded-full opacity-55 blur-3xl"
+                    className="absolute w-80 h-80 rounded-full opacity-75 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(59, 130, 246, 1) 0%, transparent 50%)',
                       top: '60%',
                       right: '10%',
                       animation: 'float-2 10s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-72 h-72 rounded-full opacity-50 blur-3xl"
+                    className="absolute w-72 h-72 rounded-full opacity-70 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.7) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(99, 102, 241, 0.9) 0%, transparent 50%)',
                       bottom: '15%',
                       left: '5%',
                       animation: 'float-3 12s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-64 h-64 rounded-full opacity-45 blur-3xl"
+                    className="absolute w-64 h-64 rounded-full opacity-65 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(6, 182, 212, 0.9) 0%, transparent 50%)',
                       top: '25%',
                       right: '35%',
                       animation: 'float-4 9s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-88 h-88 rounded-full opacity-40 blur-3xl"
+                    className="absolute w-88 h-88 rounded-full opacity-60 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, transparent 50%)',
                       top: '45%',
                       left: '60%',
                       animation: 'float-5 11s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-56 h-56 rounded-full opacity-35 blur-3xl"
+                    className="absolute w-56 h-56 rounded-full opacity-55 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(34, 197, 94, 0.6) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(34, 197, 94, 0.8) 0%, transparent 50%)',
                       bottom: '45%',
                       right: '5%',
                       animation: 'float-6 7s ease-in-out infinite reverse'
                     }}
                   />
                   <div 
-                    className="absolute w-68 h-68 rounded-full opacity-30 blur-3xl"
+                    className="absolute w-68 h-68 rounded-full opacity-50 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(236, 72, 153, 0.5) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(236, 72, 153, 0.7) 0%, transparent 50%)',
                       top: '75%',
                       left: '40%',
                       animation: 'float-7 13s ease-in-out infinite'
                     }}
                   />
                   <div 
-                    className="absolute w-52 h-52 rounded-full opacity-25 blur-3xl"
+                    className="absolute w-52 h-52 rounded-full opacity-45 blur-3xl"
                     style={{
-                      background: 'radial-gradient(circle, rgba(251, 146, 60, 0.5) 0%, transparent 60%)',
+                      background: 'radial-gradient(circle, rgba(251, 146, 60, 0.7) 0%, transparent 50%)',
                       top: '15%',
                       left: '75%',
                       animation: 'float-8 6s ease-in-out infinite reverse'
+                    }}
+                  />
+                  {/* Additional bright spots for full coverage */}
+                  <div 
+                    className="absolute w-60 h-60 rounded-full opacity-40 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(217, 70, 239, 0.6) 0%, transparent 50%)',
+                      top: '35%',
+                      left: '2%',
+                      animation: 'float-9 14s ease-in-out infinite'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-75 h-75 rounded-full opacity-35 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(14, 165, 233, 0.6) 0%, transparent 50%)',
+                      bottom: '5%',
+                      right: '30%',
+                      animation: 'float-10 8s ease-in-out infinite reverse'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-48 h-48 rounded-full opacity-30 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, transparent 50%)',
+                      top: '50%',
+                      left: '85%',
+                      animation: 'float-11 15s ease-in-out infinite'
+                    }}
+                  />
+                  <div 
+                    className="absolute w-84 h-84 rounded-full opacity-25 blur-3xl"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(245, 101, 101, 0.5) 0%, transparent 50%)',
+                      bottom: '60%',
+                      left: '30%',
+                      animation: 'float-12 9s ease-in-out infinite reverse'
                     }}
                   />
                 </div>
@@ -200,6 +237,25 @@ const Hero = () => {
                   @keyframes float-8 {
                     0%, 100% { transform: translate(0, 0) scale(1); }
                     50% { transform: translate(30px, 35px) scale(1.3); }
+                  }
+                  @keyframes float-9 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    33% { transform: translate(45px, -20px) scale(1.2); }
+                    66% { transform: translate(-25px, 40px) scale(0.8); }
+                  }
+                  @keyframes float-10 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    50% { transform: translate(-35px, -25px) scale(1.4); }
+                  }
+                  @keyframes float-11 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    25% { transform: translate(-30px, 30px) scale(1.1); }
+                    75% { transform: translate(20px, -40px) scale(0.9); }
+                  }
+                  @keyframes float-12 {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    40% { transform: translate(35px, 25px) scale(1.25); }
+                    80% { transform: translate(-40px, -30px) scale(0.75); }
                   }
                 `}</style>
                 
