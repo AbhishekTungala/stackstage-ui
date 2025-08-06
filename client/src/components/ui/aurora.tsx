@@ -44,36 +44,36 @@ const Aurora: React.FC<AuroraProps> = ({
         className="absolute inset-0 z-[-1] pointer-events-none mix-blend-screen"
         style={{
           background: `
-            radial-gradient(circle at 30% 30%, rgba(59, 130, 246, ${0.35 * intensity}) 0%, transparent 60%),
-            radial-gradient(circle at 70% 70%, rgba(124, 58, 237, ${0.35 * intensity}) 0%, transparent 60%),
-            radial-gradient(circle at 50% 90%, rgba(6, 182, 212, ${0.3 * intensity}) 0%, transparent 60%)
+            radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+            radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+            radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
           `,
           filter: 'blur(100px)',
-          opacity: 0.8 * intensity,
+          opacity: 0.6,
           maskImage: getFadeMask(),
           WebkitMaskImage: getFadeMask(),
         }}
         animate={{
           background: [
             `
-              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, ${0.35 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, ${0.35 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, ${0.3 * intensity}) 0%, transparent 60%)
+              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 70% 20%, rgba(124, 58, 237, ${0.4 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 30% 80%, rgba(6, 182, 212, ${0.35 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 90% 50%, rgba(99, 102, 241, ${0.32 * intensity}) 0%, transparent 60%)
+              radial-gradient(circle at 70% 20%, rgba(124, 58, 237, 0.4) 0%, transparent 60%),
+              radial-gradient(circle at 30% 80%, rgba(6, 182, 212, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 90% 50%, rgba(99, 102, 241, 0.32) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 20% 70%, rgba(6, 182, 212, ${0.38 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 80% 30%, rgba(139, 92, 246, ${0.32 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 40% 10%, rgba(59, 130, 246, ${0.35 * intensity}) 0%, transparent 60%)
+              radial-gradient(circle at 20% 70%, rgba(6, 182, 212, 0.38) 0%, transparent 60%),
+              radial-gradient(circle at 80% 30%, rgba(139, 92, 246, 0.32) 0%, transparent 60%),
+              radial-gradient(circle at 40% 10%, rgba(59, 130, 246, 0.35) 0%, transparent 60%)
             `,
             `
-              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, ${0.35 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, ${0.35 * intensity}) 0%, transparent 60%),
-              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, ${0.3 * intensity}) 0%, transparent 60%)
+              radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.35) 0%, transparent 60%),
+              radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.3) 0%, transparent 60%)
             `,
           ],
         }}

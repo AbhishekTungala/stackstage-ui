@@ -28,8 +28,6 @@ const Hero = () => {
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Aurora Background with smooth fade */}
       <Aurora 
-        intensity={0.4}
-        speed={1.2}
         className="aurora-background"
         fadeHeight={300}
         fadeDirection="bottom"
@@ -88,7 +86,7 @@ const Hero = () => {
                   fadeDirection="bottom"
                 />
                 {/* Additional overlay for better text visibility */}
-                <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                <div className="absolute inset-0 bg-black/50 pointer-events-none" />
                 
                 <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
                   {/* Centered Profile Card */}
