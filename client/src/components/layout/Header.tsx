@@ -13,8 +13,8 @@ const Header = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   const navigation = [
-    { name: "Analyze", href: "/analyze" },
     { name: "Features", href: "/#features" },
+    { name: "Analyze", href: "/analyze" },
     { name: "AI Assistant", href: "/assistant" },
     { name: "Docs", href: "/docs" },
     { name: "Pricing", href: "/pricing" },
