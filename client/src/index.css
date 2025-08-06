@@ -1,4 +1,5 @@
 @import './styles/profile-card.css';
+@import './styles/aurora-profile.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

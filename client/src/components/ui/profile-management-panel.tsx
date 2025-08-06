@@ -69,8 +69,10 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
 
   return (
     <div className="w-full space-y-6">
-      {/* Glass Card Container */}
-      <Card className="bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl ring-1 ring-white/10">
+      {/* Glass Card Container with enhanced aurora-compatible styling */}
+      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl ring-1 ring-white/10 relative overflow-hidden">
+        {/* Subtle inner aurora glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
         <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="p-2 rounded-full bg-primary/20">

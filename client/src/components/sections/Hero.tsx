@@ -79,9 +79,22 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-gradient-to-br from-slate-900/95 via-gray-900/98 to-black/95 backdrop-blur-xl">
-                {/* Premium dark overlay with subtle gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/10 to-indigo-900/20 pointer-events-none" />
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-black/90 backdrop-blur-xl">
+                {/* Premium Aurora Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  {/* Main aurora gradient layers with animations */}
+                  <div className="absolute inset-0 aurora-profile-bg bg-gradient-to-br from-purple-600/25 via-blue-500/15 via-cyan-400/10 to-purple-800/20" />
+                  <div className="absolute inset-0 aurora-profile-pulse bg-gradient-to-tr from-pink-500/15 via-transparent to-blue-600/25" />
+                  <div className="absolute inset-0 aurora-blend-overlay bg-gradient-to-bl from-transparent via-indigo-500/12 to-purple-600/18" />
+                  
+                  {/* Animated aurora wave effect */}
+                  <div className="absolute inset-0 aurora-profile-wave bg-gradient-to-r from-transparent via-cyan-400/8 to-transparent" />
+                  
+                  {/* Multiple layer smooth fade to create seamless blend */}
+                  <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/95 via-black/70 via-black/40 to-transparent aurora-fade-bottom" />
+                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/98 via-black/80 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-black/90" />
+                </div>
                 
                 <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
                   {/* Centered Profile Card */}
