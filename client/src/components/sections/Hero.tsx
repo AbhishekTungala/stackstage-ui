@@ -77,19 +77,30 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-slate-950 dark:bg-black">
-                {/* Custom Profile Dialog Aurora Background */}
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto">
+                {/* Premium Profile Dialog Background System */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  {/* Dark base with profile-specific aurora gradients */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
+                  {/* Base premium gradient foundation */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800/90 via-slate-900/95 to-slate-950" />
                   
-                  {/* Profile Aurora Effects */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/30 via-transparent to-blue-900/25" />
-                  <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-indigo-900/20 to-cyan-900/15" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-violet-800/10 to-transparent" />
+                  {/* Multi-layer aurora effects with premium blending */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-purple-800/20 via-transparent to-blue-800/15" />
+                  <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-indigo-800/15 to-cyan-800/12" />
+                  <div className="absolute inset-0 bg-gradient-to-tl from-violet-800/8 via-transparent to-purple-700/10" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/8 to-indigo-900/12" />
                   
-                  {/* Smooth bottom fade */}
-                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+                  {/* Premium radial overlays for depth */}
+                  <div className="absolute inset-0 bg-gradient-radial from-purple-800/15 via-transparent to-transparent" style={{background: 'radial-gradient(circle at 30% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 60%)'}} />
+                  <div className="absolute inset-0 bg-gradient-radial from-blue-700/12 via-transparent to-transparent" style={{background: 'radial-gradient(circle at 70% 80%, rgba(29, 78, 216, 0.12) 0%, transparent 60%)'}} />
+                  <div className="absolute inset-0 bg-gradient-radial from-indigo-600/10 via-transparent to-transparent" style={{background: 'radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.1) 0%, transparent 70%)'}} />
+                  
+                  {/* Seamless edge blending */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-800/40" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-slate-800/40 via-transparent to-slate-950/60" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/30 via-transparent to-slate-900/30" />
+                  
+                  {/* Final premium overlay for cohesion */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-slate-800/10 to-slate-950/30" />
                 </div>
                 
                 <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
