@@ -69,8 +69,8 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
 
   return (
     <div className="w-full space-y-6">
-      {/* Premium Glass Card Container */}
-      <Card className="bg-white/85 dark:bg-white/8 backdrop-blur-2xl border-white/40 dark:border-white/15 shadow-2xl text-slate-900 dark:text-white ring-1 ring-white/10 dark:ring-white/5">
+      {/* Glass Card Container - optimized for both light and dark modes */}
+      <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-xl border-white/30 dark:border-white/20 shadow-2xl text-slate-900 dark:text-white">
         <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="p-2 rounded-full bg-primary/20">
@@ -87,14 +87,14 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
 
         <CardContent>
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-slate-100/60 dark:bg-white/8 backdrop-blur-sm border border-white/20 dark:border-white/10 text-slate-700 dark:text-white/90 rounded-lg">
-              <TabsTrigger value="personal" className="data-[state=active]:bg-white/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:data-[state=active]:bg-white/15 dark:data-[state=active]:text-white rounded-md">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-200/50 dark:bg-white/10 text-slate-700 dark:text-white">
+              <TabsTrigger value="personal" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Personal Info
               </TabsTrigger>
-              <TabsTrigger value="professional" className="data-[state=active]:bg-white/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:data-[state=active]:bg-white/15 dark:data-[state=active]:text-white rounded-md">
+              <TabsTrigger value="professional" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Professional
               </TabsTrigger>
-              <TabsTrigger value="security" className="data-[state=active]:bg-white/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:data-[state=active]:bg-white/15 dark:data-[state=active]:text-white rounded-md">
+              <TabsTrigger value="security" className="data-[state=active]:bg-white/70 data-[state=active]:text-slate-900 dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                 Security
               </TabsTrigger>
             </TabsList>
@@ -108,7 +108,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                     variant="outline" 
                     size="sm" 
                     onClick={() => setIsEditing(true)}
-                    className="bg-slate-100/70 dark:bg-white/8 border-slate-300/60 dark:border-white/15 hover:bg-slate-200/60 dark:hover:bg-white/12 text-slate-700 dark:text-white/90 backdrop-blur-sm"
+                    className="bg-slate-200/50 dark:bg-white/10 border-slate-300/50 dark:border-white/20 hover:bg-slate-300/50 dark:hover:bg-white/20 text-slate-700 dark:text-white"
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
                     Edit
@@ -119,7 +119,7 @@ const ProfileManagementPanel: React.FC<ProfileManagementPanelProps> = ({ demoUse
                       variant="outline" 
                       size="sm" 
                       onClick={handleCancel}
-                      className="bg-slate-100/70 dark:bg-white/8 border-slate-300/60 dark:border-white/15 hover:bg-slate-200/60 dark:hover:bg-white/12 text-slate-700 dark:text-white/90 backdrop-blur-sm"
+                      className="bg-slate-200/50 dark:bg-white/10 border-slate-300/50 dark:border-white/20 hover:bg-slate-300/50 dark:hover:bg-white/20 text-slate-700 dark:text-white"
                     >
                       <X className="h-4 w-4 mr-2" />
                       Cancel
