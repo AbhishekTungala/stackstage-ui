@@ -65,8 +65,8 @@ const Header = () => {
                 <UserAvatar />
               ) : (
                 <>
-                  <Button variant="ghost" asChild>
-                    <Link to="/api/login">Login</Link>
+                  <Button variant="ghost" disabled>
+                    Login (Coming Soon)
                   </Button>
                   <Button variant="hero" asChild className="text-white">
                     <Link to="/analyze">Try Free</Link>
@@ -119,8 +119,8 @@ const Header = () => {
                 {!isLoading && (
                   !isAuthenticated ? (
                     <>
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/api/login">Login</Link>
+                      <Button variant="ghost" disabled className="justify-start">
+                        Login (Coming Soon)
                       </Button>
                       <Button variant="hero" asChild className="text-white">
                         <Link to="/analyze">Try Free</Link>

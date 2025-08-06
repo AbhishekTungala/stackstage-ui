@@ -1,11 +1,28 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Zap, ArrowRight, Shield, DollarSign, TrendingUp } from "lucide-react";
+import { Zap, ArrowRight, Shield, DollarSign, TrendingUp, User } from "lucide-react";
 import Aurora from "@/components/ui/aurora";
 import TrueFocus from "@/components/ui/true-focus";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import ProfileCard from "@/components/ui/profile-card";
 
 const Hero = () => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Demo user data for the profile card
+  const demoUser = {
+    id: "demo_user_123",
+    email: "demo@stackstage.dev",
+    firstName: "Alex",
+    lastName: "Developer", 
+    profileImageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    jobTitle: "Senior Cloud Architect",
+    company: "TechCorp Inc.",
+    location: "San Francisco, CA"
+  };
+
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Aurora Background with smooth fade */}
@@ -46,19 +63,41 @@ const Hero = () => {
           </p>
           
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Link href="/analyze">
               <Button size="lg" className="px-8 py-6 text-lg" variant="hero">
                 Start Analysis
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/login">
-              <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
-                Sign In
-              </Button>
-            </Link>
+            
+            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
+                  <User className="mr-2 w-5 h-5" />
+                  View Profile Demo
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+                <ProfileCard 
+                  avatarUrl={demoUser.profileImageUrl}
+                  name={`${demoUser.firstName} ${demoUser.lastName}`}
+                  title={demoUser.jobTitle}
+                  handle={demoUser.email.split('@')[0]}
+                  status="Online"
+                  contactText="Edit Profile"
+                  onContactClick={() => setIsProfileOpen(false)}
+                  showUserInfo={true}
+                  enableTilt={true}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
+
+          {/* Demo Info */}
+          <p className="text-sm text-muted-foreground mb-8">
+            ✨ Click "View Profile Demo" to see the premium 3D profile card with tilt effects
+          </p>
           
           {/* Animated Stats */}
           <motion.div 
