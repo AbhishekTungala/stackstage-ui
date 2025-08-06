@@ -28,7 +28,7 @@ const Hero = () => {
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Aurora Background with smooth fade */}
       <Aurora 
-        intensity={0.3}
+        intensity={0.4}
         speed={1.2}
         className="aurora-background"
         fadeHeight={300}
