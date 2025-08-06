@@ -7,6 +7,7 @@ import Aurora from "@/components/ui/aurora";
 import TrueFocus from "@/components/ui/true-focus";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ProfileCard from "@/components/ui/profile-card";
+import ProfileManagementPanel from "@/components/ui/profile-management-panel";
 
 const Hero = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -78,18 +79,28 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
-                <ProfileCard 
-                  avatarUrl={demoUser.profileImageUrl}
-                  name={`${demoUser.firstName} ${demoUser.lastName}`}
-                  title={demoUser.jobTitle}
-                  handle={demoUser.email.split('@')[0]}
-                  status="Online"
-                  contactText="Edit Profile"
-                  onContactClick={() => setIsProfileOpen(false)}
-                  showUserInfo={true}
-                  enableTilt={true}
-                />
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 bg-transparent border-none shadow-none overflow-y-auto">
+                <div className="flex flex-col items-center justify-center min-h-[80vh] py-8">
+                  {/* Centered Profile Card */}
+                  <div className="mb-12">
+                    <ProfileCard 
+                      avatarUrl={demoUser.profileImageUrl}
+                      name={`${demoUser.firstName} ${demoUser.lastName}`}
+                      title={demoUser.jobTitle}
+                      handle={demoUser.email.split('@')[0]}
+                      status="Online"
+                      contactText="Edit Profile"
+                      onContactClick={() => {}}
+                      showUserInfo={true}
+                      enableTilt={true}
+                    />
+                  </div>
+                  
+                  {/* Premium Profile Management Panel */}
+                  <div className="w-full max-w-4xl mx-auto">
+                    <ProfileManagementPanel demoUser={demoUser} />
+                  </div>
+                </div>
               </DialogContent>
             </Dialog>
           </div>
