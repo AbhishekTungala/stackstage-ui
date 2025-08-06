@@ -79,13 +79,16 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-transparent">
-                {/* Landing Page Style Aurora Background */}
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-black/40 backdrop-blur-sm">
+                {/* Enhanced Aurora Background with increased brightness */}
                 <Aurora 
                   className="absolute inset-0 pointer-events-none"
-                  fadeHeight={120}
+                  intensity={0.8}
+                  fadeHeight={80}
                   fadeDirection="bottom"
                 />
+                {/* Additional overlay for better text visibility */}
+                <div className="absolute inset-0 bg-black/30 pointer-events-none" />
                 
                 <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
                   {/* Centered Profile Card */}
