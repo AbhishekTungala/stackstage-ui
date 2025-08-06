@@ -79,10 +79,13 @@ const Hero = () => {
                   View Profile Demo
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-6xl max-h-[90vh] p-0 bg-transparent border-none shadow-none overflow-y-auto">
-                <div className="flex flex-col items-center justify-center min-h-[80vh] py-8">
+              <DialogContent className="max-w-6xl max-h-[90vh] p-0 border-none shadow-none overflow-y-auto bg-gradient-to-br from-slate-900/95 via-gray-900/98 to-black/95 backdrop-blur-xl">
+                {/* Premium dark overlay with subtle gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/10 to-indigo-900/20 pointer-events-none" />
+                
+                <div className="relative flex flex-col items-center justify-center min-h-[80vh] py-8">
                   {/* Centered Profile Card */}
-                  <div className="mb-12">
+                  <div className="mb-12 z-10">
                     <ProfileCard 
                       avatarUrl={demoUser.profileImageUrl}
                       name={`${demoUser.firstName} ${demoUser.lastName}`}
@@ -97,7 +100,7 @@ const Hero = () => {
                   </div>
                   
                   {/* Premium Profile Management Panel */}
-                  <div className="w-full max-w-4xl mx-auto">
+                  <div className="w-full max-w-4xl mx-auto z-10">
                     <ProfileManagementPanel demoUser={demoUser} />
                   </div>
                 </div>
