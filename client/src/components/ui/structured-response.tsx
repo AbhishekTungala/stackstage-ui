@@ -66,9 +66,10 @@ interface StructuredResponseData {
 interface StructuredResponseProps {
   data: StructuredResponseData;
   className?: string;
+  parsingError?: boolean;
 }
 
-const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className = '' }) => {
+const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className = '', parsingError = false }) => {
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
@@ -86,6 +87,20 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
 
   return (
     <div className={`space-y-6 ${className}`}>
+      {parsingError && (
+        <Card className="glass-card border-yellow-500/50 bg-yellow-50 dark:bg-yellow-900/20">
+          <CardContent className="pt-4">
+            <div className="flex items-center space-x-2 text-yellow-800 dark:text-yellow-200">
+              <AlertTriangle className="w-5 h-5" />
+              <span className="font-medium">AI Response Format Issue</span>
+            </div>
+            <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-2">
+              The AI provided an unstructured response. Please try asking your question again with more specific requirements.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Score and Summary */}
       <Card className="glass-card border-primary/20">
         <CardHeader>

@@ -120,8 +120,8 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
       body: JSON.stringify({
         model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-70b-instruct',
         messages: fullMessages,
-        max_tokens: 2000,
-        temperature: 0.2
+        max_tokens: 1200,
+        temperature: 0.15
       })
     });
     
@@ -133,25 +133,10 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     const data = await response.json();
     let aiResponse = data.choices[0]?.message?.content || "I'm here to help with your cloud architecture questions.";
     
-    // Try to parse as JSON for structured responses
+    // Enhanced JSON extraction and validation
     let structuredResponse;
     try {
-      // Clean response to extract JSON
-      let cleanResponse = aiResponse.trim();
-      if (cleanResponse.startsWith('```json')) {
-        cleanResponse = cleanResponse.replace(/```json\n?/, '').replace(/\n?```$/, '');
-      } else if (cleanResponse.startsWith('```')) {
-        cleanResponse = cleanResponse.replace(/```\n?/, '').replace(/\n?```$/, '');
-      }
-      
-      // Find JSON boundaries
-      const jsonStart = cleanResponse.indexOf('{');
-      const jsonEnd = cleanResponse.lastIndexOf('}');
-      
-      if (jsonStart !== -1 && jsonEnd !== -1) {
-        const jsonString = cleanResponse.substring(jsonStart, jsonEnd + 1);
-        structuredResponse = JSON.parse(jsonString);
-      }
+      structuredResponse = extractAndValidateJson(aiResponse);
     } catch (parseError) {
       console.log("Response not in JSON format, using as text:", parseError.message);
     }
@@ -167,14 +152,27 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         structured: true
       };
     } else {
-      // Fallback to text response
-      const suggestions = generateRoleBasedSuggestions(aiResponse, role);
+      // Fallback: return error-like structured response for failed JSON parsing
+      const suggestions = ['Retry with a more specific question', 'Try asking about a specific cloud architecture pattern'];
       
       return {
-        response: aiResponse,
+        response: {
+          score: 0,
+          summary: "AI response parsing failed",
+          rationale: "The AI provided an unstructured response that couldn't be parsed into the expected JSON format.",
+          risks: [{ id: "PARSE-001", title: "Response Format Error", severity: "med", impact: "Unable to provide structured analysis", fix: "Please retry your question with more specific requirements." }],
+          recommendations: [],
+          rpo_rto_alignment: { rpo_minutes: 0, rto_minutes: 0, notes: "Unable to parse requirements from response" },
+          pci_essentials: [],
+          cost: { currency: "USD", assumptions: [], range_monthly_usd: { low: 0, high: 0 }, items: [] },
+          latency: { primary_region: "", alt_regions_considered: [], notes: "No latency analysis available" },
+          diagram_mermaid: "",
+          alternatives: []
+        },
         suggestions: suggestions,
         timestamp: new Date().toISOString(),
-        structured: false
+        structured: true,
+        parsing_error: true
       };
     }
     
@@ -186,31 +184,35 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
 
 function getRoleBasedSystemPrompt(role?: string): string {
   const baseStackStagePrompt = `You are StackStage AI, a senior cloud architecture advisor for AWS, Azure, and GCP.
-Always return STRICT JSON only (no markdown, no backticks). Follow this schema exactly:
+You MUST return STRICT JSON only — nothing else (no prose before/after). Follow this exact schema:
+
 {
-  "score": number,
+  "score": integer (0-100),
   "summary": string,
   "rationale": string,
   "risks": [{"id": string, "title": string, "severity": "high|med|low", "impact": string, "fix": string}],
   "recommendations": [{"title": string, "why": string, "how": string, "iac_snippet": string}],
-  "rpo_rto_alignment": {"rpo_minutes": number, "rto_minutes": number, "notes": string},
+  "rpo_rto_alignment": {"rpo_minutes": integer, "rto_minutes": integer, "notes": string},
   "pci_essentials": [{"control": string, "status": "pass|gap", "action": string}],
   "cost": {
     "currency": "USD",
-    "assumptions": string[],
+    "assumptions": [string],
     "range_monthly_usd": {"low": number, "high": number},
     "items": [{"service": string, "est_usd": number}]
   },
-  "latency": {"primary_region": string, "alt_regions_considered": string[], "notes": string},
+  "latency": {"primary_region": string, "alt_regions_considered": [string], "notes": string},
   "diagram_mermaid": string,
-  "alternatives": [{"name": string, "pros": string[], "cons": string[], "cost_delta_pct": number, "latency_delta_ms": number}]
+  "alternatives": [{"name": string, "pros": [string], "cons": [string], "cost_delta_pct": number, "latency_delta_ms": number}]
 }
-Rules:
-- Be concise but complete.
-- Cost numbers are estimates with assumptions; prefer ranges.
-- Map design choices explicitly to the requested RPO and RTO.
-- Include a valid Mermaid diagram (no markdown fences).
-- Add at least 1 alternative architecture with trade-offs.`;
+
+RULES:
+1. Do not include any text outside the JSON object.
+2. Use integers for score and RPO/RTO minutes.
+3. Provide cost ranges not single hard numbers. If you give estimates for items, they must sum to be inside range.
+4. For RPO=5 / RTO=30 — explicitly map at least 2 technical controls that achieve each (e.g., PITR frequency, cross-AZ failover, replica promotion time).
+5. Include at least one secured PCI control (segmentation, tokenization, logging retention).
+6. Provide a working Mermaid diagram in diagram_mermaid.
+7. Be concise and use factual-sounding assumptions. If information is missing, add it under cost.assumptions.`;
   
   switch (role) {
     case 'CTO':
@@ -322,4 +324,64 @@ function generateStructuredSuggestions(structuredResponse: any, role?: string): 
   suggestions.push("Export detailed analysis report");
   
   return suggestions.slice(0, 4);
+}
+
+function extractAndValidateJson(rawText: string): any {
+  // Remove leading/trailing backticks and whitespace
+  let cleanText = rawText.trim();
+  cleanText = cleanText.replace(/^```json?\s*/, '').replace(/\s*```$/, '');
+  
+  // Find JSON boundaries
+  const jsonStart = cleanText.indexOf('{');
+  const jsonEnd = cleanText.lastIndexOf('}');
+  
+  if (jsonStart === -1 || jsonEnd === -1) {
+    throw new Error("No JSON object found in AI response");
+  }
+  
+  let candidate = cleanText.substring(jsonStart, jsonEnd + 1);
+  
+  // Fix common trailing comma issues
+  candidate = candidate.replace(/,\s*}/g, '}');
+  candidate = candidate.replace(/,\s*]/g, ']');
+  
+  const parsed = JSON.parse(candidate);
+  
+  // Validation and normalization
+  const required = ['score', 'summary', 'diagram_mermaid', 'cost'];
+  for (const key of required) {
+    if (!(key in parsed)) {
+      throw new Error(`AI response missing required field: ${key}`);
+    }
+  }
+  
+  // Normalize score to integer 0-100
+  if (typeof parsed.score === 'number') {
+    parsed.score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+  } else if (typeof parsed.score === 'string') {
+    const nums = parsed.score.match(/\d+/);
+    parsed.score = nums ? Math.max(0, Math.min(100, parseInt(nums[0]))) : 0;
+  } else {
+    parsed.score = 0;
+  }
+  
+  // Ensure cost range coherence
+  const costRange = parsed.cost?.range_monthly_usd;
+  if (costRange && costRange.low > costRange.high) {
+    const temp = costRange.low;
+    costRange.low = costRange.high;
+    costRange.high = temp;
+  }
+  
+  // Ensure RPO/RTO are integers
+  if (parsed.rpo_rto_alignment) {
+    if (typeof parsed.rpo_rto_alignment.rpo_minutes === 'number') {
+      parsed.rpo_rto_alignment.rpo_minutes = Math.round(parsed.rpo_rto_alignment.rpo_minutes);
+    }
+    if (typeof parsed.rpo_rto_alignment.rto_minutes === 'number') {
+      parsed.rpo_rto_alignment.rto_minutes = Math.round(parsed.rpo_rto_alignment.rto_minutes);
+    }
+  }
+  
+  return parsed;
 }

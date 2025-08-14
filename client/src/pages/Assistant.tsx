@@ -693,7 +693,10 @@ Select your role below to get personalized recommendations, or ask me anything a
                                 >
                                   <div className="text-sm leading-relaxed">
                                     {typeof message.content === 'object' && message.content.score !== undefined ? (
-                                      <StructuredResponse data={message.content} />
+                                      <StructuredResponse 
+                                        data={message.content} 
+                                        parsingError={message.content.score === 0 && message.content.summary?.includes("parsing failed")}
+                                      />
                                     ) : (
                                       <div className="whitespace-pre-wrap">
                                         {typeof message.content === 'string' ? message.content : JSON.stringify(message.content, null, 2)}

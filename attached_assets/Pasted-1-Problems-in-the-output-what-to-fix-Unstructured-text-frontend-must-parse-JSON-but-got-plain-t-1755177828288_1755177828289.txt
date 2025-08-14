@@ -1,0 +1,201 @@
+1) Problems in the output (what to fix)
+
+Unstructured text: frontend must parse JSON but got plain text sections.
+
+Score format inconsistent: 8.5/100 — better to return an integer 0–100.
+
+Cost assumptions vague and itemized numbers inconsistent with earlier claims (e.g., RDS $500 vs previous $70).
+
+RPO/RTO mapping weak — asserts they’re met but lacks exact mechanisms (backup frequency, failover time).
+
+IaC snippets are not fenced or language-labeled → frontend can't display nicely.
+
+Mermaid provided — good — but must be included inside JSON field diagram_mermaid.
+
+2) Strong system prompt (STRICT JSON) — paste into utils/ai_engine.py
+
+Replace your existing system prompt with this. It forces the model to return strict JSON only and includes rules to ensure fields are present.
+
+STACKSTAGE_SYSTEM = """
+You are StackStage AI, a senior cloud architecture advisor for AWS, Azure, and GCP.
+You MUST return STRICT JSON only — nothing else (no prose before/after). Follow this exact schema:
+
+{
+  "score": integer (0-100),
+  "summary": string,
+  "rationale": string,
+  "risks": [{"id": string, "title": string, "severity": "high|med|low", "impact": string, "fix": string}],
+  "recommendations": [{"title": string, "why": string, "how": string, "iac_snippet": string}],
+  "rpo_rto_alignment": {"rpo_minutes": integer, "rto_minutes": integer, "notes": string},
+  "pci_essentials": [{"control": string, "status": "pass|gap", "action": string}],
+  "cost": {
+    "currency": "USD",
+    "assumptions": [string],
+    "range_monthly_usd": {"low": number, "high": number},
+    "items": [{"service": string, "est_usd": number}]
+  },
+  "latency": {"primary_region": string, "alt_regions_considered": [string], "notes": string},
+  "diagram_mermaid": string,
+  "alternatives": [{"name": string, "pros": [string], "cons": [string], "cost_delta_pct": number, "latency_delta_ms": number}]
+}
+
+RULES:
+1. Do not include any text outside the JSON object.
+2. Use integers for score and RPO/RTO minutes.
+3. Provide cost ranges not single hard numbers. If you give estimates for items, they must sum to be inside range.
+4. For RPO=5 / RTO=30 — explicitly map at least 2 technical controls that achieve each (e.g., PITR frequency, cross-AZ failover, replica promotion time).
+5. Include at least one secured PCI control (segmentation, tokenization, logging retention).
+6. Provide a working Mermaid diagram in diagram_mermaid.
+7. Be concise and use factual-sounding assumptions. If information is missing, add it under cost.assumptions.
+"""
+
+3) Updated analyze_architecture() (paste-over)
+
+This version posts to OpenRouter, enforces JSON, attempts salvage if the model wraps JSON in text, validates required keys and ensures score is integer.
+
+import os, json, requests, re
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+BASE_URL = "https://openrouter.ai/api/v1"
+MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-70b-instruct")
+
+def _post_openrouter(messages):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {"model": MODEL, "messages": messages, "temperature": 0.15, "max_tokens": 1200}
+    r = requests.post(f"{BASE_URL}/chat/completions", headers=headers, json=payload, timeout=60)
+    r.raise_for_status()
+    return r.json()["choices"][0]["message"]["content"]
+
+def _extract_json(raw_text: str):
+    # Remove leading/trailing backticks and find first JSON object
+    txt = raw_text.strip()
+    txt = txt.strip("```").strip()
+    start = txt.find("{")
+    end = txt.rfind("}")
+    if start == -1 or end == -1:
+        raise ValueError("No JSON object found in AI response")
+    candidate = txt[start:end+1]
+    # Try to fix common trailing commas
+    candidate = re.sub(r",\s*}", "}", candidate)
+    candidate = re.sub(r",\s*]", "]", candidate)
+    return json.loads(candidate)
+
+async def analyze_architecture(data):
+    user_prompt = f"""
+User input region: {data.user_region}
+Architecture text:
+{data.architecture_text}
+
+If RPO or RTO were specified use them; otherwise assume conservative RPO=15m,RTO=60m.
+Return STRICT JSON per StackStage schema.
+"""
+    messages = [
+        {"role": "system", "content": STACKSTAGE_SYSTEM},
+        {"role": "user", "content": user_prompt}
+    ]
+    raw = _post_openrouter(messages)
+    try:
+        parsed = _extract_json(raw)
+    except Exception as e:
+        # fallback: return an error-like structured response
+        return {
+            "score": 0,
+            "summary": "AI failed to return valid JSON",
+            "rationale": str(e),
+            "risks": [],
+            "recommendations": [],
+            "rpo_rto_alignment": {"rpo_minutes": 0, "rto_minutes": 0, "notes": "AI parse error"},
+            "pci_essentials": [],
+            "cost": {"currency":"USD","assumptions":[],"range_monthly_usd":{"low":0,"high":0},"items":[]},
+            "latency": {"primary_region": data.user_region, "alt_regions_considered": [], "notes": ""},
+            "diagram_mermaid": "",
+            "alternatives": []
+        }
+
+    # minimal validation
+    required = ["score", "summary", "diagram_mermaid", "cost"]
+    for k in required:
+        if k not in parsed:
+            raise ValueError(f"AI response missing required field: {k}")
+
+    # normalize score to int 0-100
+    score = parsed.get("score")
+    if isinstance(score, (float, int)):
+        parsed["score"] = max(0, min(100, int(round(score))))
+    else:
+        # try to parse numbers in string
+        nums = re.findall(r"\d+", str(score))
+        parsed["score"] = int(nums[0]) if nums else 0
+
+    # ensure cost range coherence
+    rng = parsed["cost"].get("range_monthly_usd", {})
+    low = rng.get("low", 0); high = rng.get("high", 0)
+    if low > high:
+        parsed["cost"]["range_monthly_usd"] = {"low": min(low, high), "high": max(low, high)}
+
+    return parsed
+
+4) Validator route — to auto-check AI output (paste into routers/analyze.py)
+from fastapi import APIRouter, HTTPException
+from models.schemas import AnalyzeRequest
+from utils.ai_engine import analyze_architecture
+from pydantic import BaseModel
+
+router = APIRouter()
+
+class ValidateResponse(BaseModel):
+    ok: bool
+    errors: list
+
+@router.post("/validate")
+async def validate_analyze(data: AnalyzeRequest):
+    result = await analyze_architecture(data)
+    errors = []
+    # Basic checks
+    if not isinstance(result.get("score"), int):
+        errors.append("score not integer")
+    if not result.get("diagram_mermaid"):
+        errors.append("missing diagram_mermaid")
+    cost = result.get("cost", {})
+    if "range_monthly_usd" not in cost:
+        errors.append("missing cost.range_monthly_usd")
+    if errors:
+        raise HTTPException(status_code=502, detail={"errors": errors, "result": result})
+    return {"ok": True, "errors": []}
+
+
+This endpoint helps you pre-validate model replies and surface issues fast.
+
+5) Frontend tips for rendering (quick)
+
+Expect JSON object. Don’t parse raw text.
+
+Score: show as integer with progress ring.
+
+Diagram: take diagram_mermaid string and feed to Mermaid renderer directly.
+
+Cost: show range_monthly_usd.low–high and an item table.
+
+Risks: render severity badges (high=red).
+
+If API returns score=0 + rationale contains "parse error", show a friendly “AI parsing error” message and allow retry.
+
+6) Example of a GOOD (expected) JSON output
+
+Use this to test your parser locally:
+
+{
+  "score": 86,
+  "summary": "Highly-available e-commerce in eu-west-1 using ALB+Fargate+Aurora Serverless Multi-AZ; meets RPO=5m and RTO=30m with warm-standby DR.",
+  "rationale": "Multi-AZ service placement, PITR-enabled DB, cross-AZ load balancing and autoscaling reduce failover time; warm-standby in eu-central-1 reduces RTO further.",
+  "risks": [{"id":"R-001","title":"Single NAT GW per AZ","severity":"med","impact":"egress SPOF","fix":"Provision NAT per AZ or use egress via GWLB."}],
+  "recommendations": [{"title":"Use Aurora Serverless v2 Multi-AZ","why":"fast failover & PITR","how":"enable PITR=5m snapshots, set backup window and test failover monthly","iac_snippet":"resource \"aws_rds_cluster\" \"aurora\" {..}"}],
+  "rpo_rto_alignment": {"rpo_minutes":5,"rto_minutes":30,"notes":"PITR at 5m cadence; failover automation tested to <30m."},
+  "pci_essentials": [{"control":"Segmentation","status":"gap","action":"Isolate CHD in separate VPC/subnet; tokenization of card data."}],
+  "cost": {"currency":"USD","assumptions":["~2M requests/mo","200GB S3"],"range_monthly_usd":{"low":1600,"high":2400},"items":[{"service":"CloudFront+S3","est_usd":120}]},
+  "latency": {"primary_region":"eu-west-1","alt_regions_considered":["eu-central-1"],"notes":"eu-west-1 chosen for AZ spread and lower pricing."},
+  "diagram_mermaid": "graph LR; U[Users] --> CF[CloudFront]; CF --> ALB; ALB --> F1[Fargate-AZ1]; ALB --> F2[Fargate-AZ2]; F1 --> DB[(Aurora)];",
+  "alternatives": [{"name":"Serverless (Lambda+API GW)","pros":["lower ops"],"cons":["cold starts"],"cost_delta_pct":-12,"latency_delta_ms":-8}]
+}
