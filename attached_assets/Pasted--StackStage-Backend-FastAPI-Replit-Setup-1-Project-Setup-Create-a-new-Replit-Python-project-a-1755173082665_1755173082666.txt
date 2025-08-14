@@ -1,0 +1,187 @@
+✅ StackStage Backend (FastAPI) - Replit Setup
+1. Project Setup
+
+Create a new Replit Python project and add these dependencies:
+
+pip install fastapi uvicorn python-multipart pydantic requests openai
+
+
+(We’re using openai for now, but later we’ll switch to OpenRouter.)
+
+2. Project Structure
+stackstage-backend/
+│── main.py                # Entry point
+│── routers/
+│    ├── analyze.py        # Analyze architecture endpoint
+│    ├── assistant.py      # Chat assistant endpoint
+│    └── diagram.py        # Diagram generation
+│── models/
+│    └── schemas.py        # Pydantic models
+│── utils/
+│    ├── ai_engine.py      # OpenRouter/OpenAI integration
+│    └── pdf_export.py     # Report export logic
+│── requirements.txt
+│── .env                   # API keys (use Replit Secrets)
+
+3. Create main.py
+from fastapi import FastAPI
+from routers import analyze, assistant, diagram
+
+app = FastAPI(title="StackStage API", version="1.0")
+
+# Include Routers
+app.include_router(analyze.router, prefix="/api/analyze", tags=["Analyze"])
+app.include_router(assistant.router, prefix="/api/assistant", tags=["Assistant"])
+app.include_router(diagram.router, prefix="/api/diagram", tags=["Diagram"])
+
+@app.get("/")
+def root():
+    return {"message": "StackStage API is running!"}
+
+4. Create Pydantic Schemas (models/schemas.py)
+from pydantic import BaseModel
+from typing import List, Optional
+
+class AnalyzeRequest(BaseModel):
+    architecture_text: str
+    user_region: Optional[str] = "us-east-1"
+
+class AnalyzeResponse(BaseModel):
+    score: int
+    issues: List[str]
+    recommendations: List[str]
+    diagram: str
+    estimated_cost: str
+
+class AssistantRequest(BaseModel):
+    prompt: str
+
+class AssistantResponse(BaseModel):
+    response: str
+
+5. Create Analyze Router (routers/analyze.py)
+from fastapi import APIRouter
+from models.schemas import AnalyzeRequest, AnalyzeResponse
+from utils.ai_engine import analyze_architecture
+
+router = APIRouter()
+
+@router.post("/", response_model=AnalyzeResponse)
+async def analyze(data: AnalyzeRequest):
+    return await analyze_architecture(data)
+
+6. Create Assistant Router (routers/assistant.py)
+from fastapi import APIRouter
+from models.schemas import AssistantRequest, AssistantResponse
+from utils.ai_engine import assistant_chat
+
+router = APIRouter()
+
+@router.post("/", response_model=AssistantResponse)
+async def chat(data: AssistantRequest):
+    return await assistant_chat(data.prompt)
+
+7. AI Engine (utils/ai_engine.py)
+import os
+import requests
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+BASE_URL = "https://openrouter.ai/api/v1"
+
+async def analyze_architecture(data):
+    # Prompt for architecture analysis
+    prompt = f"""
+    Analyze this cloud architecture:
+    {data.architecture_text}
+
+    User region: {data.user_region}
+    Provide:
+    - Score (0-100)
+    - List of major issues
+    - Fix recommendations
+    - Estimated cost implications
+    - Return a Mermaid diagram of optimized design
+    """
+
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "openai/gpt-4",  # or use "mistral" for free option
+        "messages": [
+            {"role": "system", "content": "You are a cloud architecture expert."},
+            {"role": "user", "content": prompt}
+        ]
+    }
+
+    response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
+    result = response.json()
+
+    # Extract response text
+    content = result['choices'][0]['message']['content']
+
+    return {
+        "score": 85,  # placeholder, parse from content if structured
+        "issues": ["High latency for EU users", "No multi-region failover"],
+        "recommendations": ["Use AWS EU region", "Add RDS Multi-AZ"],
+        "diagram": "graph TD; A[Client] --> B[Load Balancer]; B --> C[App Servers];",
+        "estimated_cost": "$450/month"
+    }
+
+async def assistant_chat(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "openai/gpt-4",
+        "messages": [
+            {"role": "system", "content": "You are a helpful cloud design assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    }
+
+    response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
+    result = response.json()
+    content = result['choices'][0]['message']['content']
+
+    return {"response": content}
+
+8. Diagram Router (routers/diagram.py)
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+
+router = APIRouter()
+
+@router.get("/")
+async def generate_diagram():
+    # Example static diagram (later from AI output)
+    diagram = "graph TD; Client --> API; API --> DB;"
+    return JSONResponse(content={"diagram": diagram})
+
+9. Run Server
+
+In Replit Shell:
+
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+
+Your API will run at:
+https://<your-repl>.repl.co
+
+✅ Endpoints Ready:
+
+POST /api/analyze → Analyze architecture
+
+POST /api/assistant → AI chat assistant
+
+GET /api/diagram → Get diagram (basic now)
+
+Next Steps
+
+✅ Test with mock data → Wire frontend (React Query) → Switch OpenAI → OpenRouter
+✅ Add export logic for PDF
+✅ Implement Geo-aware optimization logic in analysis promp
