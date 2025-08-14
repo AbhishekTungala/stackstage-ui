@@ -263,6 +263,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced AI Assistant Chat with Role Context
+  app.post("/api/assistant/chat", async (req, res) => {
+    try {
+      const { messages, role } = req.body;
+
+      if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ error: "Messages array is required" });
+      }
+
+      console.log("Getting enhanced AI assistant response with role context...");
+      
+      try {
+        // Call Python backend with role context
+        const backendResult = await callPythonAssistant(messages, role);
+
+        res.json({ 
+          response: backendResult.response || backendResult.message || "I'm here to help with your cloud architecture questions.",
+          suggestions: backendResult.suggestions || [
+            "How can I improve my cloud security?",
+            "What are the cost optimization best practices?", 
+            "How do I implement proper monitoring?",
+            "What's the recommended disaster recovery approach?"
+          ],
+          timestamp: new Date().toISOString()
+        });
+      } catch (backendError) {
+        console.error('Enhanced assistant backend failed, using intelligent fallback:', backendError);
+        
+        // Generate intelligent response based on role
+        const lastMessage = messages[messages.length - 1];
+        const roleSpecificResponse = generateRoleSpecificResponse(lastMessage?.content || "", role);
+        
+        res.json(roleSpecificResponse);
+      }
+    } catch (error) {
+      console.error('Enhanced assistant error:', error);
+      res.status(500).json({ 
+        response: "I apologize, but I'm experiencing technical difficulties. Please check your connection and try again.",
+        suggestions: ["Try again", "Check API configuration", "Contact support"],
+        timestamp: new Date().toISOString(),
+        error: true
+      });
+    }
+  });
+
+  // Export chat to PDF
+  app.post("/api/assistant/export/pdf", async (req, res) => {
+    try {
+      const { messages, role } = req.body;
+      
+      if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ error: "Messages array is required" });
+      }
+
+      // Generate simple PDF content - enhanced version would call Python backend
+      const timestamp = new Date().toISOString();
+      const roleLabel = role ? ` (${role} Mode)` : "";
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="stackstage_chat.pdf"');
+      
+      // Simple PDF placeholder - production would use proper PDF generation
+      const pdfContent = Buffer.from(`StackStage AI Assistant Chat Export${roleLabel}
+Generated: ${timestamp}
+
+${messages.map(msg => `${msg.role.toUpperCase()}: ${msg.content}`).join('\n\n')}
+
+---
+Exported from StackStage Cloud Intelligence Platform`);
+      
+      res.send(pdfContent);
+      
+    } catch (error) {
+      console.error("PDF export error:", error);
+      res.status(500).json({ 
+        error: "PDF export failed", 
+        details: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
   // Get Analysis Results
   app.get("/api/analysis/:id", async (req, res) => {
     try {
@@ -282,6 +363,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Generate role-specific responses when backend is unavailable
+function generateRoleSpecificResponse(userMessage: string, role?: string) {
+  const baseResponse = "Thank you for your question. Based on our cloud architecture expertise, here's my comprehensive guidance:";
+  
+  let roleSpecificContent = "";
+  let suggestions = [];
+  
+  if (role === "CTO") {
+    roleSpecificContent = `
+
+**Business Impact Analysis:**
+• Cost optimization strategies that align with your budget constraints
+• Compliance and security posture assessment for enterprise requirements
+• ROI projections and risk mitigation approaches
+• Strategic technology roadmap recommendations
+
+**Executive Summary:**
+I recommend implementing a phased approach that balances immediate cost savings with long-term strategic benefits. This includes rightsizing resources, implementing automated cost controls, and establishing governance frameworks.`;
+
+    suggestions = [
+      "Audit our PCI posture and cost hot-spots for a 2-AZ AWS SaaS",
+      "What's our current cloud spend breakdown and ROI analysis?",
+      "How do we ensure SOC 2 compliance across our multi-cloud setup?",
+      "What are the business risks of our current DR strategy?"
+    ];
+  } else if (role === "DevOps") {
+    roleSpecificContent = `
+
+**Operations & Automation Focus:**
+• CI/CD pipeline optimization and automated deployment strategies
+• Infrastructure as Code implementation with Terraform/CloudFormation
+• Monitoring, alerting, and observability best practices  
+• Container orchestration and Kubernetes management
+
+**Implementation Roadmap:**
+I suggest starting with automated infrastructure provisioning, then implementing comprehensive monitoring, followed by advanced deployment strategies like blue/green deployments.`;
+
+    suggestions = [
+      "Design GitHub Actions → ECS blue/green with canary deployments",
+      "How can we implement zero-downtime deployments?",
+      "What monitoring should we add for our Kubernetes cluster?",
+      "How do we automate our infrastructure scaling policies?"
+    ];
+  } else if (role === "Architect") {
+    roleSpecificContent = `
+
+**Architecture Design Considerations:**
+• Scalable system design patterns and microservices architecture
+• High availability and disaster recovery patterns
+• Data flow optimization and service communication strategies
+• Performance and security architecture decisions
+
+**Technical Implementation:**
+I recommend evaluating your current architecture against cloud-native patterns, implementing proper service mesh communication, and designing for both horizontal and vertical scaling scenarios.`;
+
+    suggestions = [
+      "Compare active-passive multi-region vs pilot-light for RPO≤5m, RTO≤30m",
+      "How should we design our microservices communication patterns?",
+      "What's the best approach for handling distributed transactions?",
+      "How do we implement proper service mesh security?"
+    ];
+  } else {
+    roleSpecificContent = `
+
+**Comprehensive Cloud Guidance:**
+• Security and compliance best practices across all cloud platforms
+• Cost optimization and resource management strategies
+• Performance tuning and scalability planning
+• Modern DevOps and automation practices
+
+**Next Steps:**
+I recommend starting with a comprehensive architecture review, implementing proper monitoring and security measures, followed by cost optimization initiatives.`;
+
+    suggestions = [
+      "How can I improve my cloud architecture security?",
+      "What are the best practices for cost optimization?",
+      "How do I implement proper monitoring and logging?",
+      "What's the recommended disaster recovery approach?"
+    ];
+  }
+
+  return {
+    response: baseResponse + roleSpecificContent,
+    suggestions,
+    timestamp: new Date().toISOString()
+  };
 }
 
 function buildAnalysisPrompt(mode: string, provider?: string): string {

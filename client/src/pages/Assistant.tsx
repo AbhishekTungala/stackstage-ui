@@ -70,7 +70,7 @@ const Assistant = () => {
     {
       id: '1',
       type: 'assistant',
-      content: `Welcome to StackStage Cloud Intelligence Assistant! I'm your dedicated cloud architecture expert, specifically designed for cloud companies, DevOps teams, and cloud developers. I provide enterprise-grade guidance for:
+      content: `Welcome to StackStage Cloud Intelligence Assistant! I'm your dedicated cloud architecture expert, specifically designed for enterprise teams. I provide expert guidance on:
 
 **Cloud Architecture & Strategy**
 • Multi-cloud and hybrid cloud architecture design
@@ -96,16 +96,18 @@ const Assistant = () => {
 • Disaster recovery and business continuity planning
 • Performance optimization and auto-scaling policies
 
-How can I help you optimize your cloud infrastructure today?`,
+Select your role below to get personalized recommendations, or ask me anything about your cloud infrastructure!`,
       timestamp: new Date(),
       suggestions: [
         "Review my Kubernetes cluster security configuration",
-        "Optimize multi-cloud cost allocation strategy",
+        "Optimize multi-cloud cost allocation strategy", 
         "Design a zero-trust architecture for microservices",
         "Implement GitOps workflow for infrastructure deployment"
       ]
     }
   ]);
+  
+  const [currentRole, setCurrentRole] = useState<'CTO' | 'DevOps' | 'Architect' | null>(null);
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -276,18 +278,15 @@ How can I help you optimize your cloud infrastructure today?`,
         content: msg.content
       }));
 
-      // Call real OpenAI API
-      const response = await fetch('/api/chat', {
+      // Call enhanced AI assistant API
+      const response = await fetch('/api/assistant/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messages: messageHistory,
-          userRegion: selectedRegion,
-          regionalImpact,
-          role: selectedRole,
-          conversationHistory: messageHistory
+          role: currentRole
         }),
       });
 
@@ -298,15 +297,12 @@ How can I help you optimize your cloud infrastructure today?`,
 
       const data = await response.json();
       
-      // Generate contextual suggestions based on the response
-      const suggestions = generateSuggestions(data.message, currentInput);
-      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.message.content || data.message,
+        content: data.response,
         timestamp: new Date(),
-        suggestions
+        suggestions: data.suggestions || []
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -445,6 +441,38 @@ How can I help you optimize your cloud infrastructure today?`,
                       <div className="flex items-center text-sm">
                         <Star className="w-4 h-4 mr-2 text-yellow-500" />
                         <span className="text-muted-foreground">99.9% accuracy</span>
+                      </div>
+                    </div>
+                    
+                    {/* Role Selector */}
+                    <div className="mt-4 pt-4 border-t border-border/50">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Select Your Role</Label>
+                        <Select value={currentRole || ""} onValueChange={(value: 'CTO' | 'DevOps' | 'Architect') => setCurrentRole(value)}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Choose your role for personalized advice" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="CTO">
+                              <div className="flex items-center space-x-2">
+                                <TrendingUp className="w-4 h-4 text-blue-500" />
+                                <span>CTO - Business Impact</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="DevOps">
+                              <div className="flex items-center space-x-2">
+                                <Code className="w-4 h-4 text-green-500" />
+                                <span>DevOps - Operations</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Architect">
+                              <div className="flex items-center space-x-2">
+                                <Cloud className="w-4 h-4 text-purple-500" />
+                                <span>Architect - Design</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </CardContent>
@@ -758,8 +786,44 @@ How can I help you optimize your cloud infrastructure today?`,
                     </div>
                     
                     <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                      <p>Press Enter to send</p>
+                      <div className="flex items-center space-x-2">
+                        <span>Press Enter to send</span>
+                        {currentRole && (
+                          <Badge variant="outline" className="text-xs py-0">
+                            {currentRole} Mode
+                          </Badge>
+                        )}
+                      </div>
                       <div className="flex items-center space-x-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-xs"
+                          onClick={() => {
+                            const conversationHistory = messages.map(msg => ({
+                              role: msg.type === 'assistant' ? 'assistant' : 'user',
+                              content: msg.content
+                            }));
+                            
+                            fetch('/api/assistant/export/pdf', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ messages: conversationHistory, role: currentRole })
+                            })
+                            .then(response => response.blob())
+                            .then(blob => {
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement('a');
+                              a.href = url;
+                              a.download = 'stackstage_chat.pdf';
+                              a.click();
+                              URL.revokeObjectURL(url);
+                            });
+                          }}
+                        >
+                          <Download className="w-3 h-3 mr-1" />
+                          Export
+                        </Button>
                         <span>Enterprise Cloud Intelligence</span>
                         <div className="flex items-center space-x-1">
                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
