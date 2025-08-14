@@ -77,8 +77,31 @@ asyncio.run(main())
   }
 }
 
-export async function callPythonAssistant(prompt: string, context?: string, conversationHistory?: any[], role?: string): Promise<any> {
+export async function callPythonAssistant(messages: any[] | string, role?: string): Promise<any> {
   try {
+    console.log("Calling Python backend for assistant...");
+    
+    // Handle different input formats
+    let requestData: any;
+    
+    if (Array.isArray(messages)) {
+      // New format: array of messages with role context
+      requestData = {
+        messages: messages,
+        role: role || null
+      };
+    } else {
+      // Legacy format: single prompt string
+      const cleanPrompt = typeof messages === 'string' 
+        ? messages.replace(/[^\w\s.,!?-]/g, '').trim()
+        : JSON.stringify(messages).replace(/[^\w\s.,!?-]/g, '').trim();
+        
+      requestData = {
+        prompt: cleanPrompt,
+        context: role
+      };
+    }
+    
     const pythonScript = `
 import sys
 import os
@@ -90,12 +113,23 @@ async def main():
     try:
         from utils.ai_engine import assistant_chat
         
-        result = await assistant_chat(
-            prompt="""${prompt.replace(/"/g, '\\"').replace(/\n/g, '\\n')}""",
-            context=${context ? `"""${context.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"""` : 'None'},
-            conversation_history=${conversationHistory ? JSON.stringify(conversationHistory).replace(/"/g, '\\"') : 'None'},
-            role="${role || 'architect'}"
-        )
+        # Handle different input formats
+        request_data = ${JSON.stringify(requestData)}
+        
+        if 'messages' in request_data:
+            # New enhanced format
+            result = await assistant_chat(
+                messages=request_data['messages'],
+                role=request_data.get('role', 'Architect')
+            )
+        else:
+            # Legacy format
+            result = await assistant_chat(
+                prompt=request_data['prompt'],
+                context=request_data.get('context', ''),
+                role=request_data.get('role', 'Architect')
+            )
+        
         print(json.dumps(result, default=str))
     except Exception as e:
         print(json.dumps({"error": str(e)}, default=str))
