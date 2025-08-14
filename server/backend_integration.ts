@@ -79,12 +79,12 @@ asyncio.run(main())
 
 export async function callPythonAssistant(messages: any[] | string, role?: string): Promise<any> {
   try {
-    console.log("Calling OpenAI API for enhanced assistant...");
+    console.log("Calling OpenRouter API for enhanced assistant...");
     
     // Check for API key
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY; // Using same env var for OpenRouter key
     if (!apiKey) {
-      throw new Error("OpenAI API key not found");
+      throw new Error("OpenRouter API key not found");
     }
     
     // Prepare messages for OpenAI
@@ -108,15 +108,17 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
       ...formattedMessages
     ];
     
-    // Call OpenAI API directly
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenRouter API for cost-effective access to multiple models
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://stackstage.dev',
+        'X-Title': 'StackStage Cloud Intelligence'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'openai/gpt-4o-mini',
         messages: fullMessages,
         max_tokens: 1500,
         temperature: 0.7
@@ -125,7 +127,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     
     if (!response.ok) {
       const errorData = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${errorData}`);
+      throw new Error(`OpenRouter API error: ${response.status} - ${errorData}`);
     }
     
     const data = await response.json();
@@ -141,7 +143,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     };
     
   } catch (error) {
-    console.error("OpenAI Assistant integration error:", error);
+    console.error("OpenRouter Assistant integration error:", error);
     throw error;
   }
 }

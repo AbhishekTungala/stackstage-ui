@@ -126,7 +126,6 @@ Select your role below to get personalized recommendations, or ask me anything a
   const [selectedRegion, setSelectedRegion] = useState("us-east-1");
   const [regionalImpact, setRegionalImpact] = useState<any>(null);
   const [showRegionSelector, setShowRegionSelector] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("architect");
 
   // Export chat functionality
   const exportChat = async () => {
@@ -143,7 +142,7 @@ Select your role below to get personalized recommendations, or ask me anything a
             timestamp: msg.timestamp
           })),
           session_info: {
-            role: selectedRole,
+            role: currentRole,
             region: selectedRegion,
             export_date: new Date().toISOString()
           }
