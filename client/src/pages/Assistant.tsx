@@ -70,21 +70,39 @@ const Assistant = () => {
     {
       id: '1',
       type: 'assistant',
-      content: `Welcome to StackStage AI Assistant! I'm here to help you with cloud architecture analysis, optimization, and best practices. I can:
+      content: `Welcome to StackStage Cloud Intelligence Assistant! I'm your dedicated cloud architecture expert, specifically designed for cloud companies, DevOps teams, and cloud developers. I provide enterprise-grade guidance for:
 
-• Analyze your infrastructure configurations
-• Provide security recommendations
-• Suggest cost optimization strategies
-• Answer questions about cloud best practices
-• Help with compliance requirements
+**Cloud Architecture & Strategy**
+• Multi-cloud and hybrid cloud architecture design
+• Microservices and serverless architecture patterns
+• Container orchestration with Kubernetes and Docker
+• Infrastructure as Code (IaC) with Terraform, CloudFormation, Pulumi
 
-How can I assist you today?`,
+**Security & Compliance**
+• Cloud security posture management and zero-trust architecture
+• Compliance frameworks (SOC 2, HIPAA, PCI DSS, ISO 27001)
+• Identity and Access Management (IAM) best practices
+• Security automation and threat detection
+
+**Cost Optimization & FinOps**
+• Cloud cost analysis and right-sizing recommendations
+• Reserved instances and spot instance strategies
+• Multi-cloud cost optimization and billing management
+• FinOps implementation and governance frameworks
+
+**DevOps & Automation**
+• CI/CD pipeline optimization and GitOps workflows
+• Infrastructure monitoring and observability strategies
+• Disaster recovery and business continuity planning
+• Performance optimization and auto-scaling policies
+
+How can I help you optimize your cloud infrastructure today?`,
       timestamp: new Date(),
       suggestions: [
-        "Analyze my AWS setup for security issues",
-        "How can I reduce my cloud costs?",
-        "Best practices for Kubernetes security",
-        "Explain Infrastructure as Code benefits"
+        "Review my Kubernetes cluster security configuration",
+        "Optimize multi-cloud cost allocation strategy",
+        "Design a zero-trust architecture for microservices",
+        "Implement GitOps workflow for infrastructure deployment"
       ]
     }
   ]);
@@ -120,35 +138,63 @@ How can I assist you today?`,
   const conversationTemplates = [
     {
       id: "security",
-      title: "Security Analysis",
-      description: "Get security recommendations for your infrastructure",
+      title: "Cloud Security Assessment",
+      description: "Zero-trust architecture and multi-cloud security audit",
       icon: Shield,
-      prompt: "Please analyze my cloud infrastructure for potential security vulnerabilities and provide detailed recommendations.",
-      color: "green"
+      prompt: "I need a comprehensive cloud security assessment covering zero-trust architecture, IAM policies, network security, data encryption, and compliance posture across my multi-cloud environment. Please provide actionable security recommendations with implementation timelines.",
+      color: "green",
+      badge: "Enterprise",
+      stats: { usage: "5.2k", rating: 4.9 }
     },
     {
-      id: "cost",
-      title: "Cost Optimization",
-      description: "Reduce cloud spending with AI insights",
+      id: "finops",
+      title: "FinOps Cost Strategy",
+      description: "Advanced cloud cost optimization and financial governance",
       icon: TrendingUp,
-      prompt: "Help me identify cost optimization opportunities in my cloud infrastructure and provide specific recommendations to reduce expenses.",
-      color: "blue"
+      prompt: "Analyze my cloud spending patterns across AWS, Azure, and GCP. I need FinOps strategies for cost allocation, right-sizing, reserved instances optimization, and implementing cloud cost governance frameworks for our organization.",
+      color: "blue",
+      badge: "Popular",
+      stats: { usage: "4.8k", rating: 4.8 }
     },
     {
-      id: "performance",
-      title: "Performance Tuning",
-      description: "Optimize infrastructure performance",
+      id: "kubernetes",
+      title: "Kubernetes at Scale",
+      description: "Production-ready K8s cluster optimization and management",
+      icon: Code,
+      prompt: "Help me optimize my Kubernetes clusters for production workloads handling 100k+ daily users. I need guidance on resource management, security hardening, networking, monitoring, GitOps workflows, and multi-cluster management.",
+      color: "purple",
+      badge: "Expert",
+      stats: { usage: "3.7k", rating: 4.9 }
+    },
+    {
+      id: "architecture",
+      title: "Cloud-Native Architecture",
+      description: "Microservices, serverless, and scalable system design",
+      icon: Cloud,
+      prompt: "I need to design a cloud-native architecture for a microservices application with auto-scaling, disaster recovery, observability, and multi-region deployment. Include API gateway, service mesh, and event-driven patterns.",
+      color: "cyan",
+      badge: "Pro",
+      stats: { usage: "3.1k", rating: 4.8 }
+    },
+    {
+      id: "devops",
+      title: "DevOps Pipeline Excellence",
+      description: "CI/CD optimization and infrastructure automation",
       icon: Cpu,
-      prompt: "Analyze my infrastructure performance and suggest optimizations for better efficiency and response times.",
-      color: "purple"
+      prompt: "Optimize my DevOps pipeline with advanced CI/CD practices, infrastructure as code, automated testing, security scanning, deployment strategies, and observability for cloud-native applications.",
+      color: "orange",
+      badge: "Pro",
+      stats: { usage: "2.9k", rating: 4.7 }
     },
     {
       id: "compliance",
-      title: "Compliance Check",
-      description: "Ensure regulatory compliance",
+      title: "Enterprise Compliance",
+      description: "SOC 2, HIPAA, PCI DSS compliance implementation",
       icon: CheckCircle,
-      prompt: "Review my infrastructure for compliance with industry standards like SOC 2, GDPR, and HIPAA.",
-      color: "orange"
+      prompt: "I need comprehensive compliance guidance for SOC 2 Type II, HIPAA, and PCI DSS requirements in my cloud infrastructure. Please provide implementation roadmap, audit preparation strategies, and automated compliance monitoring.",
+      color: "green",
+      badge: "Enterprise",
+      stats: { usage: "1.8k", rating: 4.9 }
     }
   ];
 
@@ -249,25 +295,35 @@ How can I assist you today?`,
     
     const contentLower = responseContent.toString().toLowerCase();
     
-    // Based on response content
-    if (contentLower.includes('security')) {
-      suggestions.push("Show me specific security recommendations");
-      suggestions.push("How do I implement these security fixes?");
+    // Professional cloud-focused suggestions based on response content
+    if (contentLower.includes('security') || contentLower.includes('compliance') || contentLower.includes('iam')) {
+      suggestions.push("Generate security checklist for implementation");
+      suggestions.push("Show me compliance audit framework");
+      suggestions.push("Create IAM policy templates");
     }
     
-    if (contentLower.includes('cost')) {
-      suggestions.push("Calculate potential cost savings");
-      suggestions.push("Show me a cost optimization roadmap");
+    if (contentLower.includes('cost') || contentLower.includes('finops') || contentLower.includes('optimization')) {
+      suggestions.push("Build cost monitoring dashboard strategy");
+      suggestions.push("Create FinOps governance framework");
+      suggestions.push("Generate reserved instance recommendations");
     }
     
-    if (contentLower.includes('performance')) {
-      suggestions.push("How can I monitor these performance improvements?");
-      suggestions.push("What are the performance benchmarks?");
+    if (contentLower.includes('kubernetes') || contentLower.includes('container') || contentLower.includes('orchestration')) {
+      suggestions.push("Show me Kubernetes security hardening steps");
+      suggestions.push("Create GitOps workflow implementation");
+      suggestions.push("Generate monitoring and alerting setup");
     }
     
-    // Generic helpful suggestions
-    suggestions.push("Generate a detailed implementation plan");
-    suggestions.push("Create a report I can share with my team");
+    if (contentLower.includes('terraform') || contentLower.includes('cloudformation') || contentLower.includes('iac')) {
+      suggestions.push("Create Infrastructure as Code templates");
+      suggestions.push("Generate deployment pipeline configuration");
+      suggestions.push("Show me state management best practices");
+    }
+    
+    // Enterprise-focused generic suggestions
+    suggestions.push("Generate technical implementation roadmap");
+    suggestions.push("Create executive summary for stakeholders");
+    suggestions.push("Show me metrics and KPIs to track");
     
     // Return 4 most relevant suggestions
     return suggestions.slice(0, 4);
@@ -420,22 +476,51 @@ How can I assist you today?`,
                   {conversationTemplates.map((template) => (
                     <div key={template.id}>
                       <Card 
-                        className={`cursor-pointer transition-all duration-200 glass-card border border-white/10 ${
+                        className={`cursor-pointer transition-all duration-200 glass-card border border-white/10 hover:shadow-lg hover:border-primary/30 ${
                           selectedTemplate === template.id 
-                            ? 'ring-1 ring-primary bg-primary/5 border-primary/20' 
-                            : 'hover:shadow-sm hover:bg-background/80 hover:border-white/20'
+                            ? 'ring-2 ring-primary bg-primary/5 border-primary/30' 
+                            : 'hover:bg-background/90'
                         }`}
                         onClick={() => handleTemplateSelect(template)}
                       >
-                        <CardContent className="p-1">
-                          <div className="flex items-center space-x-1">
-                            <div className={`w-3.5 h-3.5 rounded flex items-center justify-center bg-${template.color}-500/20 flex-shrink-0`}>
-                              <template.icon className={`w-2 h-2 text-${template.color}-500`} />
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${template.color}-500/10 border border-${template.color}-500/20`}>
+                                  <template.icon className={`w-4 h-4 text-${template.color}-500`} />
+                                </div>
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center space-x-2">
+                                    <h4 className="font-semibold text-sm text-foreground">{template.title}</h4>
+                                    {template.badge && (
+                                      <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+                                        {template.badge}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                                </div>
+                              </div>
                             </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-medium text-sm leading-tight">{template.title}</h4>
-                              <p className="text-xs text-muted-foreground leading-tight mt-0.5 line-clamp-2">{template.description}</p>
-                            </div>
+                            
+                            {template.stats && (
+                              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                                <div className="flex items-center space-x-3 text-xs text-muted-foreground">
+                                  <span className="flex items-center space-x-1">
+                                    <User className="w-3 h-3" />
+                                    <span>{template.stats.usage}</span>
+                                  </span>
+                                  <span className="flex items-center space-x-1">
+                                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                    <span>{template.stats.rating}</span>
+                                  </span>
+                                </div>
+                                <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
+                                  Start →
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -500,8 +585,8 @@ How can I assist you today?`,
                   </CardHeader>
 
                   {/* Messages Area */}
-                  <ScrollArea className="flex-1 p-4">
-                    <div className="space-y-4">
+                  <ScrollArea className="flex-1 p-4 h-[calc(100vh-28rem)] overflow-y-auto scroll-smooth">
+                    <div className="space-y-6 pb-4">
                       {messages.map((message) => (
                         <div
                           key={message.id}
@@ -598,7 +683,7 @@ How can I assist you today?`,
                           value={inputMessage}
                           onChange={(e) => setInputMessage(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          placeholder="Ask about cloud architecture, security, costs..."
+                          placeholder="Ask about cloud architecture, Kubernetes, DevOps, security, FinOps..."
                           className="min-h-[44px] max-h-24 resize-none pr-16 text-sm"
                         />
                         <div className="absolute bottom-2 right-2 flex items-center space-x-0.5">
@@ -625,7 +710,7 @@ How can I assist you today?`,
                     <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
                       <p>Press Enter to send</p>
                       <div className="flex items-center space-x-3">
-                        <span>Powered by StackStage AI</span>
+                        <span>Enterprise Cloud Intelligence</span>
                         <div className="flex items-center space-x-1">
                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                           <span>Secure</span>
