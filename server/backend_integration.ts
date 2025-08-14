@@ -118,10 +118,10 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         'X-Title': 'StackStage Cloud Intelligence'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
+        model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-70b-instruct',
         messages: fullMessages,
-        max_tokens: 1500,
-        temperature: 0.7
+        max_tokens: 2000,
+        temperature: 0.2
       })
     });
     
@@ -131,16 +131,52 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     }
     
     const data = await response.json();
-    const aiResponse = data.choices[0]?.message?.content || "I'm here to help with your cloud architecture questions.";
+    let aiResponse = data.choices[0]?.message?.content || "I'm here to help with your cloud architecture questions.";
     
-    // Generate contextual suggestions based on role and content
-    const suggestions = generateRoleBasedSuggestions(aiResponse, role);
+    // Try to parse as JSON for structured responses
+    let structuredResponse;
+    try {
+      // Clean response to extract JSON
+      let cleanResponse = aiResponse.trim();
+      if (cleanResponse.startsWith('```json')) {
+        cleanResponse = cleanResponse.replace(/```json\n?/, '').replace(/\n?```$/, '');
+      } else if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse.replace(/```\n?/, '').replace(/\n?```$/, '');
+      }
+      
+      // Find JSON boundaries
+      const jsonStart = cleanResponse.indexOf('{');
+      const jsonEnd = cleanResponse.lastIndexOf('}');
+      
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const jsonString = cleanResponse.substring(jsonStart, jsonEnd + 1);
+        structuredResponse = JSON.parse(jsonString);
+      }
+    } catch (parseError) {
+      console.log("Response not in JSON format, using as text:", parseError.message);
+    }
     
-    return {
-      response: aiResponse,
-      suggestions: suggestions,
-      timestamp: new Date().toISOString()
-    };
+    if (structuredResponse) {
+      // Return structured response with suggestions based on the structured data
+      const suggestions = generateStructuredSuggestions(structuredResponse, role);
+      
+      return {
+        response: structuredResponse,
+        suggestions: suggestions,
+        timestamp: new Date().toISOString(),
+        structured: true
+      };
+    } else {
+      // Fallback to text response
+      const suggestions = generateRoleBasedSuggestions(aiResponse, role);
+      
+      return {
+        response: aiResponse,
+        suggestions: suggestions,
+        timestamp: new Date().toISOString(),
+        structured: false
+      };
+    }
     
   } catch (error) {
     console.error("OpenRouter Assistant integration error:", error);
@@ -149,51 +185,53 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
 }
 
 function getRoleBasedSystemPrompt(role?: string): string {
-  const basePrompt = "You are an expert cloud architecture consultant with deep expertise in AWS, Azure, and GCP. Provide detailed, actionable advice based on industry best practices.";
+  const baseStackStagePrompt = `You are StackStage AI, a senior cloud architecture advisor for AWS, Azure, and GCP.
+Always return STRICT JSON only (no markdown, no backticks). Follow this schema exactly:
+{
+  "score": number,
+  "summary": string,
+  "rationale": string,
+  "risks": [{"id": string, "title": string, "severity": "high|med|low", "impact": string, "fix": string}],
+  "recommendations": [{"title": string, "why": string, "how": string, "iac_snippet": string}],
+  "rpo_rto_alignment": {"rpo_minutes": number, "rto_minutes": number, "notes": string},
+  "pci_essentials": [{"control": string, "status": "pass|gap", "action": string}],
+  "cost": {
+    "currency": "USD",
+    "assumptions": string[],
+    "range_monthly_usd": {"low": number, "high": number},
+    "items": [{"service": string, "est_usd": number}]
+  },
+  "latency": {"primary_region": string, "alt_regions_considered": string[], "notes": string},
+  "diagram_mermaid": string,
+  "alternatives": [{"name": string, "pros": string[], "cons": string[], "cost_delta_pct": number, "latency_delta_ms": number}]
+}
+Rules:
+- Be concise but complete.
+- Cost numbers are estimates with assumptions; prefer ranges.
+- Map design choices explicitly to the requested RPO and RTO.
+- Include a valid Mermaid diagram (no markdown fences).
+- Add at least 1 alternative architecture with trade-offs.`;
   
   switch (role) {
     case 'CTO':
-      return `${basePrompt}
+      return `${baseStackStagePrompt}
 
-You are speaking to a CTO. Focus on:
-- Business impact and ROI of technical decisions
-- Strategic technology roadmaps and risk assessments
-- Compliance, governance, and enterprise security
-- Cost optimization and budget planning
-- Executive-level summaries with clear recommendations
-
-Provide responses that help inform strategic business decisions with technical depth when needed.`;
+Role bias: Focus on cost control, compliance, and business risk. Emphasize ROI analysis, strategic roadmaps, governance frameworks, and executive-level summaries with clear business impact.`;
 
     case 'DevOps':
-      return `${basePrompt}
+      return `${baseStackStagePrompt}
 
-You are speaking to a DevOps Engineer. Focus on:
-- Operational excellence and automation strategies
-- CI/CD pipeline optimization and deployment best practices
-- Infrastructure as Code (Terraform, CloudFormation)
-- Monitoring, logging, and observability implementation
-- Container orchestration and Kubernetes management
-- Disaster recovery and incident response procedures
-
-Provide hands-on, technical guidance with specific implementation steps and tool recommendations.`;
+Role bias: Focus on automation, CI/CD, scaling policies, and observability. Emphasize Infrastructure as Code, deployment strategies, monitoring implementations, and operational excellence.`;
 
     case 'Architect':
-      return `${basePrompt}
+      return `${baseStackStagePrompt}
 
-You are speaking to a Cloud Architect. Focus on:
-- System design patterns and architectural best practices
-- Scalability, performance, and high availability design
-- Microservices architecture and service communication
-- Data architecture and storage optimization
-- Security architecture and compliance frameworks
-- Multi-cloud and hybrid cloud strategies
-
-Provide comprehensive architectural guidance with detailed technical specifications and design considerations.`;
+Role bias: Focus on design trade-offs, HA/DR patterns, and multi-region topology. Emphasize system design patterns, scalability considerations, and technical architecture decisions.`;
 
     default:
-      return `${basePrompt}
+      return `${baseStackStagePrompt}
 
-Provide comprehensive cloud architecture guidance covering security, performance, cost optimization, and operational best practices. Tailor your response to the specific question asked while maintaining technical accuracy and actionable recommendations.`;
+Provide comprehensive cloud architecture guidance covering security, performance, cost optimization, and operational best practices.`;
   }
 }
 
@@ -242,6 +280,46 @@ function generateRoleBasedSuggestions(response: string, role?: string): string[]
   
   // Add generic helpful suggestions
   suggestions.push("Export this conversation to PDF");
+  
+  return suggestions.slice(0, 4);
+}
+
+function generateStructuredSuggestions(structuredResponse: any, role?: string): string[] {
+  const suggestions: string[] = [];
+  
+  // Generate suggestions based on structured response content
+  if (structuredResponse.alternatives && structuredResponse.alternatives.length > 0) {
+    suggestions.push(`Compare with ${structuredResponse.alternatives[0].name} approach`);
+  }
+  
+  if (structuredResponse.risks && structuredResponse.risks.length > 0) {
+    const highRisks = structuredResponse.risks.filter((r: any) => r.severity === 'high');
+    if (highRisks.length > 0) {
+      suggestions.push(`Implement fix for ${highRisks[0].title}`);
+    }
+  }
+  
+  if (structuredResponse.cost && structuredResponse.cost.range_monthly_usd) {
+    suggestions.push("Optimize costs further with reserved instances");
+  }
+  
+  if (structuredResponse.pci_essentials) {
+    const gaps = structuredResponse.pci_essentials.filter((p: any) => p.status === 'gap');
+    if (gaps.length > 0) {
+      suggestions.push(`Address PCI gap: ${gaps[0].control}`);
+    }
+  }
+  
+  // Role-specific suggestions
+  if (role === 'CTO') {
+    suggestions.push("Generate executive risk assessment");
+  } else if (role === 'DevOps') {
+    suggestions.push("Create implementation automation scripts");
+  } else if (role === 'Architect') {
+    suggestions.push("Design detailed service mesh topology");
+  }
+  
+  suggestions.push("Export detailed analysis report");
   
   return suggestions.slice(0, 4);
 }

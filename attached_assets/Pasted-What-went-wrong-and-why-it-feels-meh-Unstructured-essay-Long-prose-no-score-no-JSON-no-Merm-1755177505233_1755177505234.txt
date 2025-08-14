@@ -1,0 +1,321 @@
+What went wrong (and why it feels “meh”)
+
+Unstructured essay
+
+Long prose; no score, no JSON, no Mermaid diagram, no trade-off table → hard for your UI to render cleanly.
+
+Shaky estimates
+
+RDS and EC2 numbers are unrealistic (e.g., Multi-AZ RDS isn’t ~$70/mo). We should present ranges and assumptions, not hard numbers.
+
+RPO/RTO not enforced
+
+Mentions DR but doesn’t map design choices explicitly to RPO=5m / RTO=30m (e.g., PITR windows, backup cadence, failover flow).
+
+PCI specifics light
+
+Says “PCI essentials” but lacks network segmentation, tokenization reference, centralized logging retention, WAF rulesets, ASV scan hooks.
+
+No geo/cost reasoning
+
+Doesn’t prove eu-west-1 is optimal, nor show latency/cost trade-offs with alternatives.
+
+What “great” looks like (our StackStage standard)
+
+Every analysis should return a strict JSON object with:
+
+{
+  "score": 0-100,
+  "summary": "2-3 line executive summary",
+  "rationale": "concise reasoning",
+  "risks": [{ "id": "R-001", "title": "", "severity": "high|med|low", "impact": "", "fix": "" }],
+  "recommendations": [{ "title": "", "why": "", "how": "", "iac_snippet": "```hcl\n...\n```" }],
+  "rpo_rto_alignment": { "rpo_minutes": 5, "rto_minutes": 30, "notes": "" },
+  "pci_essentials": [{ "control": "", "status": "pass|gap", "action": "" }],
+  "cost": {
+    "currency": "USD",
+    "assumptions": ["traffic ~2M req/mo", "200GB-month S3", "10M CF requests"],
+    "range_monthly_usd": { "low": 1500, "high": 2500 },
+    "items": [{ "service": "ALB", "est_usd": 60 }, { "service": "Aurora Serverless v2", "est_usd": 400 }]
+  },
+  "latency": {
+    "primary_region": "eu-west-1",
+    "alt_regions_considered": ["eu-central-1", "eu-west-2"],
+    "notes": "…"
+  },
+  "diagram_mermaid": "graph TD; ...",
+  "alternatives": [{
+    "name": "Serverless-first",
+    "pros": ["auto-scale", "reduced ops"],
+    "cons": ["cold starts"],
+    "cost_delta_pct": -12,
+    "latency_delta_ms": -20
+  }]
+}
+
+
+Your UI can reliably render scorecards, tables, diagrams, and diffs from that.
+
+Drop-in backend upgrade (copy/paste)
+1) Strengthen the system prompt + require JSON
+
+utils/ai_engine.py → analyze_architecture()
+
+import os, json, requests
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+BASE_URL = "https://openrouter.ai/api/v1"
+MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-70b-instruct")  # solid OSS via OpenRouter
+
+STACKSTAGE_SYSTEM = """
+You are StackStage AI, a senior cloud architecture advisor for AWS, Azure, and GCP.
+Always return STRICT JSON only (no markdown, no backticks). Follow this schema exactly:
+{
+  "score": number,
+  "summary": string,
+  "rationale": string,
+  "risks": [{"id": string, "title": string, "severity": "high|med|low", "impact": string, "fix": string}],
+  "recommendations": [{"title": string, "why": string, "how": string, "iac_snippet": string}],
+  "rpo_rto_alignment": {"rpo_minutes": number, "rto_minutes": number, "notes": string},
+  "pci_essentials": [{"control": string, "status": "pass|gap", "action": string}],
+  "cost": {
+    "currency": "USD",
+    "assumptions": string[],
+    "range_monthly_usd": {"low": number, "high": number},
+    "items": [{"service": string, "est_usd": number}]
+  },
+  "latency": {"primary_region": string, "alt_regions_considered": string[], "notes": string},
+  "diagram_mermaid": string,
+  "alternatives": [{"name": string, "pros": string[], "cons": string[], "cost_delta_pct": number, "latency_delta_ms": number}]
+}
+Rules:
+- Be concise but complete.
+- Cost numbers are estimates with assumptions; prefer ranges.
+- Map design choices explicitly to the requested RPO and RTO.
+- Include a valid Mermaid diagram (no markdown fences).
+- Add at least 1 alternative architecture with trade-offs.
+"""
+
+def _post_openrouter(messages):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {"model": MODEL, "messages": messages, "temperature": 0.2}
+    r = requests.post(f"{BASE_URL}/chat/completions", headers=headers, json=payload, timeout=60)
+    r.raise_for_status()
+    return r.json()["choices"][0]["message"]["content"]
+
+async def analyze_architecture(data):
+    user_prompt = f"""
+Context:
+- User region / target audience: {data.user_region}
+- Input architecture (raw): 
+{data.architecture_text}
+
+Task:
+Return STRICT JSON only. Design for the requested region(s), enforce RPO/RTO if specified,
+identify PCI gaps where applicable, include Mermaid diagram (diagram_mermaid),
+and provide cost ranges with assumptions. If info is missing, state assumptions clearly.
+"""
+    raw = _post_openrouter([
+        {"role": "system", "content": STACKSTAGE_SYSTEM},
+        {"role": "user", "content": user_prompt}
+    ])
+
+    # Hard-guard: ensure JSON
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        # Attempt salvage: common case is triple backticks or prose before/after JSON.
+        raw_clean = raw.strip().strip("`").strip()
+        start = raw_clean.find("{")
+        end = raw_clean.rfind("}")
+        parsed = json.loads(raw_clean[start:end+1])
+
+    # Minimal validation for required fields
+    for key in ["score", "summary", "diagram_mermaid", "cost"]:
+        if key not in parsed:
+            raise ValueError(f"AI response missing required field: {key}")
+
+    return parsed
+
+
+Notes
+• Uses Llama-3.1-70B-Instruct on OpenRouter by default (editable via OPENROUTER_MODEL).
+• Enforces strict JSON and validates key fields.
+• Returns diagram_mermaid and cost ranges.
+
+2) Expand your Pydantic schema to match
+
+models/schemas.py
+
+from pydantic import BaseModel
+from typing import List, Optional, Literal, Dict
+
+class Risk(BaseModel):
+    id: str
+    title: str
+    severity: Literal["high", "med", "low"]
+    impact: str
+    fix: str
+
+class Rec(BaseModel):
+    title: str
+    why: str
+    how: str
+    iac_snippet: str
+
+class CostItem(BaseModel):
+    service: str
+    est_usd: float
+
+class CostBlock(BaseModel):
+    currency: str
+    assumptions: List[str]
+    range_monthly_usd: Dict[str, float]
+    items: List[CostItem]
+
+class RpoRto(BaseModel):
+    rpo_minutes: int
+    rto_minutes: int
+    notes: str
+
+class AnalyzeRequest(BaseModel):
+    architecture_text: str
+    user_region: Optional[str] = "eu-west-1"
+
+class AnalyzeResponse(BaseModel):
+    score: int
+    summary: str
+    rationale: str
+    risks: List[Risk]
+    recommendations: List[Rec]
+    rpo_rto_alignment: RpoRto
+    pci_essentials: List[Dict[str, str]]
+    cost: CostBlock
+    latency: Dict[str, object]
+    diagram_mermaid: str
+    alternatives: List[Dict[str, object]]
+
+3) Role-based context (CTO/DevOps/Architect)
+
+Add an optional role to the request and bias the system:
+
+schemas.py
+
+class AnalyzeRequest(BaseModel):
+    architecture_text: str
+    user_region: Optional[str] = "eu-west-1"
+    role: Optional[Literal["CTO","DevOps","Architect"]] = None
+
+
+ai_engine.py (adjust user_prompt)
+
+role_bias = ""
+if getattr(data, "role", None) == "CTO":
+    role_bias = "Focus on cost control, compliance, and business risk."
+elif data.role == "DevOps":
+    role_bias = "Focus on automation, CI/CD, scaling policies, and observability."
+elif data.role == "Architect":
+    role_bias = "Focus on design trade-offs, HA/DR patterns, and multi-region topology."
+
+user_prompt = f"""
+Role bias: {role_bias}
+Context:
+- User region / target audience: {data.user_region}
+- Input architecture (raw): 
+{data.architecture_text}
+...
+"""
+
+4) Session memory for Assistant
+
+routers/assistant.py → accept full message history:
+
+from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List, Optional, Literal
+import os, requests, json
+
+router = APIRouter()
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+BASE_URL = "https://openrouter.ai/api/v1"
+MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-70b-instruct")
+
+class Msg(BaseModel):
+    role: Literal["system","user","assistant"]
+    content: str
+
+class AssistantChatRequest(BaseModel):
+    messages: List[Msg]
+    role: Optional[Literal["CTO","DevOps","Architect"]] = None
+
+@router.post("/")
+async def chat(req: AssistantChatRequest):
+    system = {
+        "role": "system",
+        "content": (
+            "You are StackStage AI, a professional cloud architecture assistant. "
+            "Be concise, actionable, and return code blocks where relevant. "
+            "Prefer AWS examples unless user states Azure/GCP."
+        )
+    }
+    if req.role == "CTO":
+        system["content"] += " Emphasize cost, compliance, risk, and business impact."
+    elif req.role == "DevOps":
+        system["content"] += " Emphasize CI/CD, automation, scaling, and observability."
+    elif req.role == "Architect":
+        system["content"] += " Emphasize design trade-offs, HA/DR, patterns, and multi-region."
+
+    headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
+    payload = {"model": MODEL, "messages": [system] + [m.dict() for m in req.messages], "temperature": 0.3}
+    r = requests.post(f"{BASE_URL}/chat/completions", headers=headers, json=payload, timeout=60)
+    r.raise_for_status()
+    content = r.json()["choices"][0]["message"]["content"]
+    return {"response": content}
+
+
+Frontend: keep sending the entire messages history each time → instant session memory without a DB.
+
+5) Chat export (PDF + TXT)
+
+Add a simple export route now; you can beautify later.
+
+Install: pip install reportlab
+
+utils/pdf_export.py
+
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import simpleSplit
+
+def export_chat_pdf(messages, outfile_path="chat.pdf", title="StackStage Chat"):
+    c = canvas.Canvas(outfile_path, pagesize=A4)
+    width, height = A4
+    y = height - 50
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y, title)
+    y -= 30
+    c.setFont("Helvetica", 10)
+    for m in messages:
+        block = f"{m['role'].upper()}: {m['content']}"
+        lines = simpleSplit(block, "Helvetica", 10, width-100)
+        for line in lines:
+            if y < 60:
+                c.showPage(); y = height - 50; c.setFont("Helvetica", 10)
+            c.drawString(50, y, line); y -= 14
+        y -= 12
+    c.save()
+    return outfile_path
+
+
+routers/assistant.py (export endpoint)
+
+from fastapi.responses import FileResponse
+from utils.pdf_export import export_chat_pdf
+
+@router.post("/export/pdf")
+async def export_pdf(req: AssistantChatRequest):
+    path = export_chat_pdf([m.dict() for m in req.messages], outfile_path="chat.pdf")
+    return FileResponse(path, filename="stackstage_chat.pdf", media_type="application/pdf")

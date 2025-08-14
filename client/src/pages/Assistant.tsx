@@ -55,6 +55,7 @@ import {
   MapPin
 } from "lucide-react";
 import { ChatLoading } from "@/components/ui/loading-skeleton";
+import StructuredResponse from "@/components/ui/structured-response";
 
 interface Message {
   id: string;
@@ -274,7 +275,7 @@ Select your role below to get personalized recommendations, or ask me anything a
       // Prepare message history for OpenAI
       const messageHistory = [...messages, userMessage].map(msg => ({
         role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content
+        content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)
       }));
 
       // Call enhanced AI assistant API
@@ -296,10 +297,13 @@ Select your role below to get personalized recommendations, or ask me anything a
 
       const data = await response.json();
       
+      // Handle both structured and unstructured responses
+      const assistantResponse = data.structured ? data.response : data.response;
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.response,
+        content: assistantResponse,
         timestamp: new Date(),
         suggestions: data.suggestions || []
       };
@@ -687,8 +691,14 @@ Select your role below to get personalized recommendations, or ask me anything a
                                       : 'bg-muted'
                                   } ${message.id === '1' && message.type === 'assistant' ? 'max-h-64 overflow-auto' : ''}`}
                                 >
-                                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                    {message.content}
+                                  <div className="text-sm leading-relaxed">
+                                    {typeof message.content === 'object' && message.content.score !== undefined ? (
+                                      <StructuredResponse data={message.content} />
+                                    ) : (
+                                      <div className="whitespace-pre-wrap">
+                                        {typeof message.content === 'string' ? message.content : JSON.stringify(message.content, null, 2)}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                                 
