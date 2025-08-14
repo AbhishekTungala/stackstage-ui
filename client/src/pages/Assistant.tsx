@@ -208,7 +208,7 @@ How can I assist you today?`,
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.message,
+        content: data.message.content || data.message,
         timestamp: new Date(),
         suggestions
       };
@@ -239,21 +239,28 @@ How can I assist you today?`,
   };
 
   // Generate contextual suggestions based on AI response and user input
-  const generateSuggestions = (aiResponse: string, userInput: string): string[] => {
+  const generateSuggestions = (aiResponse: string | any, userInput: string): string[] => {
     const suggestions = [];
     
+    // Extract content from response object or use as string
+    const responseContent = typeof aiResponse === 'object' ? 
+      (aiResponse.content || aiResponse.response || JSON.stringify(aiResponse)) : 
+      (aiResponse || '');
+    
+    const contentLower = responseContent.toString().toLowerCase();
+    
     // Based on response content
-    if (aiResponse.toLowerCase().includes('security')) {
+    if (contentLower.includes('security')) {
       suggestions.push("Show me specific security recommendations");
       suggestions.push("How do I implement these security fixes?");
     }
     
-    if (aiResponse.toLowerCase().includes('cost')) {
+    if (contentLower.includes('cost')) {
       suggestions.push("Calculate potential cost savings");
       suggestions.push("Show me a cost optimization roadmap");
     }
     
-    if (aiResponse.toLowerCase().includes('performance')) {
+    if (contentLower.includes('performance')) {
       suggestions.push("How can I monitor these performance improvements?");
       suggestions.push("What are the performance benchmarks?");
     }
