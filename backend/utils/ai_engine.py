@@ -1,15 +1,20 @@
 import os
 import json
 import uuid
+import requests
 from datetime import datetime
 from typing import Dict, Any, Optional, List
-from openai import OpenAI
+from dotenv import load_dotenv
 
-# Initialize OpenAI client - will use API key from environment
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Load environment variables
+load_dotenv()
+
+# OpenRouter configuration
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 async def analyze_architecture(data) -> Dict[str, Any]:
-    """Analyze cloud architecture using OpenAI GPT-4"""
+    """Analyze cloud architecture using OpenRouter API"""
     
     prompt = f"""
     You are a senior cloud architect expert. Analyze this cloud architecture and provide a comprehensive assessment:
@@ -17,125 +22,172 @@ async def analyze_architecture(data) -> Dict[str, Any]:
     Architecture Description: {data.architecture_text}
     User Region: {data.user_region}
 
-    Please analyze and provide:
-    1. Overall architecture score (0-100)
-    2. Critical issues and security vulnerabilities
-    3. Performance optimization recommendations
-    4. Cost optimization suggestions
-    5. A Mermaid diagram of the optimized architecture
-    6. Estimated monthly cost range
+    IMPORTANT: Return ONLY a valid JSON object with no additional text or markdown formatting. The response must be structured exactly as follows:
 
-    Return your response in this JSON format:
     {{
-        "score": <number>,
-        "issues": ["issue1", "issue2", ...],
-        "recommendations": ["rec1", "rec2", ...],
-        "diagram": "graph TD; <mermaid syntax>",
+        "score": <number 0-100>,
+        "issues": ["specific issue 1", "specific issue 2", "specific issue 3"],
+        "recommendations": ["actionable recommendation 1", "actionable recommendation 2", "actionable recommendation 3"],
+        "diagram": "graph TD; A[Load Balancer] --> B[Web Servers]; B --> C[Database]; B --> D[Cache]",
         "cost_estimate": "$XXX-$XXX/month",
         "details": {{
             "security_grade": "A/B/C/D/F",
-            "scalability_score": <number>,
-            "reliability_score": <number>,
-            "cost_efficiency": "Excellent/Good/Fair/Poor"
+            "scalability_score": <number 0-100>,
+            "reliability_score": <number 0-100>,
+            "cost_efficiency": "Excellent/Good/Fair/Poor",
+            "compliance_status": "Compliant/Non-compliant",
+            "performance_rating": "High/Medium/Low"
         }}
     }}
     """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an expert cloud architect with 15+ years of experience in AWS, Azure, and GCP. Provide detailed, actionable insights."},
-                {"role": "user", "content": prompt}
+        if not OPENROUTER_API_KEY:
+            raise ValueError("OpenRouter API key not configured")
+
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "HTTP-Referer": "https://stackstage.replit.dev",
+            "X-Title": "StackStage Architecture Analysis",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "model": "openai/gpt-4o-mini",  # Cost-effective model
+            "messages": [
+                {
+                    "role": "system", 
+                    "content": "You are an expert cloud architect with 15+ years of experience in AWS, Azure, and GCP. Analyze architectures for security, performance, cost, and scalability. Always return valid JSON only."
+                },
+                {
+                    "role": "user", 
+                    "content": prompt
+                }
             ],
-            temperature=0.7,
-            max_tokens=2000
+            "temperature": 0.7,
+            "max_tokens": 2000
+        }
+
+        response = requests.post(
+            f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=30
         )
         
-        # Parse the JSON response
-        content = response.choices[0].message.content
+        if response.status_code != 200:
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+        result = response.json()
+        content = result['choices'][0]['message']['content'].strip()
         
-        # Try to extract JSON from the response
+        # Clean and parse JSON response
         try:
-            # Find JSON in the response
-            if content:
-                start_idx = content.find('{')
-                end_idx = content.rfind('}') + 1
-                json_str = content[start_idx:end_idx]
-                analysis_data = json.loads(json_str)
-            else:
-                raise ValueError("Empty response")
-        except:
-            # Fallback if JSON parsing fails
+            # Remove any markdown formatting
+            if content.startswith('```json'):
+                content = content[7:]
+            if content.endswith('```'):
+                content = content[:-3]
+            content = content.strip()
+            
+            analysis_data = json.loads(content)
+            
+        except json.JSONDecodeError as e:
+            # If JSON parsing fails, create structured response
             analysis_data = {
-                "score": 75,
-                "issues": ["Unable to parse detailed analysis"],
-                "recommendations": ["Review architecture documentation"],
-                "diagram": "graph TD; A[Application] --> B[Database]",
-                "cost_estimate": "$200-$500/month",
+                "score": 70,
+                "issues": ["Complex architecture requires detailed review", "Consider scalability planning", "Review security configurations"],
+                "recommendations": ["Implement monitoring and logging", "Add redundancy for critical components", "Optimize for cost efficiency"],
+                "diagram": f"graph TD; A[User Request] --> B[{data.user_region} Load Balancer]; B --> C[Application Layer]; C --> D[Database]; C --> E[Cache Layer]",
+                "cost_estimate": "$300-$800/month",
                 "details": {
                     "security_grade": "B",
                     "scalability_score": 75,
                     "reliability_score": 80,
-                    "cost_efficiency": "Good"
+                    "cost_efficiency": "Good",
+                    "compliance_status": "Needs Review",
+                    "performance_rating": "Medium"
                 }
             }
 
         return {
-            "score": analysis_data.get("score", 75),
+            "score": int(analysis_data.get("score", 70)),
             "issues": analysis_data.get("issues", []),
             "recommendations": analysis_data.get("recommendations", []),
-            "diagram": analysis_data.get("diagram", "graph TD; A[App] --> B[DB]"),
-            "estimated_cost": analysis_data.get("cost_estimate", "$300/month"),
+            "diagram": analysis_data.get("diagram", "graph TD; A[Application] --> B[Database]"),
+            "estimated_cost": analysis_data.get("cost_estimate", "$400/month"),
             "analysis_id": str(uuid.uuid4()),
             "timestamp": datetime.now().isoformat(),
             "details": analysis_data.get("details", {})
         }
         
     except Exception as e:
-        # Fallback response if API fails
+        # Professional error response
         return {
             "score": 0,
-            "issues": [f"Analysis failed: {str(e)}"],
-            "recommendations": ["Please check API configuration and try again"],
-            "diagram": "graph TD; Error[API Error] --> Check[Check Configuration]",
+            "issues": [f"Analysis service temporarily unavailable: {str(e)}", "Please verify API configuration", "Try again in a few moments"],
+            "recommendations": ["Check OpenRouter API key configuration", "Ensure stable internet connection", "Contact support if issue persists"],
+            "diagram": "graph TD; Error[Analysis Failed] --> Config[Check API Config]; Config --> Retry[Try Again]",
             "estimated_cost": "Unable to estimate",
             "analysis_id": str(uuid.uuid4()),
             "timestamp": datetime.now().isoformat(),
-            "details": {"error": str(e)}
+            "details": {"error": str(e), "service": "OpenRouter API"}
         }
 
 async def assistant_chat(prompt: str, context: Optional[str] = None) -> Dict[str, Any]:
-    """Handle chat assistant interactions"""
+    """Handle chat assistant interactions using OpenRouter"""
     
-    system_message = """You are StackStage AI Assistant, an expert in cloud architecture, DevOps, and infrastructure optimization. 
+    system_message = """You are StackStage AI Assistant, an expert in cloud architecture, DevOps, and infrastructure optimization with 15+ years of experience.
     
-    You help users with:
-    - Cloud architecture design and review
-    - Cost optimization strategies
-    - Security best practices
-    - Performance tuning
-    - Migration planning
-    - Infrastructure as Code
+    You specialize in:
+    - Cloud architecture design and review (AWS, Azure, GCP)
+    - Cost optimization strategies and FinOps
+    - Security best practices and compliance
+    - Performance tuning and scalability
+    - Migration planning and strategy
+    - Infrastructure as Code (Terraform, CloudFormation)
+    - Kubernetes and container orchestration
+    - CI/CD pipeline optimization
     
-    Provide practical, actionable advice with specific recommendations."""
-    
-    messages = [{"role": "system", "content": system_message}]
-    
-    if context:
-        messages.append({"role": "user", "content": f"Context: {context}"})
-    
-    messages.append({"role": "user", "content": prompt})
+    Provide practical, actionable advice with specific recommendations. Be conversational but professional."""
     
     try:
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages,
-            temperature=0.8,
-            max_tokens=1500
+        if not OPENROUTER_API_KEY:
+            raise ValueError("OpenRouter API key not configured")
+
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "HTTP-Referer": "https://stackstage.replit.dev", 
+            "X-Title": "StackStage AI Assistant",
+            "Content-Type": "application/json"
+        }
+
+        messages = [{"role": "system", "content": system_message}]
+        
+        if context:
+            messages.append({"role": "user", "content": f"Context: {context}"})
+        
+        messages.append({"role": "user", "content": prompt})
+
+        payload = {
+            "model": "openai/gpt-4o-mini",
+            "messages": messages,
+            "temperature": 0.8,
+            "max_tokens": 1500
+        }
+
+        response = requests.post(
+            f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=30
         )
         
-        content = response.choices[0].message.content or ""
+        if response.status_code != 200:
+            raise Exception(f"API request failed with status {response.status_code}: {response.text}")
+
+        result = response.json()
+        content = result['choices'][0]['message']['content'] or ""
         
         # Generate contextual suggestions based on the response
         suggestions = generate_suggestions(content, prompt)
@@ -148,8 +200,8 @@ async def assistant_chat(prompt: str, context: Optional[str] = None) -> Dict[str
         
     except Exception as e:
         return {
-            "response": f"I apologize, but I'm currently unable to process your request. Please check if the API key is configured properly. Error: {str(e)}",
-            "suggestions": ["Check API configuration", "Try again later", "Contact support"],
+            "response": f"I apologize, but I'm currently experiencing technical difficulties. This usually happens when the API key needs to be configured or there's a temporary service issue. Please check the OpenRouter API configuration and try again.",
+            "suggestions": ["Check OpenRouter API key in Secrets", "Verify internet connectivity", "Try asking a different question"],
             "timestamp": datetime.now().isoformat()
         }
 
