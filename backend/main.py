@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import analyze, assistant, diagram, export
+from routers import analyze, assistant, diagram, export, chat_export
 
 app = FastAPI(title="StackStage API", version="1.0")
 
@@ -18,6 +18,7 @@ app.include_router(analyze.router, prefix="/api/analyze", tags=["Analyze"])
 app.include_router(assistant.router, prefix="/api/assistant", tags=["Assistant"])
 app.include_router(diagram.router, prefix="/api/diagram", tags=["Diagram"])
 app.include_router(export.router, prefix="/api/export", tags=["Export"])
+app.include_router(chat_export.router, prefix="/api/chat/export", tags=["chat_export"])
 
 @app.get("/")
 def root():

@@ -124,6 +124,54 @@ How can I help you optimize your cloud infrastructure today?`,
   const [selectedRegion, setSelectedRegion] = useState("us-east-1");
   const [regionalImpact, setRegionalImpact] = useState<any>(null);
   const [showRegionSelector, setShowRegionSelector] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("architect");
+
+  // Export chat functionality
+  const exportChat = async () => {
+    try {
+      const response = await fetch('/api/chat/export/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: messages.map(msg => ({
+            type: msg.type,
+            content: msg.content,
+            timestamp: msg.timestamp
+          })),
+          session_info: {
+            role: selectedRole,
+            region: selectedRegion,
+            export_date: new Date().toISOString()
+          }
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Download PDF
+        const pdfBlob = new Blob([
+          Uint8Array.from(atob(result.pdf_data), c => c.charCodeAt(0))
+        ], { type: 'application/pdf' });
+        
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = result.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.error('Export failed');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+    }
+  };
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -237,7 +285,9 @@ How can I help you optimize your cloud infrastructure today?`,
         body: JSON.stringify({
           messages: messageHistory,
           userRegion: selectedRegion,
-          regionalImpact
+          regionalImpact,
+          role: selectedRole,
+          conversationHistory: messageHistory
         }),
       });
 

@@ -1,0 +1,86 @@
+✅ Step 1: Train the Assistant with Stronger Context
+
+Update the system prompt in assistant_chat() to:
+
+Specialize in AWS, Azure, GCP cloud architecture.
+
+Cover security, cost optimization, scalability, HA, compliance.
+
+Add tone: professional SaaS consultant.
+
+Example system prompt update:
+
+{"role": "system", "content": """
+You are StackStage AI, a professional cloud architecture advisor for enterprises and startups.
+Expert in AWS, Azure, and GCP. Specialize in:
+- Scalable & fault-tolerant architectures
+- Cost optimization & FinOps best practices
+- Security & compliance (SOC2, GDPR, HIPAA)
+- Multi-cloud strategies & DevOps automation
+Provide actionable steps, diagrams (Mermaid), and explain trade-offs clearly.
+"""}
+
+✅ Step 2: Enable Session Memory
+
+Why? So the assistant remembers previous messages in the same session.
+
+Implementation:
+
+Store messages in frontend state (already partially done) and send the full conversation array to backend.
+
+Update assistant_chat():
+
+payload = {
+    "model": "openai/gpt-4",
+    "messages": conversation_history  # not just the latest prompt
+}
+
+
+Add a session ID or conversation token for future persistence if needed.
+
+✅ Step 3: Add Export Chat Feature
+
+PDF Export (primary) and Text Export (optional).
+
+Use ReportLab for PDF generation:
+
+Export chat history with:
+
+User and AI messages in formatted style.
+
+Include timestamp.
+
+Add branding (StackStage logo + tagline).
+
+API Endpoint:
+
+POST /api/chat/export/pdf → returns downloadable PDF.
+
+✅ Step 4: Implement Role-Based Templates
+
+Roles:
+
+CTO View → Cost, compliance, business impact.
+
+DevOps View → Automation, scaling, CI/CD pipelines.
+
+Architect View → Patterns, design trade-offs, DR strategies.
+
+Implementation:
+
+Add a role selector in UI (dropdown or cards).
+
+Modify system prompt dynamically:
+
+if role == "CTO":
+    context += "Focus on compliance, cost control, and business impact."
+elif role == "DevOps":
+    context += "Focus on automation, pipelines, and scaling strategies."
+elif role == "Architect":
+    context += "Focus on design trade-offs, multi-region HA, DR patterns."
+
+🔥 Execution Plan
+
+✔ Step 1 & 2 → Together (system prompt + session memory)
+✔ Step 3 → Export feature
+✔ Step 4 → Role-based templates with dynamic prompt injection

@@ -134,22 +134,26 @@ async def analyze_architecture(data) -> Dict[str, Any]:
             "details": {"error": str(e), "service": "OpenRouter API"}
         }
 
-async def assistant_chat(prompt: str, context: Optional[str] = None) -> Dict[str, Any]:
-    """Handle chat assistant interactions using OpenRouter"""
+async def assistant_chat(prompt: str, context: Optional[str] = None, conversation_history: Optional[List[Dict]] = None, role: str = "architect") -> Dict[str, Any]:
+    """Handle chat assistant interactions using OpenRouter with role-based system prompts"""
     
-    system_message = """You are StackStage AI Assistant, an expert in cloud architecture, DevOps, and infrastructure optimization with 15+ years of experience.
+    # Role-based system prompts
+    base_prompt = """You are StackStage AI, a professional cloud architecture advisor for enterprises and startups.
+Expert in AWS, Azure, and GCP. Specialize in:
+- Scalable & fault-tolerant architectures
+- Cost optimization & FinOps best practices  
+- Security & compliance (SOC2, GDPR, HIPAA)
+- Multi-cloud strategies & DevOps automation
+
+Provide actionable steps, diagrams (Mermaid), and explain trade-offs clearly."""
+
+    role_context = {
+        "cto": "Focus on compliance, cost control, business impact, and executive-level strategic decisions. Emphasize ROI, risk management, and governance frameworks.",
+        "devops": "Focus on automation, scaling, CI/CD pipelines, infrastructure as code, monitoring, and operational excellence. Emphasize practical implementation.",
+        "architect": "Focus on design trade-offs, multi-region HA, disaster recovery patterns, scalability patterns, and technical architecture decisions."
+    }
     
-    You specialize in:
-    - Cloud architecture design and review (AWS, Azure, GCP)
-    - Cost optimization strategies and FinOps
-    - Security best practices and compliance
-    - Performance tuning and scalability
-    - Migration planning and strategy
-    - Infrastructure as Code (Terraform, CloudFormation)
-    - Kubernetes and container orchestration
-    - CI/CD pipeline optimization
-    
-    Provide practical, actionable advice with specific recommendations. Be conversational but professional."""
+    system_message = f"{base_prompt}\n\nRole Context: {role_context.get(role.lower(), role_context['architect'])}"
     
     try:
         if not OPENROUTER_API_KEY:
@@ -162,11 +166,16 @@ async def assistant_chat(prompt: str, context: Optional[str] = None) -> Dict[str
             "Content-Type": "application/json"
         }
 
+        # Build conversation with session memory
         messages = [{"role": "system", "content": system_message}]
         
-        if context:
+        # Add conversation history for session memory
+        if conversation_history:
+            messages.extend(conversation_history)
+        elif context:
             messages.append({"role": "user", "content": f"Context: {context}"})
         
+        # Add current prompt
         messages.append({"role": "user", "content": prompt})
 
         payload = {
