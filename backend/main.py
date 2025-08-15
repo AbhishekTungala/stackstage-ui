@@ -1,8 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import analyze, assistant, diagram, export, chat_export
+from routers import analyze, assistant, diagram, export, chat_export, auth
+from dotenv import load_dotenv
+import os
 
-app = FastAPI(title="StackStage API", version="1.0")
+# Load environment variables
+load_dotenv()
+
+app = FastAPI(
+    title="StackStage API", 
+    version="1.0",
+    description="Production-grade FastAPI backend for StackStage cloud architecture analysis platform"
+)
 
 # Add CORS middleware for frontend integration
 app.add_middleware(
@@ -14,11 +23,12 @@ app.add_middleware(
 )
 
 # Include Routers
+app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(analyze.router, prefix="/api/analyze", tags=["Analyze"])
 app.include_router(assistant.router, prefix="/api/assistant", tags=["Assistant"])
 app.include_router(diagram.router, prefix="/api/diagram", tags=["Diagram"])
 app.include_router(export.router, prefix="/api/export", tags=["Export"])
-app.include_router(chat_export.router, prefix="/api/chat/export", tags=["chat_export"])
+app.include_router(chat_export.router, prefix="/api/chat/export", tags=["ChatExport"])
 
 @app.get("/")
 def root():

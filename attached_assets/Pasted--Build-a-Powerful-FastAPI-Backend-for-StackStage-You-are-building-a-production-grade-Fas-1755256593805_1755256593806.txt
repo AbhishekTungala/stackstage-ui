@@ -1,0 +1,111 @@
+### 🛠️ Build a Powerful FastAPI Backend for StackStage
+
+You are building a **production-grade FastAPI backend** for **StackStage**, a professional SaaS platform that provides **Cloud Architecture Analysis, AI Assistant, and Diagram Generation** for AWS, Azure, and GCP.
+
+The backend must replace all mock data currently in the frontend and integrate real functionality. Follow these **detailed requirements**:
+
+---
+
+## ✅ **Core Requirements**
+1. **Framework & Language**
+   - Use **FastAPI** for backend
+   - Use **Python 3.11**
+   - Run with **Uvicorn** server
+
+2. **Authentication**
+   - Use **Firebase Authentication** for:
+     - Signup (Email/Password, Google OAuth)
+     - Login
+     - Session validation
+   - Integrate Firebase Admin SDK for user verification in backend routes
+
+3. **AI Integration**
+   - Use **OpenRouter API** (open-source AI gateway)
+   - All AI tasks should use **structured responses**:
+     - **Cloud Architecture Analysis** (Cost, Performance, Security)
+     - **AI Assistant Chat** (context-aware cloud advisor)
+     - **Architecture Diagram Generator** (Mermaid + Code representation)
+   - System prompt must position the assistant as:
+     ```
+     You are StackStage AI, an expert in AWS, Azure, and GCP cloud architecture. 
+     Provide professional advice for startups and enterprises on:
+     - High availability
+     - Cost optimization
+     - Security & compliance
+     - Multi-cloud strategies
+     Include architecture diagrams and code snippets.
+     ```
+
+4. **Diagram & Code Output**
+   - AI should return **two formats**:
+     - **Visual Diagram** → Mermaid syntax or Graphviz
+     - **Code Representation** → Terraform or CloudFormation template
+   - These diagrams must be rendered in HD style (eraser.io-like)
+
+---
+
+## ✅ **Backend API Endpoints**
+- `POST /api/auth/login` → Firebase login
+- `POST /api/auth/signup` → Firebase signup
+- `POST /api/analyze` → Analyze uploaded file/text/cloud config
+  - Input: file (YAML/JSON) or text
+  - Output: JSON with:
+    - `score` (0-100)
+    - `issues` (list)
+    - `recommendations` (list)
+    - `diagram` (Mermaid or Graphviz)
+    - `code_template` (Terraform snippet)
+    - `estimated_cost`
+- `POST /api/assistant` → AI-powered chat
+  - Maintains **session memory** per user
+- `POST /api/export/pdf` → Export report as **PDF**
+  - Includes: analysis summary, diagram, recommendations
+- `POST /api/chat/export/pdf` → Export chat history as **PDF**
+- **Enable CORS** for frontend
+
+---
+
+## ✅ **Features to Implement**
+✔ Strong **system prompt** for AI  
+✔ **Session memory** in chat (store last 10 messages per user)  
+✔ **Role-based templates**: CTO, DevOps, Architect  
+✔ **PDF Export** for analysis + chat  
+✔ **Geo-Aware Optimization**: Suggest best regions for performance & cost  
+✔ **Multi-Architecture Comparison**: Compare current vs suggested design  
+
+---
+
+## ✅ **Open Source & Free Tools**
+- **Auth**: Firebase Authentication (Email/Google)
+- **Database**: Use **PostgreSQL with SQLAlchemy/Drizzle ORM** (or SQLite for MVP)
+- **PDF Export**: ReportLab or WeasyPrint
+- **Diagram Rendering**: Mermaid.js or Graphviz via AI output
+
+---
+
+## ✅ **Remove All Mock Data**
+- Remove all placeholder responses in:
+  - **AI Assistant Page**
+  - **Analysis Page**
+  - **Diagram Page**
+- Replace with **real API calls** to FastAPI backend
+
+---
+
+## ✅ **Deployment Notes**
+- Keep project **modular and production-ready**
+- Store secrets in **Replit Secrets Manager**
+- Backend must run on `PORT=8000`
+- Frontend must point to `http://localhost:8000` for APIs
+
+---
+
+### ✅ Deliverables:
+- Full FastAPI backend inside `/backend` folder
+- Tested API endpoints integrated with frontend
+- Replace all mock data in React app
+- Ensure **professional SaaS quality**
+
+---
+
+💡 **Key Objective:** Make this backend powerful, secure, and production-ready while using only **open-source tools**.

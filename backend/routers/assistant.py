@@ -1,22 +1,17 @@
 from fastapi import APIRouter, HTTPException, Response
-from pydantic import BaseModel
-from typing import List, Literal, Optional
+from models.schemas import Message, AssistantRequest, AssistantResponse, RoleType
 from utils.ai_engine import assistant_chat
-from utils.pdf_export import export_chat_pdf
+from utils.pdf_export_chat import generate_chat_pdf
+from typing import Dict, Any, List, Literal
 import os
 
 router = APIRouter()
 
-class Message(BaseModel):
-    role: Literal["system", "user", "assistant"]
-    content: str
+# Session storage for conversation memory (in production, use Redis or database)
+session_memory: Dict[str, List[Dict[str, str]]] = {}
 
-class AssistantPayload(BaseModel):
-    messages: List[Message]
-    role: Optional[Literal["CTO", "DevOps", "Architect"]] = None
-
-@router.post("/chat")
-async def chat(payload: AssistantPayload):
+@router.post("/chat", response_model=AssistantResponse)
+async def chat(payload: AssistantRequest):
     """Enhanced AI assistant chat with conversation memory and role context"""
     try:
         if not payload.messages or len(payload.messages) == 0:
@@ -25,26 +20,33 @@ async def chat(payload: AssistantPayload):
         # Convert messages to dict format for AI engine
         message_dicts = [{"role": m.role, "content": m.content} for m in payload.messages]
         
+        # Call the updated assistant_chat function
         result = await assistant_chat(message_dicts, payload.role)
-        return result
+        
+        return AssistantResponse(
+            response=result.get("response", ""),
+            suggestions=result.get("suggestions", [])
+        )
     
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
+@router.post("/")
+async def assistant(payload: AssistantRequest):
+    """Main assistant endpoint for backward compatibility"""
+    return await chat(payload)
+
 @router.post("/export/pdf")
-async def export_pdf(payload: AssistantPayload):
+async def export_pdf(payload: AssistantRequest):
     """Export chat conversation to PDF"""
     try:
         message_dicts = [m.dict() for m in payload.messages]
-        path = export_chat_pdf(message_dicts)
-        
-        with open(path, "rb") as f:
-            pdf_content = f.read()
+        pdf_bytes = generate_chat_pdf(message_dicts)
         
         return Response(
-            content=pdf_content, 
+            content=pdf_bytes, 
             media_type="application/pdf",
             headers={"Content-Disposition": 'attachment; filename="stackstage_chat.pdf"'}
         )
@@ -52,8 +54,32 @@ async def export_pdf(payload: AssistantPayload):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF export failed: {str(e)}")
 
+# Chat memory management
+@router.post("/memory/{session_id}")
+async def store_message(session_id: str, message: Message):
+    """Store message in session memory"""
+    if session_id not in session_memory:
+        session_memory[session_id] = []
+    
+    session_memory[session_id].append(message.dict())
+    
+    # Keep only last 20 messages for memory efficiency
+    if len(session_memory[session_id]) > 20:
+        session_memory[session_id] = session_memory[session_id][-20:]
+    
+    return {"success": True, "message_count": len(session_memory[session_id])}
+
+@router.get("/memory/{session_id}")
+async def get_session_memory(session_id: str):
+    """Get conversation history for session"""
+    return {
+        "session_id": session_id,
+        "messages": session_memory.get(session_id, []),
+        "message_count": len(session_memory.get(session_id, []))
+    }
+
 @router.post("/export/txt")
-async def export_txt(payload: AssistantPayload):
+async def export_txt(payload: AssistantRequest):
     """Export chat conversation to text file"""
     try:
         lines = [f"{m.role.upper()}: {m.content}" for m in payload.messages]
@@ -67,6 +93,14 @@ async def export_txt(payload: AssistantPayload):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Text export failed: {str(e)}")
+
+@router.delete("/memory/{session_id}")
+async def clear_session_memory(session_id: str):
+    """Clear conversation history for session"""
+    if session_id in session_memory:
+        del session_memory[session_id]
+    
+    return {"success": True, "message": f"Session {session_id} memory cleared"}
 
 @router.get("/templates/{role}")
 async def get_role_templates(role: Literal["CTO", "DevOps", "Architect"]):
