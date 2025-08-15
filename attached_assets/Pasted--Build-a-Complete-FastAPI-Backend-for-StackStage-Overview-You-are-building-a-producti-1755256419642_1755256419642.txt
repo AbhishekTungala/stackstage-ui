@@ -1,0 +1,213 @@
+# 🚀 Build a Complete FastAPI Backend for StackStage
+
+## ✅ Overview
+You are building a **production-grade FastAPI backend** for **StackStage**, a professional SaaS tool that:
+- Provides **AI-driven cloud architecture analysis**
+- Offers **architecture diagrams (Mermaid + HD visuals like Eraser.io)** and **code snippets**
+- Includes **AI Assistant for cloud professionals** (AWS, Azure, GCP)
+- Supports **real-time PDF report export**
+- Has **Authentication (Firebase)** for login/signup
+- Fully **removes mock data from frontend** and connects to these APIs
+
+## ✅ Requirements
+- **Framework:** FastAPI (Python 3.11)
+- **Server:** Uvicorn
+- **Authentication:** Firebase Authentication (Google + Email/Password)
+- **AI Integration:** OpenRouter API (OpenAI GPT-4 or better)
+- **File Handling:** `python-multipart` for uploads
+- **Environment:** Use `.env` for secrets
+- **Security:** Use CORS and input validation with Pydantic
+- **Database (Optional):** Use SQLite or Postgres via SQLAlchemy (or Drizzle ORM if needed)
+
+---
+
+## ✅ Core Features to Implement
+
+### 1. **Authentication**
+- Use Firebase Authentication SDK for Python
+- Routes:
+  - `POST /api/auth/login`
+  - `POST /api/auth/signup`
+- Validate Firebase ID tokens for all authenticated requests
+
+---
+
+### 2. **AI Assistant Endpoint**
+- `POST /api/assistant`
+- Input: Array of messages (`role`, `content`)
+- Output:
+  ```json
+  {
+    "response": "Professional cloud advice",
+    "suggestions": ["Try cost optimization", "Enable HA mode"]
+  }
+Use OpenRouter API with strong system prompt:
+
+diff
+Copy
+Edit
+You are StackStage AI, a professional cloud architecture advisor.
+Expert in AWS, Azure, and GCP.
+Specialize in:
+- Scalable & fault-tolerant architectures
+- Cost optimization & FinOps best practices
+- Security & compliance (SOC2, GDPR, HIPAA)
+- Multi-cloud strategies & DevOps automation
+Provide actionable steps, diagrams (Mermaid), and code snippets.
+3. Architecture Analysis Endpoint
+POST /api/analyze
+
+Input:
+
+json
+Copy
+Edit
+{
+  "project_type": "ecommerce",
+  "cloud": "aws",
+  "requirements": ["high availability", "cost optimization"],
+  "region": "us-east-1"
+}
+Output:
+
+json
+Copy
+Edit
+{
+  "score": 92,
+  "issues": ["Latency for EU users"],
+  "recommendations": [
+    "Add CloudFront for caching",
+    "Enable RDS Multi-AZ"
+  ],
+  "diagram": "Mermaid code for architecture",
+  "diagram_image": "HD URL or base64 image",
+  "infrastructure_code": {
+    "terraform": "...",
+    "cloudformation": "..."
+  },
+  "estimated_cost": "$450/month"
+}
+Diagram Handling:
+
+Generate Mermaid diagram
+
+Convert to HD image (like Eraser.io) using open-source renderer (e.g., mermaid-cli or a Python lib)
+
+4. PDF Export Endpoint
+POST /api/export/pdf
+
+Input: JSON from analysis
+
+Output: Downloadable PDF with:
+
+Score
+
+Recommendations
+
+Diagram (HD)
+
+Infrastructure code
+
+Branding (StackStage logo)
+
+5. Session Memory for AI Assistant
+Store conversation context in memory (for the session)
+
+Always send full conversation history to AI for continuity
+
+6. Role-Based Templates
+Add role parameter for assistant (CTO, DevOps, Architect)
+
+Modify system prompt dynamically:
+
+CTO: Focus on compliance, cost, and business impact
+
+DevOps: Focus on automation and CI/CD
+
+Architect: Focus on design trade-offs and multi-region strategies
+
+✅ Frontend Integration
+Replace all mock data in:
+
+Assistant.tsx → Use /api/assistant
+
+Analyze.tsx → Use /api/analyze
+
+Diagram.tsx → Show HD diagram from API response
+
+Implement export as PDF button calling /api/export/pdf
+
+✅ Libraries to Use
+fastapi
+
+uvicorn
+
+pydantic
+
+requests
+
+firebase-admin (for authentication)
+
+mermaid-cli or pymermaid for diagrams
+
+reportlab for PDF export
+
+python-multipart for file handling
+
+✅ Additional Notes
+Use environment variables for API keys (OpenRouter, Firebase)
+
+Implement error handling for AI timeouts and bad requests
+
+CORS enabled for frontend
+
+Code should be modular:
+
+routers/assistant.py
+
+routers/analyze.py
+
+routers/auth.py
+
+utils/ai_engine.py
+
+utils/pdf_generator.py
+
+utils/diagram_generator.py
+
+✅ Deliverables:
+Fully working FastAPI backend with:
+
+Authentication
+
+AI Assistant (with memory + role-based context)
+
+Analysis endpoint (with HD diagrams + code output)
+
+PDF export endpoint
+
+Frontend updated to remove mock data and use these APIs
+
+All secrets in .env
+
+Build this now.
+
+yaml
+Copy
+Edit
+---
+
+This prompt is **detailed like a senior prompt engineer’s spec** so Replit understands exactly what to build.  
+
+---
+
+✅ Do you want me to **also give you the exact updated system prompt for AI Assistant and session memory handling code now**, so when Replit builds it, it knows how to integrate OpenRouter properly? Or should we first run this backend prompt in Replit and then refine?
+
+
+
+
+
+
+
+Ask ChatGPT
