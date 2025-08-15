@@ -414,7 +414,7 @@ const Analyze = () => {
                       <input
                         type="file"
                         multiple
-                        accept=".tf,.yaml,.yml,.json,.hcl,.py,.js,.ts"
+                        accept=".tf,.yaml,.yml,.json,.hcl,.py,.js,.ts,.toml,.cfg,.conf,.env,.properties,.sh,.bat,.ps1,.dockerfile,.docker,.k8s,.helm,.terraform,.tfvars,.tfstate,.txt,*"
                         onChange={handleFileUpload}
                         className="hidden"
                         id="file-upload"
