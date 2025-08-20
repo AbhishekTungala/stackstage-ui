@@ -635,38 +635,122 @@ resource "aws_instance" "web_server" {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                           >
-                            <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                              <CardHeader className="pb-3">
-                                <CardTitle className="flex items-center text-lg">
-                                  <Eye className="w-5 h-5 mr-2 text-blue-600" />
-                                  Live Analysis Preview
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent className="pt-0">
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                  <div className="text-center">
-                                    <Server className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                                    <div className="text-xl font-bold">{validationResults.resources}</div>
-                                    <div className="text-xs text-muted-foreground">Resources</div>
+                            <div className="relative">
+                              {/* Premium glow effect */}
+                              <motion.div 
+                                className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 rounded-xl blur-xl"
+                                animate={{ scale: [1, 1.02, 1] }}
+                                transition={{ duration: 3, repeat: Infinity }}
+                              />
+                              
+                              <Card className="glass-card relative overflow-hidden bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/50 dark:to-purple-950/50 border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm">
+                                <CardHeader className="pb-3">
+                                  <CardTitle className="flex items-center text-lg text-blue-900 dark:text-blue-100">
+                                    <motion.div
+                                      animate={{ scale: [1, 1.1, 1] }}
+                                      transition={{ duration: 2, repeat: Infinity }}
+                                    >
+                                      <Eye className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+                                    </motion.div>
+                                    Live Analysis Preview
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-0">
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <motion.div 
+                                      className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20 border border-blue-200/30 dark:border-blue-800/30"
+                                      whileHover={{ scale: 1.05, y: -2 }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      <motion.div
+                                        animate={{ rotate: [0, 5, -5, 0] }}
+                                        transition={{ duration: 4, repeat: Infinity }}
+                                      >
+                                        <Server className="w-6 h-6 mx-auto mb-2 text-blue-600 dark:text-blue-400" />
+                                      </motion.div>
+                                      <motion.div 
+                                        className="text-xl font-bold text-blue-900 dark:text-blue-100"
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                                      >
+                                        {validationResults.resources}
+                                      </motion.div>
+                                      <div className="text-xs text-blue-700 dark:text-blue-300 font-medium">Resources</div>
+                                    </motion.div>
+                                    
+                                    <motion.div 
+                                      className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20 border border-green-200/30 dark:border-green-800/30"
+                                      whileHover={{ scale: 1.05, y: -2 }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      <motion.div
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+                                      >
+                                        <Shield className="w-6 h-6 mx-auto mb-2 text-green-600 dark:text-green-400" />
+                                      </motion.div>
+                                      <motion.div 
+                                        className="text-xl font-bold text-green-900 dark:text-green-100"
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                                      >
+                                        {validationResults.syntax}
+                                      </motion.div>
+                                      <div className="text-xs text-green-700 dark:text-green-300 font-medium">Syntax</div>
+                                    </motion.div>
+                                    
+                                    <motion.div 
+                                      className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20 border border-orange-200/30 dark:border-orange-800/30"
+                                      whileHover={{ scale: 1.05, y: -2 }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      <motion.div
+                                        animate={{ rotate: [0, 10, -10, 0] }}
+                                        transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+                                      >
+                                        <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
+                                      </motion.div>
+                                      <motion.div 
+                                        className="text-xl font-bold text-orange-900 dark:text-orange-100"
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                                      >
+                                        {validationResults.issues}
+                                      </motion.div>
+                                      <div className="text-xs text-orange-700 dark:text-orange-300 font-medium">Issues</div>
+                                    </motion.div>
+                                    
+                                    <motion.div 
+                                      className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20 border border-purple-200/30 dark:border-purple-800/30"
+                                      whileHover={{ scale: 1.05, y: -2 }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      <motion.div
+                                        animate={{ y: [0, -2, 0] }}
+                                        transition={{ duration: 2.5, repeat: Infinity, delay: 1.5 }}
+                                      >
+                                        <DollarSign className="w-6 h-6 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
+                                      </motion.div>
+                                      <motion.div 
+                                        className="text-xl font-bold text-purple-900 dark:text-purple-100"
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
+                                      >
+                                        {validationResults.estimatedCost}
+                                      </motion.div>
+                                      <div className="text-xs text-purple-700 dark:text-purple-300 font-medium">Est. Cost/mo</div>
+                                    </motion.div>
                                   </div>
-                                  <div className="text-center">
-                                    <Shield className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                                    <div className="text-xl font-bold">{validationResults.syntax}</div>
-                                    <div className="text-xs text-muted-foreground">Syntax</div>
-                                  </div>
-                                  <div className="text-center">
-                                    <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-orange-600" />
-                                    <div className="text-xl font-bold">{validationResults.issues}</div>
-                                    <div className="text-xs text-muted-foreground">Issues</div>
-                                  </div>
-                                  <div className="text-center">
-                                    <DollarSign className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                                    <div className="text-xl font-bold">{validationResults.estimatedCost}</div>
-                                    <div className="text-xs text-muted-foreground">Est. Cost/mo</div>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
+                                  
+                                  {/* Premium bottom accent */}
+                                  <motion.div 
+                                    className="mt-4 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full"
+                                    animate={{ opacity: [0.5, 1, 0.5] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                  />
+                                </CardContent>
+                              </Card>
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
