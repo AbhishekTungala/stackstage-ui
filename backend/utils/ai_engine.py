@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# OpenRouter configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# OpenRouter configuration - Use OPENAI_API_KEY for OpenRouter
+OPENROUTER_API_KEY = os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Enhanced system prompt for architecture analysis
@@ -130,7 +130,7 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
     
     try:
         if not OPENROUTER_API_KEY:
-            raise ValueError("OpenRouter API key not configured")
+            raise ValueError("OpenAI/OpenRouter API key not configured")
 
         # Build messages with full conversation history and role context
         chat_messages = build_chat_messages(messages, role_hint)
@@ -216,7 +216,7 @@ async def analyze_architecture(data) -> Dict[str, Any]:
     
     try:
         if not OPENROUTER_API_KEY:
-            raise ValueError("OpenRouter API key not configured")
+            raise ValueError("OpenAI/OpenRouter API key not configured")
 
         # Build messages with role context
         role_hint = getattr(data, 'role', None)
