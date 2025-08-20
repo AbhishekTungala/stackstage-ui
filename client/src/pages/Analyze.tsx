@@ -170,7 +170,8 @@ const Analyze = () => {
           }
         } catch (fileError) {
           console.error("❌ File reading failed:", fileError);
-          throw new Error(`Failed to read uploaded files: ${fileError.message}`);
+          const errorMessage = fileError instanceof Error ? fileError.message : 'Unknown file error';
+          throw new Error(`Failed to read uploaded files: ${errorMessage}`);
         }
       }
       
@@ -892,27 +893,30 @@ resource "aws_instance" "web_server" {
                             <h4 className="text-sm font-semibold mb-4 text-center text-muted-foreground">Real-time Analysis Metrics</h4>
                             <div className="grid grid-cols-4 gap-6">
                               {[
-                                { icon: Activity, label: "Processing", value: "Active", color: "text-blue-500" },
-                                { icon: HardDrive, label: "Memory", value: "Optimal", color: "text-green-500" },
-                                { icon: Network, label: "AI Engine", value: "Online", color: "text-orange-500" },
-                                { icon: Clock, label: "ETA", value: "45s", color: "text-purple-500" }
-                              ].map((metric, index) => (
-                                <motion.div 
-                                  key={index}
-                                  className="text-center"
-                                  animate={{ y: [0, -2, 0] }}
-                                  transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
-                                >
-                                  <motion.div
-                                    animate={{ scale: [1, 1.1, 1] }}
-                                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+                                { Icon: Activity, label: "Processing", value: "Active", color: "text-blue-500" },
+                                { Icon: HardDrive, label: "Memory", value: "Optimal", color: "text-green-500" },
+                                { Icon: Network, label: "AI Engine", value: "Online", color: "text-orange-500" },
+                                { Icon: Clock, label: "ETA", value: "45s", color: "text-purple-500" }
+                              ].map((metric, index) => {
+                                const { Icon } = metric;
+                                return (
+                                  <motion.div 
+                                    key={index}
+                                    className="text-center"
+                                    animate={{ y: [0, -2, 0] }}
+                                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
                                   >
-                                    <metric.icon className={`w-6 h-6 mx-auto mb-2 ${metric.color}`} />
+                                    <motion.div
+                                      animate={{ scale: [1, 1.1, 1] }}
+                                      transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+                                    >
+                                      <Icon className={`w-6 h-6 mx-auto mb-2 ${metric.color}`} />
+                                    </motion.div>
+                                    <div className="text-sm font-medium">{metric.label}</div>
+                                    <div className="text-xs text-muted-foreground">{metric.value}</div>
                                   </motion.div>
-                                  <div className="text-sm font-medium">{metric.label}</div>
-                                  <div className="text-xs text-muted-foreground">{metric.value}</div>
-                                </motion.div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </CardContent>
                         </Card>
