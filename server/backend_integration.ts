@@ -25,9 +25,9 @@ export interface AnalyzeResult {
 export async function callPythonAnalyze(request: AnalyzeRequest): Promise<AnalyzeResult> {
   try {
     // Use OpenRouter API for architecture analysis
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenRouter API key not found");
+      throw new Error("OpenAI/OpenRouter API key not found");
     }
 
     const analysisPrompt = `You are a cloud architecture expert. Analyze this infrastructure and provide a comprehensive assessment:
@@ -52,7 +52,7 @@ Focus on security, scalability, cost optimization, and best practices.`;
         'X-Title': 'StackStage Cloud Analysis'
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.1-70b-instruct',
+        model: 'openai/gpt-4o-mini',
         messages: [{ role: 'user', content: analysisPrompt }],
         max_tokens: 1500,
         temperature: 0.1
@@ -118,9 +118,9 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     console.log("Calling OpenRouter API for enhanced assistant...");
     
     // Check for API key
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenRouter API key not found");
+      throw new Error("OpenAI/OpenRouter API key not found");
     }
     
     // Prepare messages for OpenAI
@@ -154,7 +154,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         'X-Title': 'StackStage Cloud Intelligence'
       },
       body: JSON.stringify({
-        model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-70b-instruct',
+        model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
         messages: fullMessages,
         max_tokens: 1200,
         temperature: 0.15

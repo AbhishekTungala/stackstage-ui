@@ -130,13 +130,27 @@ const Analyze = () => {
       // Prepare analysis content
       let content = textInput.trim();
       if (selectedFiles.length > 0) {
-        // In a real app, you'd read file contents here
-        content += `\n\nFiles uploaded: ${selectedFiles.map(f => f.name).join(', ')}`;
-        // For demo, we'll use the text input or a sample if files are selected
+        // Read actual file contents
+        const fileContents = await Promise.all(
+          selectedFiles.map(async (file) => {
+            return new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = reject;
+              reader.readAsText(file);
+            });
+          })
+        );
+        
+        // Add file contents to analysis
+        const filesText = selectedFiles.map((file, index) => 
+          `\n\n--- File: ${file.name} ---\n${fileContents[index]}`
+        ).join('');
+        
+        content = content ? content + filesText : filesText;
+        
         if (!content.trim()) {
-          content = `# Infrastructure Configuration
-# Files: ${selectedFiles.map(f => f.name).join(', ')}
-# Please provide actual file contents for real analysis`;
+          content = `# Infrastructure Configuration Files\n${filesText}`;
         }
       }
 
