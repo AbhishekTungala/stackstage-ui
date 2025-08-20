@@ -73,13 +73,97 @@ const Analyze = () => {
     }
   };
 
+  // Unified Analysis Engine - Deterministic and Professional
+  const analyzeInfrastructureContent = (content: string) => {
+    // Create deterministic hash from content for consistent results
+    const contentHash = content.split('').reduce((hash, char) => {
+      return (hash << 5) - hash + char.charCodeAt(0);
+    }, 0);
+    
+    // Professional Infrastructure Analysis
+    const analysis = {
+      resources: 0,
+      issues: 0,
+      estimatedCost: 0,
+      syntax: "valid"
+    };
+    
+    // 1. RESOURCE DETECTION (Deterministic)
+    const terraformResources = content.match(/resource\s+"[^"]+"\s+"[^"]+"/g) || [];
+    const awsResources = content.match(/aws_[a-z_]+/g) || [];
+    const gcpResources = content.match(/google_[a-z_]+/g) || [];
+    const azureResources = content.match(/azurerm_[a-z_]+/g) || [];
+    const k8sResources = content.match(/kind:\s*(Deployment|Service|Pod|ConfigMap|Secret)/g) || [];
+    const dockerResources = content.match(/FROM\s+|EXPOSE\s+|RUN\s+/g) || [];
+    
+    analysis.resources = terraformResources.length + 
+                        awsResources.length + 
+                        gcpResources.length + 
+                        azureResources.length + 
+                        k8sResources.length + 
+                        dockerResources.length;
+    
+    // 2. SECURITY ISSUES DETECTION (Deterministic)
+    const securityIssues = [
+      content.match(/0\.0\.0\.0\/0/g) || [],
+      content.match(/"0\.0\.0\.0\/0"/g) || [],
+      content.match(/allow_all/g) || [],
+      content.match(/"\*"/g) || [],
+      content.match(/public.*true/g) || [],
+      content.match(/publicly_accessible.*=.*true/g) || []
+    ];
+    
+    const complianceIssues = [
+      content.match(/unencrypted|no_encryption/g) || [],
+      content.match(/skip_final_snapshot.*=.*true/g) || [],
+      content.match(/deletion_protection.*=.*false/g) || []
+    ];
+    
+    analysis.issues = securityIssues.flat().length + complianceIssues.flat().length;
+    
+    // 3. COST ESTIMATION (Deterministic based on resource types)
+    const costFactors = {
+      // AWS Services
+      ec2: (content.match(/aws_instance|t3\.|m5\.|c5\./g) || []).length * 75,
+      rds: (content.match(/aws_db_instance|mysql|postgresql/g) || []).length * 120,
+      lambda: (content.match(/aws_lambda_function/g) || []).length * 15,
+      s3: (content.match(/aws_s3_bucket/g) || []).length * 25,
+      elb: (content.match(/aws_lb|aws_elb/g) || []).length * 45,
+      
+      // GCP Services  
+      compute: (content.match(/google_compute_instance|n1-|n2-/g) || []).length * 80,
+      storage: (content.match(/google_storage_bucket/g) || []).length * 20,
+      
+      // Azure Services
+      vm: (content.match(/azurerm_virtual_machine|Standard_/g) || []).length * 85,
+      
+      // Kubernetes
+      k8s: (content.match(/kind:\s*(Deployment|Service)/g) || []).length * 35
+    };
+    
+    const baseCost = Object.values(costFactors).reduce((sum, cost) => sum + cost, 0);
+    
+    // Add deterministic variance based on content hash
+    const variance = Math.abs(contentHash % 100);
+    analysis.estimatedCost = Math.max(baseCost + variance, 50);
+    
+    // 4. SYNTAX VALIDATION
+    const syntaxErrors = [
+      content.match(/\s+{[\s\S]*?}\s*{/g) || [], // Double braces
+      content.match(/=\s*{[^}]*$/g) || [], // Unclosed braces
+      content.match(/"\s*[^"]*$/g) || [] // Unclosed quotes
+    ];
+    
+    analysis.syntax = syntaxErrors.flat().length > 0 ? "error" : "valid";
+    
+    return analysis;
+  };
+
   const analyzeUploadedFiles = async (files: File[]) => {
     try {
-      // Read and analyze file contents
-      let totalResources = 0;
-      let totalIssues = 0;
-      let totalCost = 0;
+      let combinedContent = "";
       
+      // Read all files and combine content
       for (const file of files) {
         const content = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -87,45 +171,29 @@ const Analyze = () => {
           reader.onerror = reject;
           reader.readAsText(file);
         });
-        
-        // Analyze content for resources, issues, and cost
-        const resourceMatches = content.match(/resource\s+"[^"]+"|resource\s+[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
-        const instanceMatches = content.match(/instance_type|machine_type|vm_size|node_size/g) || [];
-        const storageMatches = content.match(/disk_size|volume_size|storage/g) || [];
-        
-        totalResources += resourceMatches.length + instanceMatches.length + storageMatches.length;
-        
-        // Detect common issues
-        const securityIssues = content.match(/0\.0\.0\.0\/0|"\*"|allow_all|public/g) || [];
-        const deprecatedFeatures = content.match(/deprecated|legacy|old_/g) || [];
-        totalIssues += securityIssues.length + deprecatedFeatures.length;
-        
-        // Estimate cost based on resource types
-        const expensiveResources = content.match(/instance_type.*[ml][\d]+\.large|machine_type.*n1-highmem|vm_size.*Standard_D/g) || [];
-        totalCost += (resourceMatches.length * 50) + (expensiveResources.length * 200) + Math.floor(Math.random() * 100);
+        combinedContent += "\n" + content;
       }
       
-      // Set results in the same format as paste code feature
+      // Use unified analysis engine
+      const analysis = analyzeInfrastructureContent(combinedContent);
+      
       setTimeout(() => {
         setValidationResults({
-          syntax: "valid",
-          resources: Math.max(totalResources, Math.floor(Math.random() * 15) + 5),
-          issues: Math.max(totalIssues, Math.floor(Math.random() * 3)),
-          estimatedCost: "$" + Math.max(totalCost, Math.floor(Math.random() * 500) + 100).toString()
+          syntax: analysis.syntax,
+          resources: analysis.resources,
+          issues: analysis.issues,
+          estimatedCost: "$" + analysis.estimatedCost.toString()
         });
       }, 1500);
       
     } catch (error) {
       console.error("Error analyzing uploaded files:", error);
-      // Fallback to simulated data
-      setTimeout(() => {
-        setValidationResults({
-          syntax: "valid",
-          resources: Math.floor(Math.random() * 15) + 5,
-          issues: Math.floor(Math.random() * 3),
-          estimatedCost: "$" + (Math.random() * 500 + 100).toFixed(0)
-        });
-      }, 1500);
+      setValidationResults({
+        syntax: "error",
+        resources: 0,
+        issues: 1,
+        estimatedCost: "$0"
+      });
     }
   };
 
@@ -320,17 +388,21 @@ const Analyze = () => {
   };
 
   useEffect(() => {
-    // Simulate real-time validation for text input
+    // Professional real-time validation for text input
     if (textInput.trim()) {
       const timer = setTimeout(() => {
+        // Use the same unified analysis engine
+        const analysis = analyzeInfrastructureContent(textInput);
         setValidationResults({
-          syntax: "valid",
-          resources: Math.floor(Math.random() * 15) + 5,
-          issues: Math.floor(Math.random() * 3),
-          estimatedCost: "$" + (Math.random() * 500 + 100).toFixed(0)
+          syntax: analysis.syntax,
+          resources: analysis.resources,
+          issues: analysis.issues,
+          estimatedCost: "$" + analysis.estimatedCost.toString()
         });
       }, 1500);
       return () => clearTimeout(timer);
+    } else {
+      setValidationResults(null); // Clear results when input is empty
     }
   }, [textInput]);
 
