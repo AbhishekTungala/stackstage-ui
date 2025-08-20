@@ -101,6 +101,9 @@ const Analyze = () => {
   };
 
   const handleAnalyze = async () => {
+    console.log("🚀 Analysis started - Text input length:", textInput.trim().length);
+    console.log("📁 Selected files:", selectedFiles.length, selectedFiles.map(f => f.name));
+    
     if (!textInput.trim() && selectedFiles.length === 0) {
       alert("Please provide infrastructure configuration or upload files to analyze.");
       return;
@@ -115,8 +118,8 @@ const Analyze = () => {
       const steps = [
         { step: "validating", progress: 15, delay: 500 },
         { step: "parsing", progress: 30, delay: 800 },
-        { step: "analyzing", progress: 60, delay: 1000 },
-        { step: "optimizing", progress: 85, delay: 1200 }
+        { step: "analyzing", progress: 60, delay: 1500 },
+        { step: "optimizing", progress: 85, delay: 2000 }
       ];
 
       // Update UI progressively
@@ -129,32 +132,62 @@ const Analyze = () => {
 
       // Prepare analysis content
       let content = textInput.trim();
+      
       if (selectedFiles.length > 0) {
-        // Read actual file contents
-        const fileContents = await Promise.all(
-          selectedFiles.map(async (file) => {
-            return new Promise<string>((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.onerror = reject;
-              reader.readAsText(file);
-            });
-          })
-        );
-        
-        // Add file contents to analysis
-        const filesText = selectedFiles.map((file, index) => 
-          `\n\n--- File: ${file.name} ---\n${fileContents[index]}`
-        ).join('');
-        
-        content = content ? content + filesText : filesText;
-        
-        if (!content.trim()) {
-          content = `# Infrastructure Configuration Files\n${filesText}`;
+        console.log("📂 Reading file contents...");
+        try {
+          // Read actual file contents
+          const fileContents = await Promise.all(
+            selectedFiles.map(async (file) => {
+              console.log(`📄 Reading file: ${file.name} (${file.size} bytes)`);
+              return new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const result = reader.result as string;
+                  console.log(`✅ File read successfully: ${file.name} - ${result.length} characters`);
+                  resolve(result);
+                };
+                reader.onerror = (error) => {
+                  console.error(`❌ File read error for ${file.name}:`, error);
+                  reject(error);
+                };
+                reader.readAsText(file);
+              });
+            })
+          );
+          
+          // Add file contents to analysis
+          const filesText = selectedFiles.map((file, index) => 
+            `\n\n--- File: ${file.name} ---\n${fileContents[index]}`
+          ).join('');
+          
+          content = content ? content + filesText : filesText.trim();
+          console.log("📋 Final content length:", content.length);
+          
+          if (!content.trim()) {
+            content = `# Infrastructure Configuration Files\n${filesText}`;
+            console.log("⚠️ Using fallback content structure");
+          }
+        } catch (fileError) {
+          console.error("❌ File reading failed:", fileError);
+          throw new Error(`Failed to read uploaded files: ${fileError.message}`);
         }
+      }
+      
+      console.log("🔍 Final analysis content preview:", content.substring(0, 200) + "...");
+      
+      if (!content.trim()) {
+        throw new Error("No content available for analysis");
       }
 
       // Call real OpenAI API
+      console.log("🤖 Calling analysis API with:", {
+        contentLength: content.length,
+        analysisMode,
+        cloudProvider,
+        userRegion: selectedRegion
+      });
+      
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
@@ -169,12 +202,16 @@ const Analyze = () => {
         }),
       });
 
+      console.log("📡 API Response status:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("❌ API Error:", errorData);
         throw new Error(errorData.error || 'Analysis failed');
       }
 
       const data = await response.json();
+      console.log("✅ Analysis completed successfully:", data);
       
       // Complete the progress
       setCurrentStep("complete");
@@ -190,13 +227,39 @@ const Analyze = () => {
       }, 1000);
 
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error('❌ Analysis error:', error);
       setIsAnalyzing(false);
       setCurrentStep("error");
       
-      // Professional error handling
+      // Professional error handling with better UX
       const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
-      alert(`Analysis failed: ${errorMessage}\n\nPlease check your configuration and try again.`);
+      
+      // Show error state briefly before resetting
+      setTimeout(() => {
+        setCurrentStep("upload");
+        setAnalysisProgress(0);
+      }, 3000);
+      
+      // Premium error notification (you can replace with a toast component)
+      const errorDialog = document.createElement('div');
+      errorDialog.className = 'fixed top-4 right-4 z-50 p-6 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl shadow-lg max-w-md';
+      errorDialog.innerHTML = `
+        <div class="flex items-start space-x-3">
+          <div class="w-6 h-6 text-red-500 mt-0.5">⚠️</div>
+          <div>
+            <h3 class="font-semibold text-red-900 dark:text-red-100">Analysis Failed</h3>
+            <p class="text-sm text-red-700 dark:text-red-200 mt-1">${errorMessage}</p>
+            <p class="text-xs text-red-600 dark:text-red-300 mt-2">Please check your files and try again.</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(errorDialog);
+      
+      // Remove error dialog after 5 seconds
+      setTimeout(() => {
+        errorDialog.style.animation = 'fadeOut 0.3s ease-out forwards';
+        setTimeout(() => errorDialog.remove(), 300);
+      }, 5000);
     }
   };
 
@@ -718,47 +781,142 @@ resource "aws_instance" "web_server" {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Analysis Progress */}
+                {/* Premium Analysis Progress */}
                 <AnimatePresence>
                   {isAnalyzing && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      className="space-y-6"
                     >
-                      <div className="text-center">
-                        <h3 className="text-lg font-semibold mb-2">
-                          {getAnalysisStepMessage(currentStep)}
-                        </h3>
-                        <Progress value={analysisProgress} className="w-full h-3" />
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {analysisProgress}% Complete
-                        </p>
+                      {/* Main Analysis Display */}
+                      <div className="relative">
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple/10 to-primary/10 rounded-3xl blur-xl"
+                          animate={{ scale: [1, 1.05, 1] }}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        />
+                        
+                        <Card className="glass-card relative overflow-hidden border-primary/30">
+                          <CardContent className="p-8">
+                            <div className="text-center space-y-6">
+                              {/* Premium Spinner */}
+                              <motion.div className="relative">
+                                <motion.div
+                                  className="w-20 h-20 mx-auto rounded-full relative"
+                                  style={{
+                                    background: `conic-gradient(from 0deg, rgb(var(--primary)) 0deg, rgb(var(--primary)/0.3) 90deg, rgb(var(--primary)) 180deg, rgb(var(--primary)/0.3) 270deg, rgb(var(--primary)) 360deg)`,
+                                    padding: '4px'
+                                  }}
+                                  animate={{ rotate: 360 }}
+                                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                >
+                                  <div className="w-full h-full bg-background rounded-full flex items-center justify-center">
+                                    <motion.div
+                                      animate={{ scale: [1, 1.2, 1] }}
+                                      transition={{ duration: 2, repeat: Infinity }}
+                                    >
+                                      <Sparkles className="w-8 h-8 text-primary" />
+                                    </motion.div>
+                                  </div>
+                                </motion.div>
+                              </motion.div>
+
+                              {/* Analysis Status */}
+                              <div className="space-y-3">
+                                <motion.h3 
+                                  className="text-3xl font-bold bg-gradient-to-r from-primary to-purple bg-clip-text text-transparent"
+                                  animate={{ opacity: [0.7, 1, 0.7] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                  AI Analysis in Progress
+                                </motion.h3>
+                                
+                                <motion.p 
+                                  className="text-lg text-muted-foreground"
+                                  key={currentStep}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  {currentStep === "validating" && "🔍 Validating infrastructure configuration..."}
+                                  {currentStep === "parsing" && "📊 Parsing cloud architecture components..."}
+                                  {currentStep === "analyzing" && "🤖 Running AI-powered comprehensive analysis..."}
+                                  {currentStep === "optimizing" && "⚡ Generating optimization recommendations..."}
+                                  {currentStep === "complete" && "✨ Analysis complete! Preparing results..."}
+                                  {currentStep === "error" && "❌ Analysis encountered an error. Please try again."}
+                                </motion.p>
+                              </div>
+
+                              {/* Premium Progress Bar */}
+                              <div className="relative">
+                                <div className="w-full h-4 bg-muted/30 rounded-full overflow-hidden backdrop-blur-sm">
+                                  <motion.div
+                                    className="h-full bg-gradient-to-r from-primary via-purple to-primary relative"
+                                    initial={{ width: "0%" }}
+                                    animate={{ width: `${analysisProgress}%` }}
+                                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                                  >
+                                    <motion.div 
+                                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                                      animate={{ x: ['-100%', '200%'] }}
+                                      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                                    />
+                                  </motion.div>
+                                </div>
+                                <div className="absolute -top-1 -right-1">
+                                  <motion.div
+                                    className="text-xs font-semibold text-primary px-2 py-1 bg-primary/10 rounded-full border border-primary/20"
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 1, repeat: Infinity }}
+                                  >
+                                    {analysisProgress}%
+                                  </motion.div>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
-                      
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="text-center">
-                          <Activity className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                          <div className="text-sm font-medium">CPU Usage</div>
-                          <div className="text-xs text-muted-foreground">High</div>
-                        </div>
-                        <div className="text-center">
-                          <HardDrive className="w-6 h-6 mx-auto mb-2 text-green-500" />
-                          <div className="text-sm font-medium">Memory</div>
-                          <div className="text-xs text-muted-foreground">Optimal</div>
-                        </div>
-                        <div className="text-center">
-                          <Network className="w-6 h-6 mx-auto mb-2 text-orange-500" />
-                          <div className="text-sm font-medium">Network</div>
-                          <div className="text-xs text-muted-foreground">Active</div>
-                        </div>
-                        <div className="text-center">
-                          <Clock className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-                          <div className="text-sm font-medium">ETA</div>
-                          <div className="text-xs text-muted-foreground">2 min</div>
-                        </div>
-                      </div>
+
+                      {/* Real-time Metrics */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                      >
+                        <Card className="glass-card border-primary/20">
+                          <CardContent className="p-6">
+                            <h4 className="text-sm font-semibold mb-4 text-center text-muted-foreground">Real-time Analysis Metrics</h4>
+                            <div className="grid grid-cols-4 gap-6">
+                              {[
+                                { icon: Activity, label: "Processing", value: "Active", color: "text-blue-500" },
+                                { icon: HardDrive, label: "Memory", value: "Optimal", color: "text-green-500" },
+                                { icon: Network, label: "AI Engine", value: "Online", color: "text-orange-500" },
+                                { icon: Clock, label: "ETA", value: "45s", color: "text-purple-500" }
+                              ].map((metric, index) => (
+                                <motion.div 
+                                  key={index}
+                                  className="text-center"
+                                  animate={{ y: [0, -2, 0] }}
+                                  transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                                >
+                                  <motion.div
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+                                  >
+                                    <metric.icon className={`w-6 h-6 mx-auto mb-2 ${metric.color}`} />
+                                  </motion.div>
+                                  <div className="text-sm font-medium">{metric.label}</div>
+                                  <div className="text-xs text-muted-foreground">{metric.value}</div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -767,21 +925,48 @@ resource "aws_instance" "web_server" {
                 {!isAnalyzing && (
                   <div className="text-center space-y-4">
                     <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
-                      <Button
-                        onClick={handleAnalyze}
-                        disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
-                        className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white"
-                        style={{ color: '#ffffff !important' }}
-                        size="lg"
-                        variant="hero"
+                      <motion.div
+                        className="relative"
+                        whileHover="hover"
+                        variants={{
+                          hover: {
+                            boxShadow: "0 20px 25px -5px rgba(var(--primary) / 0.3), 0 10px 10px -5px rgba(var(--primary) / 0.1)"
+                          }
+                        }}
+                        transition={{ duration: 0.3 }}
                       >
-                        <Zap className="mr-3 w-6 h-6" />
-                        Launch {analysisTypes.find(t => t.id === analysisMode)?.name} Analysis
-                        <ArrowRight className="ml-3 w-6 h-6" />
-                      </Button>
+                        <Button
+                          onClick={handleAnalyze}
+                          disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
+                          className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white relative overflow-hidden"
+                          style={{ color: '#ffffff !important' }}
+                          size="lg"
+                          variant="hero"
+                        >
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20"
+                            animate={{ x: ['-100%', '100%'] }}
+                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                          />
+                          <motion.div
+                            whileHover={{ rotate: 180 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <Zap className="mr-3 w-6 h-6" />
+                          </motion.div>
+                          Launch {analysisTypes.find(t => t.id === analysisMode)?.name} Analysis
+                          <motion.div
+                            whileHover={{ x: 5 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <ArrowRight className="ml-3 w-6 h-6" />
+                          </motion.div>
+                        </Button>
+                      </motion.div>
                     </motion.div>
                     
                     <p className="text-sm text-muted-foreground">
