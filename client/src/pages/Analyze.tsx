@@ -143,9 +143,23 @@ const Analyze = () => {
     
     const baseCost = Object.values(costFactors).reduce((sum, cost) => sum + cost, 0);
     
-    // Add deterministic variance based on content hash
-    const variance = Math.abs(contentHash % 100);
-    analysis.estimatedCost = Math.max(baseCost + variance, 50);
+    // Professional Cost Ranges (Safe and Reliable)
+    let costRange = "";
+    if (baseCost === 0) {
+      costRange = "$0-50";
+    } else if (baseCost <= 100) {
+      costRange = "$50-150";
+    } else if (baseCost <= 300) {
+      costRange = "$150-400";
+    } else if (baseCost <= 600) {
+      costRange = "$400-800";
+    } else if (baseCost <= 1000) {
+      costRange = "$800-1.2K";
+    } else {
+      costRange = "$1K+";
+    }
+    
+    analysis.estimatedCost = costRange;
     
     // 4. SYNTAX VALIDATION
     const syntaxErrors = [
@@ -182,7 +196,7 @@ const Analyze = () => {
           syntax: analysis.syntax,
           resources: analysis.resources,
           issues: analysis.issues,
-          estimatedCost: "$" + analysis.estimatedCost.toString()
+          estimatedCost: analysis.estimatedCost
         });
       }, 1500);
       
@@ -397,7 +411,7 @@ const Analyze = () => {
           syntax: analysis.syntax,
           resources: analysis.resources,
           issues: analysis.issues,
-          estimatedCost: "$" + analysis.estimatedCost.toString()
+          estimatedCost: analysis.estimatedCost
         });
       }, 1500);
       return () => clearTimeout(timer);
