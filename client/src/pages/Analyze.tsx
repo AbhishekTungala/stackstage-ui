@@ -1142,42 +1142,61 @@ resource "aws_instance" "web_server" {
                       {/* Cloud Provider Selection */}
                       <div className="space-y-4">
                         <Label className="text-lg font-medium">Select Cloud Provider</Label>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                           {cloudProviders.map((provider) => (
                             <motion.div
                               key={provider.id}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
                             >
                               <Card 
-                                className={`cursor-pointer transition-all duration-300 relative overflow-hidden ${
+                                className={`cursor-pointer transition-all duration-300 group ${
                                   cloudProvider === provider.id 
-                                    ? 'ring-2 ring-primary shadow-lg bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20' 
-                                    : 'hover:shadow-md hover:border-primary/20 border-gray-200/60 dark:border-gray-700/60'
+                                    ? 'ring-2 ring-primary shadow-lg bg-primary/5 border-primary/30' 
+                                    : 'hover:shadow-md hover:border-primary/20 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-white/20 dark:border-gray-700/30'
                                 }`}
                                 onClick={() => setCloudProvider(provider.id)}
                               >
-                                <div className={`absolute inset-0 bg-gradient-to-br ${provider.color} opacity-5 hover:opacity-10 transition-opacity`} />
-                                <CardContent className="relative p-6">
-                                  <div className="flex items-start justify-between mb-4">
-                                    <div className="text-3xl">{provider.icon}</div>
-                                    {cloudProvider === provider.id && (
-                                      <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                                        <CheckCircle className="w-4 h-4 text-white" />
+                                <CardContent className="p-6">
+                                  <div className="flex items-start space-x-4">
+                                    {/* Provider Icon */}
+                                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br ${provider.color} shadow-sm`}>
+                                      {provider.icon}
+                                    </div>
+                                    
+                                    {/* Content */}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-start justify-between mb-3">
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                                          {provider.name}
+                                        </h3>
+                                        {cloudProvider === provider.id && (
+                                          <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                            <CheckCircle className="w-4 h-4 text-white" />
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
-                                  </div>
-                                  <h3 className="font-bold text-lg mb-2">{provider.name}</h3>
-                                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                                    {provider.description}
-                                  </p>
-                                  <div className="flex items-center justify-between text-xs">
-                                    <span className="text-muted-foreground">
-                                      {provider.regions.length} regions
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                      {provider.credentials.length} credentials
-                                    </span>
+                                      
+                                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                                        {provider.description}
+                                      </p>
+                                      
+                                      {/* Feature List */}
+                                      <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                        <li className="flex items-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
+                                          {provider.regions.length} global regions available
+                                        </li>
+                                        <li className="flex items-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
+                                          {provider.credentials.length} credential fields required
+                                        </li>
+                                        <li className="flex items-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
+                                          Real-time infrastructure scanning
+                                        </li>
+                                      </ul>
+                                    </div>
                                   </div>
                                 </CardContent>
                               </Card>
