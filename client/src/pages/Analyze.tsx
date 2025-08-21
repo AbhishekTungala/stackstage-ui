@@ -52,7 +52,7 @@ import { Input } from "@/components/ui/input";
 const Analyze = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [cloudProvider, setCloudProvider] = useState("");
-  const [cloudConnect, setCloudConnect] = useState(false);
+
   const [textInput, setTextInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -203,7 +203,6 @@ const Analyze = () => {
       
       if (result.success) {
         setConnectionStatus("Connected successfully");
-        setCloudConnect(true);
       } else {
         setConnectionStatus(`Connection failed: ${result.error}`);
       }
@@ -1309,126 +1308,7 @@ resource "aws_instance" "web_server" {
                         </AnimatePresence>
                       </div>
 
-                      {/* Connection Configuration */}
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="cloud-connect" className="text-lg font-medium">
-                            Direct Cloud Connection
-                          </Label>
-                          <Switch
-                            id="cloud-connect"
-                            checked={cloudConnect}
-                            onCheckedChange={setCloudConnect}
-                          />
-                        </div>
-                        
-                        <AnimatePresence>
-                          {cloudConnect && cloudProvider && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -20 }}
-                              className="space-y-6"
-                            >
-                              {/* Connection Setup Card */}
-                              <Card className="glass-card bg-gradient-to-br from-primary/5 to-purple/5 border-primary/20">
-                                <CardHeader className="pb-4">
-                                  <CardTitle className="flex items-center space-x-2">
-                                    <Cloud className="w-5 h-5 text-primary" />
-                                    <span>{cloudProviders.find(p => p.id === cloudProvider)?.name} Connection</span>
-                                  </CardTitle>
-                                  <CardDescription>
-                                    Securely connect to your cloud account for live infrastructure analysis
-                                  </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                  {/* Connection Methods */}
-                                  <div className="space-y-3">
-                                    <Label className="text-sm font-medium">Connection Method</Label>
-                                    <div className="grid grid-cols-1 gap-3">
-                                      <Card className="p-4 cursor-pointer hover:bg-primary/5 transition-colors border-primary/20">
-                                        <div className="flex items-center space-x-3">
-                                          <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
-                                            <Shield className="w-4 h-4 text-green-500" />
-                                          </div>
-                                          <div className="flex-1">
-                                            <h4 className="font-medium text-sm">OAuth 2.0 (Recommended)</h4>
-                                            <p className="text-xs text-muted-foreground">Secure, temporary access without storing credentials</p>
-                                          </div>
-                                          <CheckCircle className="w-5 h-5 text-primary" />
-                                        </div>
-                                      </Card>
-                                      
-                                      <Card className="p-4 opacity-60">
-                                        <div className="flex items-center space-x-3">
-                                          <div className="w-8 h-8 bg-gray-500/20 rounded-lg flex items-center justify-center">
-                                            <Lock className="w-4 h-4 text-gray-500" />
-                                          </div>
-                                          <div className="flex-1">
-                                            <h4 className="font-medium text-sm">API Keys</h4>
-                                            <p className="text-xs text-muted-foreground">Manual credential entry (Enterprise only)</p>
-                                          </div>
-                                          <Crown className="w-5 h-5 text-gray-400" />
-                                        </div>
-                                      </Card>
-                                    </div>
-                                  </div>
 
-                                  {/* Connection Action */}
-                                  <motion.div className="pt-4">
-                                    <Button 
-                                      className="w-full bg-gradient-to-r from-primary to-primary-glow text-white hover:shadow-lg transition-all duration-300"
-                                      size="lg"
-                                      onClick={() => {
-                                        // Here you would integrate with actual OAuth flows
-                                        alert(`Initiating secure OAuth connection to ${cloudProviders.find(p => p.id === cloudProvider)?.name}...\n\nIn a production environment, this would redirect to the cloud provider's OAuth authorization page.`);
-                                      }}
-                                    >
-                                      <Cloud className="w-5 h-5 mr-2" />
-                                      Connect to {cloudProviders.find(p => p.id === cloudProvider)?.name}
-                                    </Button>
-                                  </motion.div>
-
-                                  {/* Security Notice */}
-                                  <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                                    <div className="flex items-start space-x-3">
-                                      <Shield className="w-5 h-5 text-green-600 mt-0.5" />
-                                      <div>
-                                        <h4 className="font-medium text-green-900 dark:text-green-100 text-sm">Enterprise Security</h4>
-                                        <ul className="text-xs text-green-700 dark:text-green-300 mt-1 space-y-1">
-                                          <li>• End-to-end encryption in transit and at rest</li>
-                                          <li>• No credential storage - OAuth tokens expire automatically</li>
-                                          <li>• Read-only access with minimal required permissions</li>
-                                          <li>• SOC 2 Type II compliant infrastructure</li>
-                                        </ul>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </motion.div>
-                          )}
-                          
-                          {cloudConnect && !cloudProvider && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                            >
-                              <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-800">
-                                <CardContent className="p-6 text-center">
-                                  <AlertCircle className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-                                  <h3 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">
-                                    Select Cloud Provider
-                                  </h3>
-                                  <p className="text-sm text-orange-700 dark:text-orange-300">
-                                    Please choose your cloud provider to configure the connection
-                                  </p>
-                                </CardContent>
-                              </Card>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -1633,7 +1513,7 @@ resource "aws_instance" "web_server" {
                       >
                         <Button
                           onClick={handleAnalyze}
-                          disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
+                          disabled={!selectedFiles.length && !textInput.trim() && !cloudProvider}
                           className="px-12 py-4 text-lg font-semibold text-white relative overflow-hidden bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
                           size="lg"
                         >
