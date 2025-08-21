@@ -1142,7 +1142,7 @@ resource "aws_instance" "web_server" {
                       {/* Cloud Provider Selection */}
                       <div className="space-y-4">
                         <Label className="text-lg font-medium">Select Cloud Provider</Label>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           {cloudProviders.map((provider) => (
                             <motion.div
                               key={provider.id}
@@ -1158,20 +1158,20 @@ resource "aws_instance" "web_server" {
                                 onClick={() => setCloudProvider(provider.id)}
                               >
                                 <CardContent className="p-6">
-                                  <div className="flex items-start space-x-4">
+                                  <div className="flex flex-col items-center text-center">
                                     {/* Provider Icon */}
-                                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br ${provider.color} shadow-sm`}>
+                                    <div className={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-gradient-to-br ${provider.color} shadow-sm mb-4`}>
                                       {provider.icon}
                                     </div>
                                     
                                     {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-start justify-between mb-3">
+                                    <div className="w-full">
+                                      <div className="flex items-center justify-center mb-3 relative">
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                                           {provider.name}
                                         </h3>
                                         {cloudProvider === provider.id && (
-                                          <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
                                             <CheckCircle className="w-4 h-4 text-white" />
                                           </div>
                                         )}
@@ -1183,17 +1183,17 @@ resource "aws_instance" "web_server" {
                                       
                                       {/* Feature List */}
                                       <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                                        <li className="flex items-center">
-                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
-                                          {provider.regions.length} global regions available
+                                        <li className="flex items-center justify-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-2"></span>
+                                          {provider.regions.length} global regions
                                         </li>
-                                        <li className="flex items-center">
-                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
-                                          {provider.credentials.length} credential fields required
+                                        <li className="flex items-center justify-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-2"></span>
+                                          {provider.credentials.length} credential fields
                                         </li>
-                                        <li className="flex items-center">
-                                          <span className="w-1 h-1 bg-primary rounded-full mr-3"></span>
-                                          Real-time infrastructure scanning
+                                        <li className="flex items-center justify-center">
+                                          <span className="w-1 h-1 bg-primary rounded-full mr-2"></span>
+                                          Real-time scanning
                                         </li>
                                       </ul>
                                     </div>
