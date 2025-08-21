@@ -32,13 +32,16 @@ export async function callPythonAnalyze(request: AnalyzeRequest): Promise<Analyz
     }
 
     const analysisInput = request.architecture_text || request.file_content || '';
+    const cloudProvider = request.cloud || 'aws';
+    const projectType = request.project_type || 'comprehensive';
+    const region = request.region || 'us-east-1';
     
-    const analysisPrompt = `You are a professional cloud architecture expert. Analyze this ${request.cloud.toUpperCase()} infrastructure configuration for ${request.project_type} analysis in region ${request.region}.
+    const analysisPrompt = `You are a professional cloud architecture expert. Analyze this ${cloudProvider.toUpperCase()} infrastructure configuration for ${projectType} analysis in region ${region}.
 
 Infrastructure Configuration:
 ${analysisInput}
 
-Requirements: ${request.requirements.join(', ')}
+Requirements: ${(request.requirements || ['security', 'cost-optimization']).join(', ')}
 
 Provide a comprehensive professional analysis as a JSON object with:
 - score: integer 0-100 (overall architecture quality)
@@ -47,7 +50,7 @@ Provide a comprehensive professional analysis as a JSON object with:
 - cost: estimated monthly cost range (e.g., "$500-800/month")
 - diagram: Mermaid diagram code representing the architecture
 
-Focus on: security vulnerabilities, cost optimization, performance, scalability, and cloud best practices for ${request.cloud.toUpperCase()}.`;
+Focus on: security vulnerabilities, cost optimization, performance, scalability, and cloud best practices for ${cloudProvider.toUpperCase()}.`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',

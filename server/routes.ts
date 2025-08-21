@@ -131,11 +131,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         // Call real Python backend
         const backendResult = await callPythonAnalyze({
-          text: content,
-          options: {
-            region: userRegion || 'us-east-1',
-            mode: analysisMode
-          }
+          project_type: analysisMode || 'comprehensive',
+          cloud: cloudProvider || 'aws',
+          requirements: ['security', 'cost-optimization', 'performance'],
+          region: userRegion || 'us-east-1',
+          architecture_text: content,
+          file_content: content.includes('--- File:') ? content : null
         });
 
         // Store analysis result
