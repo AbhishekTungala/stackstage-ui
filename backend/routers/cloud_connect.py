@@ -1,178 +1,236 @@
-from fastapi import APIRouter, HTTPException, Depends
+"""
+Cloud Provider Connection Router
+Handles authentication and data fetching from AWS, GCP, and Azure
+"""
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
-from utils.cloud_providers import multi_cloud_service
-from utils.firebase_config import firebase_service
-import asyncio
+from typing import Dict, Any, Optional
+import boto3
+from google.cloud import resource_manager
+from google.oauth2 import service_account
+from azure.identity import ClientSecretCredential
+from azure.mgmt.resource import ResourceManagementClient
+import json
+import os
 
 router = APIRouter()
 
-class CloudConnectionRequest(BaseModel):
-    cloud_provider: str
-    aws_access_key: Optional[str] = None
-    aws_secret_key: Optional[str] = None
-    azure_subscription_id: Optional[str] = None
-    gcp_project_id: Optional[str] = None
-    user_region: str = "us-east-1"
+class CloudCredentials(BaseModel):
+    provider: str
+    credentials: Dict[str, str]
+    region: str
 
-class RegionOptimizationRequest(BaseModel):
-    user_location: str
-    cloud_provider: str
-    workload_type: str = "web_application"
+class ConnectionResponse(BaseModel):
+    success: bool
+    message: str
+    resources: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
 
-class MultiCloudAnalysisRequest(BaseModel):
-    user_region: str
-    current_provider: Optional[str] = None
-    requirements: List[str] = ["high_availability", "cost_optimization"]
-
-@router.post("/test-connection")
-async def test_cloud_connection(request: CloudConnectionRequest):
-    """Test connection to specified cloud provider"""
+@router.post("/connect", response_model=ConnectionResponse)
+async def connect_cloud_provider(request: CloudCredentials):
+    """
+    Connect to cloud provider and validate credentials
+    Returns basic resource information if connection is successful
+    """
     try:
-        if request.cloud_provider.lower() == "aws":
-            result = await multi_cloud_service.test_aws_connection(
-                request.aws_access_key, 
-                request.aws_secret_key
-            )
-        elif request.cloud_provider.lower() == "azure":
-            result = await multi_cloud_service.test_azure_connection(
-                request.azure_subscription_id
-            )
-        elif request.cloud_provider.lower() == "gcp":
-            result = await multi_cloud_service.test_gcp_connection(
-                request.gcp_project_id
-            )
+        if request.provider == "aws":
+            return await connect_aws(request.credentials, request.region)
+        elif request.provider == "gcp":
+            return await connect_gcp(request.credentials, request.region)
+        elif request.provider == "azure":
+            return await connect_azure(request.credentials, request.region)
         else:
             raise HTTPException(status_code=400, detail="Unsupported cloud provider")
-        
-        return {
-            "success": result["connected"],
-            "cloud_provider": request.cloud_provider,
-            "connection_details": result
-        }
-        
+    
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Connection test failed: {str(e)}")
+        return ConnectionResponse(
+            success=False,
+            message="Connection failed",
+            error=str(e)
+        )
 
-@router.post("/optimize-regions")
-async def optimize_regions(request: RegionOptimizationRequest):
-    """Get optimal region recommendations based on user location"""
+async def connect_aws(credentials: Dict[str, str], region: str) -> ConnectionResponse:
+    """Connect to AWS and fetch basic resource information"""
     try:
-        optimal_regions = multi_cloud_service.get_optimal_regions(
-            request.user_location,
-            request.cloud_provider
+        # Create AWS session
+        session = boto3.Session(
+            aws_access_key_id=credentials.get("accessKeyId"),
+            aws_secret_access_key=credentials.get("secretAccessKey"),
+            aws_session_token=credentials.get("sessionToken"),
+            region_name=region
         )
         
-        # Get cost estimates for top 3 regions
-        cost_estimates = []
-        for region in optimal_regions[:3]:
-            cost_estimate = await multi_cloud_service.get_cloud_costs_estimation(
-                request.cloud_provider,
-                region["name"],
-                ["load_balancer", "compute", "database", "storage"]
-            )
-            cost_estimates.append(cost_estimate)
+        # Test connection with EC2 client
+        ec2_client = session.client('ec2')
         
-        return {
-            "user_location": request.user_location,
-            "cloud_provider": request.cloud_provider,
-            "optimal_regions": optimal_regions,
-            "cost_estimates": cost_estimates,
-            "recommendation": {
-                "primary_region": optimal_regions[0]["name"] if optimal_regions else None,
-                "backup_region": optimal_regions[1]["name"] if len(optimal_regions) > 1 else None,
-                "rationale": f"Primary region offers lowest latency ({optimal_regions[0]['estimated_latency_ms']}ms) from {request.user_location}"
+        # Fetch basic resources for validation
+        regions = ec2_client.describe_regions()
+        instances = ec2_client.describe_instances()
+        vpcs = ec2_client.describe_vpcs()
+        
+        # Count resources
+        instance_count = sum(len(reservation['Instances']) for reservation in instances['Reservations'])
+        vpc_count = len(vpcs['Vpcs'])
+        region_count = len(regions['Regions'])
+        
+        return ConnectionResponse(
+            success=True,
+            message="Successfully connected to AWS",
+            resources={
+                "provider": "AWS",
+                "region": region,
+                "instances": instance_count,
+                "vpcs": vpc_count,
+                "available_regions": region_count,
+                "account_id": session.client('sts').get_caller_identity()['Account']
             }
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Region optimization failed: {str(e)}")
-
-@router.post("/multi-cloud-analysis")
-async def analyze_multi_cloud_setup(request: MultiCloudAnalysisRequest):
-    """Analyze and recommend multi-cloud architecture setup"""
-    try:
-        analysis = await multi_cloud_service.analyze_multi_cloud_setup(request.user_region)
-        
-        # Get region recommendations for each cloud provider
-        aws_regions = multi_cloud_service.get_optimal_regions(request.user_region, "aws")[:2]
-        azure_regions = multi_cloud_service.get_optimal_regions(request.user_region, "azure")[:2]
-        gcp_regions = multi_cloud_service.get_optimal_regions(request.user_region, "gcp")[:2]
-        
-        return {
-            "multi_cloud_strategy": analysis,
-            "recommended_regions": {
-                "aws": aws_regions,
-                "azure": azure_regions,
-                "gcp": gcp_regions
-            },
-            "implementation_roadmap": [
-                {
-                    "phase": 1,
-                    "duration_weeks": 3,
-                    "tasks": ["Setup primary cloud infrastructure", "Implement monitoring", "Deploy application"]
-                },
-                {
-                    "phase": 2,
-                    "duration_weeks": 3,
-                    "tasks": ["Setup secondary cloud", "Configure data replication", "Test failover procedures"]
-                },
-                {
-                    "phase": 3,
-                    "duration_weeks": 2,
-                    "tasks": ["Implement disaster recovery", "Optimize costs", "Staff training"]
-                }
-            ]
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Multi-cloud analysis failed: {str(e)}")
-
-@router.get("/supported-regions/{cloud_provider}")
-async def get_supported_regions(cloud_provider: str):
-    """Get list of supported regions for a cloud provider"""
-    try:
-        if cloud_provider.lower() == "aws":
-            regions = multi_cloud_service.aws_regions
-        elif cloud_provider.lower() == "azure":
-            regions = multi_cloud_service.azure_regions
-        elif cloud_provider.lower() == "gcp":
-            regions = multi_cloud_service.gcp_regions
-        else:
-            raise HTTPException(status_code=400, detail="Unsupported cloud provider")
-        
-        return {
-            "cloud_provider": cloud_provider,
-            "supported_regions": regions,
-            "total_regions": len(regions)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get regions: {str(e)}")
-
-@router.get("/cost-estimate/{cloud_provider}/{region}")
-async def get_cost_estimate(cloud_provider: str, region: str):
-    """Get cost estimate for standard architecture in specific region"""
-    try:
-        cost_estimate = await multi_cloud_service.get_cloud_costs_estimation(
-            cloud_provider,
-            region,
-            ["load_balancer", "compute", "database", "storage", "networking", "cdn"]
         )
         
-        return cost_estimate
+    except Exception as e:
+        return ConnectionResponse(
+            success=False,
+            message="AWS connection failed",
+            error=f"AWS Error: {str(e)}"
+        )
+
+async def connect_gcp(credentials: Dict[str, str], region: str) -> ConnectionResponse:
+    """Connect to GCP and fetch basic resource information"""
+    try:
+        # Parse service account key
+        service_account_info = json.loads(credentials.get("serviceAccountKey"))
+        
+        # Create credentials
+        creds = service_account.Credentials.from_service_account_info(service_account_info)
+        
+        # Test connection with Resource Manager
+        client = resource_manager.ProjectsClient(credentials=creds)
+        
+        project_id = credentials.get("projectId")
+        project = client.get_project(name=f"projects/{project_id}")
+        
+        return ConnectionResponse(
+            success=True,
+            message="Successfully connected to Google Cloud",
+            resources={
+                "provider": "GCP",
+                "region": region,
+                "project_id": project_id,
+                "project_name": project.display_name,
+                "project_state": project.state.name
+            }
+        )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Cost estimation failed: {str(e)}")
+        return ConnectionResponse(
+            success=False,
+            message="GCP connection failed",
+            error=f"GCP Error: {str(e)}"
+        )
 
-@router.get("/health")
-async def cloud_connect_health():
-    """Health check for cloud connect service"""
-    return {
-        "status": "operational", 
-        "service": "cloud_connect",
-        "supported_providers": ["aws", "azure", "gcp"],
-        "features": ["connection_testing", "region_optimization", "multi_cloud_analysis", "cost_estimation"]
+async def connect_azure(credentials: Dict[str, str], region: str) -> ConnectionResponse:
+    """Connect to Azure and fetch basic resource information"""
+    try:
+        # Create Azure credentials
+        credential = ClientSecretCredential(
+            tenant_id=credentials.get("tenantId"),
+            client_id=credentials.get("clientId"),
+            client_secret=credentials.get("clientSecret")
+        )
+        
+        # Test connection with Resource Management
+        subscription_id = credentials.get("subscriptionId")
+        resource_client = ResourceManagementClient(credential, subscription_id)
+        
+        # Fetch resource groups
+        resource_groups = list(resource_client.resource_groups.list())
+        
+        return ConnectionResponse(
+            success=True,
+            message="Successfully connected to Microsoft Azure",
+            resources={
+                "provider": "Azure",
+                "region": region,
+                "subscription_id": subscription_id,
+                "resource_groups": len(resource_groups),
+                "tenant_id": credentials.get("tenantId")
+            }
+        )
+        
+    except Exception as e:
+        return ConnectionResponse(
+            success=False,
+            message="Azure connection failed",
+            error=f"Azure Error: {str(e)}"
+        )
+
+@router.get("/regions/{provider}")
+async def get_provider_regions(provider: str):
+    """Get all available regions for a cloud provider"""
+    
+    regions_data = {
+        "aws": [
+            {"value": "us-east-1", "label": "US East (N. Virginia)", "location": "Virginia, USA"},
+            {"value": "us-east-2", "label": "US East (Ohio)", "location": "Ohio, USA"},
+            {"value": "us-west-1", "label": "US West (N. California)", "location": "California, USA"},
+            {"value": "us-west-2", "label": "US West (Oregon)", "location": "Oregon, USA"},
+            {"value": "ca-central-1", "label": "Canada (Central)", "location": "Montreal, Canada"},
+            {"value": "eu-west-1", "label": "Europe (Ireland)", "location": "Dublin, Ireland"},
+            {"value": "eu-west-2", "label": "Europe (London)", "location": "London, UK"},
+            {"value": "eu-west-3", "label": "Europe (Paris)", "location": "Paris, France"},
+            {"value": "eu-central-1", "label": "Europe (Frankfurt)", "location": "Frankfurt, Germany"},
+            {"value": "eu-north-1", "label": "Europe (Stockholm)", "location": "Stockholm, Sweden"},
+            {"value": "ap-northeast-1", "label": "Asia Pacific (Tokyo)", "location": "Tokyo, Japan"},
+            {"value": "ap-northeast-2", "label": "Asia Pacific (Seoul)", "location": "Seoul, South Korea"},
+            {"value": "ap-southeast-1", "label": "Asia Pacific (Singapore)", "location": "Singapore"},
+            {"value": "ap-southeast-2", "label": "Asia Pacific (Sydney)", "location": "Sydney, Australia"},
+            {"value": "ap-south-1", "label": "Asia Pacific (Mumbai)", "location": "Mumbai, India"},
+            {"value": "sa-east-1", "label": "South America (São Paulo)", "location": "São Paulo, Brazil"}
+        ],
+        "gcp": [
+            {"value": "us-central1", "label": "US Central (Iowa)", "location": "Iowa, USA"},
+            {"value": "us-east1", "label": "US East (South Carolina)", "location": "South Carolina, USA"},
+            {"value": "us-east4", "label": "US East (Northern Virginia)", "location": "Virginia, USA"},
+            {"value": "us-west1", "label": "US West (Oregon)", "location": "Oregon, USA"},
+            {"value": "us-west2", "label": "US West (Los Angeles)", "location": "Los Angeles, USA"},
+            {"value": "us-west3", "label": "US West (Salt Lake City)", "location": "Utah, USA"},
+            {"value": "us-west4", "label": "US West (Las Vegas)", "location": "Nevada, USA"},
+            {"value": "northamerica-northeast1", "label": "Canada (Montreal)", "location": "Montreal, Canada"},
+            {"value": "europe-west1", "label": "Europe (Belgium)", "location": "St. Ghislain, Belgium"},
+            {"value": "europe-west2", "label": "Europe (London)", "location": "London, UK"},
+            {"value": "europe-west3", "label": "Europe (Frankfurt)", "location": "Frankfurt, Germany"},
+            {"value": "europe-west4", "label": "Europe (Netherlands)", "location": "Eemshaven, Netherlands"},
+            {"value": "europe-west6", "label": "Europe (Zurich)", "location": "Zurich, Switzerland"},
+            {"value": "asia-east1", "label": "Asia (Taiwan)", "location": "Changhua County, Taiwan"},
+            {"value": "asia-northeast1", "label": "Asia (Tokyo)", "location": "Tokyo, Japan"},
+            {"value": "asia-northeast2", "label": "Asia (Osaka)", "location": "Osaka, Japan"},
+            {"value": "asia-southeast1", "label": "Asia (Singapore)", "location": "Jurong West, Singapore"},
+            {"value": "asia-south1", "label": "Asia (Mumbai)", "location": "Mumbai, India"}
+        ],
+        "azure": [
+            {"value": "eastus", "label": "East US", "location": "Virginia, USA"},
+            {"value": "eastus2", "label": "East US 2", "location": "Virginia, USA"},
+            {"value": "westus", "label": "West US", "location": "California, USA"},
+            {"value": "westus2", "label": "West US 2", "location": "Washington, USA"},
+            {"value": "westus3", "label": "West US 3", "location": "Arizona, USA"},
+            {"value": "centralus", "label": "Central US", "location": "Iowa, USA"},
+            {"value": "northcentralus", "label": "North Central US", "location": "Illinois, USA"},
+            {"value": "southcentralus", "label": "South Central US", "location": "Texas, USA"},
+            {"value": "canadacentral", "label": "Canada Central", "location": "Toronto, Canada"},
+            {"value": "canadaeast", "label": "Canada East", "location": "Quebec City, Canada"},
+            {"value": "westeurope", "label": "West Europe", "location": "Netherlands"},
+            {"value": "northeurope", "label": "North Europe", "location": "Ireland"},
+            {"value": "uksouth", "label": "UK South", "location": "London, UK"},
+            {"value": "ukwest", "label": "UK West", "location": "Cardiff, UK"},
+            {"value": "francecentral", "label": "France Central", "location": "Paris, France"},
+            {"value": "germanywestcentral", "label": "Germany West Central", "location": "Frankfurt, Germany"},
+            {"value": "japaneast", "label": "Japan East", "location": "Tokyo, Japan"},
+            {"value": "japanwest", "label": "Japan West", "location": "Osaka, Japan"},
+            {"value": "australiaeast", "label": "Australia East", "location": "New South Wales, Australia"},
+            {"value": "australiasoutheast", "label": "Australia Southeast", "location": "Victoria, Australia"}
+        ]
     }
+    
+    if provider not in regions_data:
+        raise HTTPException(status_code=404, detail="Provider not found")
+    
+    return {"regions": regions_data[provider]}

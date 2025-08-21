@@ -63,6 +63,156 @@ const Analyze = () => {
   const [analysisMode, setAnalysisMode] = useState("comprehensive");
   const [selectedRegion, setSelectedRegion] = useState("us-east-1");
   const [regionalImpact, setRegionalImpact] = useState<any>(null);
+  
+  // Enhanced cloud provider state
+  const [credentials, setCredentials] = useState<Record<string, string>>({});
+  const [selectedCloudRegion, setSelectedCloudRegion] = useState("");
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState("");
+
+  // Comprehensive cloud provider data
+  const cloudProviders = [
+    {
+      id: "aws",
+      name: "Amazon Web Services",
+      description: "Industry-leading cloud platform with 200+ services",
+      icon: "☁️",
+      color: "from-orange-500 to-yellow-500",
+      credentials: [
+        { key: "accessKeyId", label: "Access Key ID", type: "text", required: true },
+        { key: "secretAccessKey", label: "Secret Access Key", type: "password", required: true },
+        { key: "sessionToken", label: "Session Token", type: "password", required: false },
+        { key: "region", label: "Default Region", type: "select", required: true }
+      ],
+      regions: [
+        { value: "us-east-1", label: "US East (N. Virginia)", location: "Virginia, USA" },
+        { value: "us-east-2", label: "US East (Ohio)", location: "Ohio, USA" },
+        { value: "us-west-1", label: "US West (N. California)", location: "California, USA" },
+        { value: "us-west-2", label: "US West (Oregon)", location: "Oregon, USA" },
+        { value: "ca-central-1", label: "Canada (Central)", location: "Montreal, Canada" },
+        { value: "eu-west-1", label: "Europe (Ireland)", location: "Dublin, Ireland" },
+        { value: "eu-west-2", label: "Europe (London)", location: "London, UK" },
+        { value: "eu-west-3", label: "Europe (Paris)", location: "Paris, France" },
+        { value: "eu-central-1", label: "Europe (Frankfurt)", location: "Frankfurt, Germany" },
+        { value: "eu-north-1", label: "Europe (Stockholm)", location: "Stockholm, Sweden" },
+        { value: "ap-northeast-1", label: "Asia Pacific (Tokyo)", location: "Tokyo, Japan" },
+        { value: "ap-northeast-2", label: "Asia Pacific (Seoul)", location: "Seoul, South Korea" },
+        { value: "ap-southeast-1", label: "Asia Pacific (Singapore)", location: "Singapore" },
+        { value: "ap-southeast-2", label: "Asia Pacific (Sydney)", location: "Sydney, Australia" },
+        { value: "ap-south-1", label: "Asia Pacific (Mumbai)", location: "Mumbai, India" },
+        { value: "sa-east-1", label: "South America (São Paulo)", location: "São Paulo, Brazil" }
+      ]
+    },
+    {
+      id: "gcp",
+      name: "Google Cloud Platform",
+      description: "Google's secure, intelligent, and highly performant cloud",
+      icon: "🌐",
+      color: "from-blue-500 to-green-500",
+      credentials: [
+        { key: "serviceAccountKey", label: "Service Account Key (JSON)", type: "textarea", required: true },
+        { key: "projectId", label: "Project ID", type: "text", required: true },
+        { key: "region", label: "Default Region", type: "select", required: true }
+      ],
+      regions: [
+        { value: "us-central1", label: "US Central (Iowa)", location: "Iowa, USA" },
+        { value: "us-east1", label: "US East (South Carolina)", location: "South Carolina, USA" },
+        { value: "us-east4", label: "US East (Northern Virginia)", location: "Virginia, USA" },
+        { value: "us-west1", label: "US West (Oregon)", location: "Oregon, USA" },
+        { value: "us-west2", label: "US West (Los Angeles)", location: "Los Angeles, USA" },
+        { value: "us-west3", label: "US West (Salt Lake City)", location: "Utah, USA" },
+        { value: "us-west4", label: "US West (Las Vegas)", location: "Nevada, USA" },
+        { value: "northamerica-northeast1", label: "Canada (Montreal)", location: "Montreal, Canada" },
+        { value: "europe-west1", label: "Europe (Belgium)", location: "St. Ghislain, Belgium" },
+        { value: "europe-west2", label: "Europe (London)", location: "London, UK" },
+        { value: "europe-west3", label: "Europe (Frankfurt)", location: "Frankfurt, Germany" },
+        { value: "europe-west4", label: "Europe (Netherlands)", location: "Eemshaven, Netherlands" },
+        { value: "europe-west6", label: "Europe (Zurich)", location: "Zurich, Switzerland" },
+        { value: "asia-east1", label: "Asia (Taiwan)", location: "Changhua County, Taiwan" },
+        { value: "asia-northeast1", label: "Asia (Tokyo)", location: "Tokyo, Japan" },
+        { value: "asia-northeast2", label: "Asia (Osaka)", location: "Osaka, Japan" },
+        { value: "asia-southeast1", label: "Asia (Singapore)", location: "Jurong West, Singapore" },
+        { value: "asia-south1", label: "Asia (Mumbai)", location: "Mumbai, India" }
+      ]
+    },
+    {
+      id: "azure",
+      name: "Microsoft Azure",
+      description: "Microsoft's comprehensive cloud computing platform",
+      icon: "⚡",
+      color: "from-blue-600 to-purple-600",
+      credentials: [
+        { key: "subscriptionId", label: "Subscription ID", type: "text", required: true },
+        { key: "clientId", label: "Client ID (Application ID)", type: "text", required: true },
+        { key: "clientSecret", label: "Client Secret", type: "password", required: true },
+        { key: "tenantId", label: "Tenant ID (Directory ID)", type: "text", required: true },
+        { key: "region", label: "Default Region", type: "select", required: true }
+      ],
+      regions: [
+        { value: "eastus", label: "East US", location: "Virginia, USA" },
+        { value: "eastus2", label: "East US 2", location: "Virginia, USA" },
+        { value: "westus", label: "West US", location: "California, USA" },
+        { value: "westus2", label: "West US 2", location: "Washington, USA" },
+        { value: "westus3", label: "West US 3", location: "Arizona, USA" },
+        { value: "centralus", label: "Central US", location: "Iowa, USA" },
+        { value: "northcentralus", label: "North Central US", location: "Illinois, USA" },
+        { value: "southcentralus", label: "South Central US", location: "Texas, USA" },
+        { value: "canadacentral", label: "Canada Central", location: "Toronto, Canada" },
+        { value: "canadaeast", label: "Canada East", location: "Quebec City, Canada" },
+        { value: "westeurope", label: "West Europe", location: "Netherlands" },
+        { value: "northeurope", label: "North Europe", location: "Ireland" },
+        { value: "uksouth", label: "UK South", location: "London, UK" },
+        { value: "ukwest", label: "UK West", location: "Cardiff, UK" },
+        { value: "francecentral", label: "France Central", location: "Paris, France" },
+        { value: "germanywestcentral", label: "Germany West Central", location: "Frankfurt, Germany" },
+        { value: "japaneast", label: "Japan East", location: "Tokyo, Japan" },
+        { value: "japanwest", label: "Japan West", location: "Osaka, Japan" },
+        { value: "australiaeast", label: "Australia East", location: "New South Wales, Australia" },
+        { value: "australiasoutheast", label: "Australia Southeast", location: "Victoria, Australia" }
+      ]
+    }
+  ];
+
+  // Cloud connection handlers
+  const handleCredentialChange = (key: string, value: string) => {
+    setCredentials(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleCloudConnect = async () => {
+    if (!cloudProvider) return;
+    
+    const provider = cloudProviders.find(p => p.id === cloudProvider);
+    if (!provider) return;
+
+    setIsConnecting(true);
+    setConnectionStatus("Validating credentials...");
+
+    try {
+      // Send credentials to backend for validation
+      const response = await fetch('/api/cloud/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: cloudProvider,
+          credentials: credentials,
+          region: selectedCloudRegion
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setConnectionStatus("Connected successfully");
+        setCloudConnect(true);
+      } else {
+        setConnectionStatus(`Connection failed: ${result.error}`);
+      }
+    } catch (error) {
+      setConnectionStatus(`Connection error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -421,12 +571,7 @@ const Analyze = () => {
     }
   }, [textInput]);
 
-  const cloudProviders = [
-    { value: "aws", label: "Amazon Web Services", icon: "☁️", color: "orange", credentials: ["Access Key ID", "Secret Access Key", "Region"] },
-    { value: "gcp", label: "Google Cloud Platform", icon: "🌐", color: "blue", credentials: ["Service Account JSON", "Project ID"] },
-    { value: "azure", label: "Microsoft Azure", icon: "⚡", color: "cyan", credentials: ["Subscription ID", "Client ID", "Client Secret", "Tenant ID"] },
-    { value: "hybrid", label: "Multi-Cloud/Hybrid", icon: "🔗", color: "purple", credentials: ["Multiple Provider Credentials"] }
-  ];
+
 
   const analysisTypes = [
     { 
@@ -997,37 +1142,43 @@ resource "aws_instance" "web_server" {
                       {/* Cloud Provider Selection */}
                       <div className="space-y-4">
                         <Label className="text-lg font-medium">Select Cloud Provider</Label>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           {cloudProviders.map((provider) => (
                             <motion.div
-                              key={provider.value}
+                              key={provider.id}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                             >
                               <Card 
-                                className={`cursor-pointer transition-all duration-300 relative h-24 ${
-                                  cloudProvider === provider.value 
-                                    ? 'ring-2 ring-primary shadow-lg bg-primary/5 border-primary/20' 
-                                    : 'hover:shadow-md hover:border-primary/10'
+                                className={`cursor-pointer transition-all duration-300 relative overflow-hidden ${
+                                  cloudProvider === provider.id 
+                                    ? 'ring-2 ring-primary shadow-lg bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20' 
+                                    : 'hover:shadow-md hover:border-primary/20 border-gray-200/60 dark:border-gray-700/60'
                                 }`}
-                                onClick={() => setCloudProvider(provider.value)}
+                                onClick={() => setCloudProvider(provider.id)}
                               >
-                                <CardContent className="p-4 h-full flex flex-col items-center justify-center">
-                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${
-                                    provider.value === 'aws' ? 'bg-orange-500/20' :
-                                    provider.value === 'gcp' ? 'bg-blue-500/20' : 'bg-blue-600/20'
-                                  }`}>
-                                    <span className="text-lg">{provider.icon}</span>
+                                <div className={`absolute inset-0 bg-gradient-to-br ${provider.color} opacity-5 hover:opacity-10 transition-opacity`} />
+                                <CardContent className="relative p-6">
+                                  <div className="flex items-start justify-between mb-4">
+                                    <div className="text-3xl">{provider.icon}</div>
+                                    {cloudProvider === provider.id && (
+                                      <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                        <CheckCircle className="w-4 h-4 text-white" />
+                                      </div>
+                                    )}
                                   </div>
-                                  <div className="text-center">
-                                    <h3 className="font-medium text-sm">{provider.label.split(' ')[0]}</h3>
-                                    <p className="text-xs text-muted-foreground">{provider.label.split(' ').slice(1).join(' ')}</p>
+                                  <h3 className="font-bold text-lg mb-2">{provider.name}</h3>
+                                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                                    {provider.description}
+                                  </p>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-muted-foreground">
+                                      {provider.regions.length} regions
+                                    </span>
+                                    <span className="text-muted-foreground">
+                                      {provider.credentials.length} credentials
+                                    </span>
                                   </div>
-                                  {cloudProvider === provider.value && (
-                                    <div className="absolute top-1 right-1">
-                                      <CheckCircle className="w-4 h-4 text-primary" />
-                                    </div>
-                                  )}
                                 </CardContent>
                               </Card>
                             </motion.div>
@@ -1047,17 +1198,56 @@ resource "aws_instance" "web_server" {
                                 <CardHeader className="pb-3">
                                   <CardTitle className="text-sm font-medium flex items-center">
                                     <Lock className="w-4 h-4 mr-2 text-primary" />
-                                    {cloudProviders.find(p => p.value === cloudProvider)?.label} Credentials
+                                    {cloudProviders.find(p => p.id === cloudProvider)?.name} Credentials
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className="pt-0 space-y-3">
-                                  {cloudProvider === 'aws' && (
-                                    <>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <Label className="text-xs">Access Key ID</Label>
-                                          <Input placeholder="AKIA..." className="h-8 text-sm" />
-                                        </div>
+                                <CardContent className="pt-0 space-y-4">
+                                  {cloudProvider && cloudProviders.find(p => p.id === cloudProvider)?.credentials.map((cred, index) => (
+                                    <div key={cred.key}>
+                                      <Label className="text-xs flex items-center">
+                                        {cred.label}
+                                        {cred.required && <span className="text-red-500 ml-1">*</span>}
+                                      </Label>
+                                      {cred.type === 'textarea' ? (
+                                        <Textarea
+                                          placeholder={cred.key === 'serviceAccountKey' ? 'Paste your service account JSON here...' : ''}
+                                          className="h-20 text-sm font-mono"
+                                          value={credentials[cred.key] || ''}
+                                          onChange={(e) => handleCredentialChange(cred.key, e.target.value)}
+                                        />
+                                      ) : cred.type === 'select' ? (
+                                        <Select
+                                          value={selectedCloudRegion}
+                                          onValueChange={setSelectedCloudRegion}
+                                        >
+                                          <SelectTrigger className="h-8 text-sm">
+                                            <SelectValue placeholder="Select region..." />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {cloudProviders.find(p => p.id === cloudProvider)?.regions.map((region) => (
+                                              <SelectItem key={region.value} value={region.value}>
+                                                {region.label} - {region.location}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      ) : (
+                                        <Input
+                                          type={cred.type}
+                                          placeholder={
+                                            cred.key === 'accessKeyId' ? 'AKIA...' :
+                                            cred.key === 'secretAccessKey' ? '••••••••••••••••' :
+                                            cred.key === 'projectId' ? 'my-project-id' :
+                                            cred.key === 'subscriptionId' ? 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' :
+                                            ''
+                                          }
+                                          className="h-8 text-sm"
+                                          value={credentials[cred.key] || ''}
+                                          onChange={(e) => handleCredentialChange(cred.key, e.target.value)}
+                                        />
+                                      )}
+                                    </div>
+                                  ))}
                                         <div>
                                           <Label className="text-xs">Secret Access Key</Label>
                                           <Input type="password" placeholder="••••••••" className="h-8 text-sm" />
