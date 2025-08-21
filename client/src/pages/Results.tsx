@@ -19,7 +19,8 @@ import {
   Download,
   Eye,
   Wrench,
-  ArrowRight
+  ArrowRight,
+  Loader2
 } from "lucide-react";
 import MagicBento from "@/components/ui/magic-bento";
 import AnimatedList from "@/components/ui/animated-list";
@@ -366,8 +367,8 @@ const Results = () => {
                   onClick={handleExportReport}
                   disabled={isExporting}
                 >
-                  <Download className="mr-2 w-5 h-5" />
-                  {isExporting ? 'Generating...' : 'Export Report'}
+                  {isExporting ? <Loader2 className="mr-2 w-5 h-5 animate-spin" /> : <Download className="mr-2 w-5 h-5" />}
+                  {isExporting ? 'Generating Report...' : 'Export Report'}
                 </Button>
               </div>
             </CardContent>

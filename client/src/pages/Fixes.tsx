@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "wouter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,21 @@ import {
 
 const Fixes = () => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [implementedFixes, setImplementedFixes] = useState<Set<string>>(new Set());
+
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const markAsImplemented = (fixId: string) => {
+    setImplementedFixes(prev => new Set([...prev, fixId]));
+  };
 
   const fixes = [
     {
@@ -161,7 +176,7 @@ resource "aws_ebs_volume" "data" {
     }
   ];
 
-  const copyToClipboard = (text: string, index: number) => {
+  const copyToClipboardOld = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
