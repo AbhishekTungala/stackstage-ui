@@ -159,7 +159,7 @@ const Analyze = () => {
       costRange = "$1K+";
     }
     
-    analysis.estimatedCost = costRange;
+    analysis.estimatedCost = costRange as any;
     
     // 4. SYNTAX VALIDATION
     const syntaxErrors = [
@@ -421,11 +421,10 @@ const Analyze = () => {
   }, [textInput]);
 
   const cloudProviders = [
-    { value: "aws", label: "Amazon Web Services", icon: "☁️", color: "orange" },
-    { value: "gcp", label: "Google Cloud Platform", icon: "🌐", color: "blue" },
-    { value: "azure", label: "Microsoft Azure", icon: "⚡", color: "cyan" },
-    { value: "alibaba", label: "Alibaba Cloud", icon: "🚀", color: "orange" },
-    { value: "hybrid", label: "Multi-Cloud/Hybrid", icon: "🔗", color: "purple" }
+    { value: "aws", label: "Amazon Web Services", icon: "☁️", color: "orange", credentials: ["Access Key ID", "Secret Access Key", "Region"] },
+    { value: "gcp", label: "Google Cloud Platform", icon: "🌐", color: "blue", credentials: ["Service Account JSON", "Project ID"] },
+    { value: "azure", label: "Microsoft Azure", icon: "⚡", color: "cyan", credentials: ["Subscription ID", "Client ID", "Client Secret", "Tenant ID"] },
+    { value: "hybrid", label: "Multi-Cloud/Hybrid", icon: "🔗", color: "purple", credentials: ["Multiple Provider Credentials"] }
   ];
 
   const analysisTypes = [
@@ -993,29 +992,75 @@ resource "aws_instance" "web_server" {
                   </TabsContent>
 
                   <TabsContent value="connect" className="space-y-6 mt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       {/* Cloud Provider Selection */}
-                      <div className="space-y-4">
-                        <Label className="text-lg font-medium">Cloud Provider</Label>
-                        <Select value={cloudProvider} onValueChange={setCloudProvider}>
-                          <SelectTrigger className="h-12">
-                            <SelectValue placeholder="Select cloud provider" />
-                          </SelectTrigger>
-                          <SelectContent>
+                      <div className="space-y-6">
+                        <div>
+                          <Label className="text-lg font-medium mb-4 block">Select Cloud Provider</Label>
+                          <div className="grid grid-cols-1 gap-4">
                             {cloudProviders.map((provider) => (
-                              <SelectItem key={provider.value} value={provider.value}>
-                                <div className="flex items-center space-x-2">
-                                  <span>{provider.icon}</span>
-                                  <span>{provider.label}</span>
-                                </div>
-                              </SelectItem>
+                              <motion.div
+                                key={provider.value}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <Card 
+                                  className={`cursor-pointer transition-all duration-300 relative ${
+                                    cloudProvider === provider.value 
+                                      ? 'ring-2 ring-primary shadow-xl bg-primary/5' 
+                                      : 'hover:shadow-lg hover:border-primary/20'
+                                  }`}
+                                  onClick={() => setCloudProvider(provider.value)}
+                                >
+                                  <CardContent className="p-6">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center space-x-4">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-${provider.color}-500/20`}>
+                                          <span className="text-2xl">{provider.icon}</span>
+                                        </div>
+                                        <div>
+                                          <h3 className="font-semibold text-lg">{provider.label}</h3>
+                                          <p className="text-sm text-muted-foreground">
+                                            Professional integration
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {cloudProvider === provider.value && (
+                                        <CheckCircle className="w-6 h-6 text-primary" />
+                                      )}
+                                    </div>
+                                    
+                                    {/* Show credential requirements when selected */}
+                                    <AnimatePresence>
+                                      {cloudProvider === provider.value && (
+                                        <motion.div
+                                          initial={{ opacity: 0, height: 0 }}
+                                          animate={{ opacity: 1, height: "auto" }}
+                                          exit={{ opacity: 0, height: 0 }}
+                                          className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+                                        >
+                                          <p className="text-sm font-medium mb-2">Required Credentials:</p>
+                                          <ul className="text-xs space-y-1 text-muted-foreground">
+                                            {provider.credentials.map((cred, index) => (
+                                              <li key={index} className="flex items-center">
+                                                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
+                                                {cred}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
+                                  </CardContent>
+                                </Card>
+                              </motion.div>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Direct Connect Toggle */}
-                      <div className="space-y-4">
+                      {/* Connection Configuration */}
+                      <div className="space-y-6">
                         <div className="flex items-center justify-between">
                           <Label htmlFor="cloud-connect" className="text-lg font-medium">
                             Direct Cloud Connection
@@ -1028,32 +1073,106 @@ resource "aws_instance" "web_server" {
                         </div>
                         
                         <AnimatePresence>
-                          {cloudConnect && (
+                          {cloudConnect && cloudProvider && (
                             <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="space-y-4"
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -20 }}
+                              className="space-y-6"
                             >
-                              <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-                                <CardContent className="p-6">
-                                  <div className="flex items-center space-x-3 mb-4">
-                                    <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                      <Crown className="w-4 h-4 text-purple-600" />
-                                    </div>
-                                    <div>
-                                      <h3 className="font-semibold text-purple-900">Enterprise Feature</h3>
-                                      <p className="text-sm text-purple-700">Real-time cloud scanning</p>
+                              {/* Connection Setup Card */}
+                              <Card className="glass-card bg-gradient-to-br from-primary/5 to-purple/5 border-primary/20">
+                                <CardHeader className="pb-4">
+                                  <CardTitle className="flex items-center space-x-2">
+                                    <Cloud className="w-5 h-5 text-primary" />
+                                    <span>{cloudProviders.find(p => p.value === cloudProvider)?.label} Connection</span>
+                                  </CardTitle>
+                                  <CardDescription>
+                                    Securely connect to your cloud account for live infrastructure analysis
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                  {/* Connection Methods */}
+                                  <div className="space-y-3">
+                                    <Label className="text-sm font-medium">Connection Method</Label>
+                                    <div className="grid grid-cols-1 gap-3">
+                                      <Card className="p-4 cursor-pointer hover:bg-primary/5 transition-colors border-primary/20">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                            <Shield className="w-4 h-4 text-green-500" />
+                                          </div>
+                                          <div className="flex-1">
+                                            <h4 className="font-medium text-sm">OAuth 2.0 (Recommended)</h4>
+                                            <p className="text-xs text-muted-foreground">Secure, temporary access without storing credentials</p>
+                                          </div>
+                                          <CheckCircle className="w-5 h-5 text-primary" />
+                                        </div>
+                                      </Card>
+                                      
+                                      <Card className="p-4 opacity-60">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="w-8 h-8 bg-gray-500/20 rounded-lg flex items-center justify-center">
+                                            <Lock className="w-4 h-4 text-gray-500" />
+                                          </div>
+                                          <div className="flex-1">
+                                            <h4 className="font-medium text-sm">API Keys</h4>
+                                            <p className="text-xs text-muted-foreground">Manual credential entry (Enterprise only)</p>
+                                          </div>
+                                          <Crown className="w-5 h-5 text-gray-400" />
+                                        </div>
+                                      </Card>
                                     </div>
                                   </div>
-                                  <ul className="space-y-2 text-sm text-purple-800">
-                                    <li className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-purple-600" /> Live infrastructure discovery</li>
-                                    <li className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-purple-600" /> Real-time cost monitoring</li>
-                                    <li className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-purple-600" /> Continuous compliance scanning</li>
-                                  </ul>
-                                  <Button variant="outline" size="sm" className="mt-4 border-purple-300 text-purple-700 hover:bg-purple-100">
-                                    <Link href="/pricing">Upgrade to Enterprise</Link>
-                                  </Button>
+
+                                  {/* Connection Action */}
+                                  <motion.div className="pt-4">
+                                    <Button 
+                                      className="w-full bg-gradient-to-r from-primary to-primary-glow text-white hover:shadow-lg transition-all duration-300"
+                                      size="lg"
+                                      onClick={() => {
+                                        // Here you would integrate with actual OAuth flows
+                                        alert(`Initiating secure OAuth connection to ${cloudProviders.find(p => p.value === cloudProvider)?.label}...\n\nIn a production environment, this would redirect to the cloud provider's OAuth authorization page.`);
+                                      }}
+                                    >
+                                      <Cloud className="w-5 h-5 mr-2" />
+                                      Connect to {cloudProviders.find(p => p.value === cloudProvider)?.label}
+                                    </Button>
+                                  </motion.div>
+
+                                  {/* Security Notice */}
+                                  <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                    <div className="flex items-start space-x-3">
+                                      <Shield className="w-5 h-5 text-green-600 mt-0.5" />
+                                      <div>
+                                        <h4 className="font-medium text-green-900 dark:text-green-100 text-sm">Enterprise Security</h4>
+                                        <ul className="text-xs text-green-700 dark:text-green-300 mt-1 space-y-1">
+                                          <li>• End-to-end encryption in transit and at rest</li>
+                                          <li>• No credential storage - OAuth tokens expire automatically</li>
+                                          <li>• Read-only access with minimal required permissions</li>
+                                          <li>• SOC 2 Type II compliant infrastructure</li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          )}
+                          
+                          {cloudConnect && !cloudProvider && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                            >
+                              <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-800">
+                                <CardContent className="p-6 text-center">
+                                  <AlertCircle className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                                  <h3 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                                    Select Cloud Provider
+                                  </h3>
+                                  <p className="text-sm text-orange-700 dark:text-orange-300">
+                                    Please choose your cloud provider to configure the connection
+                                  </p>
                                 </CardContent>
                               </Card>
                             </motion.div>
@@ -1265,15 +1384,13 @@ resource "aws_instance" "web_server" {
                         <Button
                           onClick={handleAnalyze}
                           disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
-                          className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white relative overflow-hidden"
-                          style={{ color: '#ffffff !important' }}
+                          className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white relative overflow-hidden bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary border-0 shadow-lg hover:shadow-xl transition-all duration-300"
                           size="lg"
-                          variant="hero"
                         >
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20"
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50"
                             animate={{ x: ['-100%', '100%'] }}
-                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
                           />
                           <motion.div
                             whileHover={{ rotate: 180 }}

@@ -4,11 +4,12 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 export interface AnalyzeRequest {
-  text: string;
-  options?: {
-    region?: string;
-    mode?: string;
-  };
+  project_type: string;
+  cloud: string;
+  requirements: string[];
+  region: string;
+  architecture_text: string;
+  file_content?: string | null;
 }
 
 export interface AnalyzeResult {
@@ -24,58 +25,66 @@ export interface AnalyzeResult {
 
 export async function callPythonAnalyze(request: AnalyzeRequest): Promise<AnalyzeResult> {
   try {
-    // Use OpenRouter API for architecture analysis
-    const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+    // Use OpenAI API for architecture analysis
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenAI/OpenRouter API key not found");
+      throw new Error("OpenAI API key not found. Please configure OPENAI_API_KEY environment variable.");
     }
 
-    const analysisPrompt = `You are a cloud architecture expert. Analyze this infrastructure and provide a comprehensive assessment:
+    const analysisInput = request.architecture_text || request.file_content || '';
+    
+    const analysisPrompt = `You are a professional cloud architecture expert. Analyze this ${request.cloud.toUpperCase()} infrastructure configuration for ${request.project_type} analysis in region ${request.region}.
 
-${request.text}
+Infrastructure Configuration:
+${analysisInput}
 
-Return your analysis as a JSON object with:
-- score: integer 0-100 (architecture quality)
-- issues: array of critical issues found
-- recommendations: array of improvement suggestions  
-- cost: estimated monthly cost range
+Requirements: ${request.requirements.join(', ')}
+
+Provide a comprehensive professional analysis as a JSON object with:
+- score: integer 0-100 (overall architecture quality)
+- issues: array of specific security/compliance issues found
+- recommendations: array of detailed improvement suggestions with implementation steps
+- cost: estimated monthly cost range (e.g., "$500-800/month")
 - diagram: Mermaid diagram code representing the architecture
 
-Focus on security, scalability, cost optimization, and best practices.`;
+Focus on: security vulnerabilities, cost optimization, performance, scalability, and cloud best practices for ${request.cloud.toUpperCase()}.`;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://stackstage.dev',
-        'X-Title': 'StackStage Cloud Analysis'
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: [{ role: 'user', content: analysisPrompt }],
-        max_tokens: 1500,
-        temperature: 0.1
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert cloud architect with deep knowledge of AWS, GCP, Azure, and cloud security best practices. Always respond with valid JSON.'
+          },
+          {
+            role: 'user', 
+            content: analysisPrompt
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.1,
+        response_format: { type: "json_object" }
       })
     });
 
     if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0]?.message?.content || "Analysis failed";
+    const aiResponse = data.choices[0]?.message?.content || "{}";
     
     // Parse AI response and extract analysis data
     let analysisData;
     try {
-      // Try to extract JSON from the AI response
-      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysisData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error("No JSON found in response");
-      }
+      analysisData = JSON.parse(aiResponse);
     } catch (parseError) {
       // Fallback: create structured data from the response
       analysisData = {
@@ -115,12 +124,12 @@ Focus on security, scalability, cost optimization, and best practices.`;
 
 export async function callPythonAssistant(messages: any[] | string, role?: string): Promise<any> {
   try {
-    console.log("Calling OpenRouter API for enhanced assistant...");
+    console.log("Calling OpenAI API for enhanced assistant...");
     
     // Check for API key
-    const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenAI/OpenRouter API key not found");
+      throw new Error("OpenAI API key not found");
     }
     
     // Prepare messages for OpenAI
@@ -144,17 +153,15 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
       ...formattedMessages
     ];
     
-    // Call OpenRouter API for cost-effective access to multiple models
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Call OpenAI API for assistant responses
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://stackstage.dev',
-        'X-Title': 'StackStage Cloud Intelligence'
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+        model: 'gpt-4o',
         messages: fullMessages,
         max_tokens: 1200,
         temperature: 0.15
@@ -163,7 +170,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     
     if (!response.ok) {
       const errorData = await response.text();
-      throw new Error(`OpenRouter API error: ${response.status} - ${errorData}`);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorData}`);
     }
     
     const data = await response.json();
@@ -213,10 +220,18 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     }
     
   } catch (error) {
-    console.error("OpenRouter Assistant integration error:", error);
-    throw error;
+    console.error("OpenAI Assistant integration error:", error);
+    
+    // Return fallback response
+    return {
+      response: "I'm experiencing technical difficulties. Please try again.",
+      suggestions: ["Try again", "Check your question", "Contact support"],
+      timestamp: new Date().toISOString()
+    };
   }
 }
+
+
 
 function getRoleBasedSystemPrompt(role?: string): string {
   const baseStackStagePrompt = `You are StackStage AI, a senior cloud architecture advisor for AWS, Azure, and GCP.
