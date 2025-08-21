@@ -1248,87 +1248,39 @@ resource "aws_instance" "web_server" {
                                       )}
                                     </div>
                                   ))}
-                                        <div>
-                                          <Label className="text-xs">Secret Access Key</Label>
-                                          <Input type="password" placeholder="••••••••" className="h-8 text-sm" />
-                                        </div>
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <Label className="text-xs">Region</Label>
-                                          <Select>
-                                            <SelectTrigger className="h-8 text-sm">
-                                              <SelectValue placeholder="us-east-1" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                              <SelectItem value="us-east-1">us-east-1</SelectItem>
-                                              <SelectItem value="us-west-2">us-west-2</SelectItem>
-                                              <SelectItem value="eu-west-1">eu-west-1</SelectItem>
-                                            </SelectContent>
-                                          </Select>
-                                        </div>
-                                        <div>
-                                          <Label className="text-xs">Session Token (Optional)</Label>
-                                          <Input placeholder="Optional" className="h-8 text-sm" />
-                                        </div>
-                                      </div>
-                                    </>
-                                  )}
                                   
-                                  {cloudProvider === 'gcp' && (
-                                    <>
-                                      <div>
-                                        <Label className="text-xs">Service Account Key (JSON)</Label>
-                                        <textarea 
-                                          className="w-full h-16 text-xs p-2 border rounded-md bg-background" 
-                                          placeholder="Paste your service account JSON key here..."
-                                        />
+                                  {/* Connection Actions */}
+                                  <div className="flex items-center justify-between pt-4 border-t">
+                                    {connectionStatus && (
+                                      <div className="flex items-center text-xs">
+                                        {connectionStatus.includes("success") ? (
+                                          <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                                        ) : connectionStatus.includes("error") || connectionStatus.includes("failed") ? (
+                                          <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                                        ) : (
+                                          <Loader2 className="w-4 h-4 text-blue-500 mr-1 animate-spin" />
+                                        )}
+                                        <span className={
+                                          connectionStatus.includes("success") ? "text-green-700" :
+                                          connectionStatus.includes("error") || connectionStatus.includes("failed") ? "text-red-700" :
+                                          "text-blue-700"
+                                        }>
+                                          {connectionStatus}
+                                        </span>
                                       </div>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <Label className="text-xs">Project ID</Label>
-                                          <Input placeholder="my-project-123" className="h-8 text-sm" />
-                                        </div>
-                                        <div>
-                                          <Label className="text-xs">Region</Label>
-                                          <Input placeholder="us-central1" className="h-8 text-sm" />
-                                        </div>
-                                      </div>
-                                    </>
-                                  )}
-                                  
-                                  {cloudProvider === 'azure' && (
-                                    <>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <Label className="text-xs">Subscription ID</Label>
-                                          <Input placeholder="12345678-1234-1234..." className="h-8 text-sm" />
-                                        </div>
-                                        <div>
-                                          <Label className="text-xs">Tenant ID</Label>
-                                          <Input placeholder="87654321-4321-4321..." className="h-8 text-sm" />
-                                        </div>
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <Label className="text-xs">Client ID</Label>
-                                          <Input placeholder="abcdef12-3456-7890..." className="h-8 text-sm" />
-                                        </div>
-                                        <div>
-                                          <Label className="text-xs">Client Secret</Label>
-                                          <Input type="password" placeholder="••••••••" className="h-8 text-sm" />
-                                        </div>
-                                      </div>
-                                    </>
-                                  )}
-                                  
-                                  <div className="flex items-center justify-between pt-2">
-                                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                                      <Shield className="w-3 h-3" />
-                                      <span>Credentials encrypted and secure</span>
-                                    </div>
-                                    <Button size="sm" className="h-7 px-3 text-xs">
-                                      Test Connection
+                                    )}
+                                    <Button 
+                                      size="sm" 
+                                      onClick={handleCloudConnect}
+                                      disabled={isConnecting || !selectedCloudRegion}
+                                      className="ml-auto"
+                                    >
+                                      {isConnecting ? (
+                                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                      ) : (
+                                        <CheckCircle className="w-4 h-4 mr-1" />
+                                      )}
+                                      {isConnecting ? "Connecting..." : "Connect"}
                                     </Button>
                                   </div>
                                 </CardContent>
@@ -1364,7 +1316,7 @@ resource "aws_instance" "web_server" {
                                 <CardHeader className="pb-4">
                                   <CardTitle className="flex items-center space-x-2">
                                     <Cloud className="w-5 h-5 text-primary" />
-                                    <span>{cloudProviders.find(p => p.value === cloudProvider)?.label} Connection</span>
+                                    <span>{cloudProviders.find(p => p.id === cloudProvider)?.name} Connection</span>
                                   </CardTitle>
                                   <CardDescription>
                                     Securely connect to your cloud account for live infrastructure analysis
@@ -1410,11 +1362,11 @@ resource "aws_instance" "web_server" {
                                       size="lg"
                                       onClick={() => {
                                         // Here you would integrate with actual OAuth flows
-                                        alert(`Initiating secure OAuth connection to ${cloudProviders.find(p => p.value === cloudProvider)?.label}...\n\nIn a production environment, this would redirect to the cloud provider's OAuth authorization page.`);
+                                        alert(`Initiating secure OAuth connection to ${cloudProviders.find(p => p.id === cloudProvider)?.name}...\n\nIn a production environment, this would redirect to the cloud provider's OAuth authorization page.`);
                                       }}
                                     >
                                       <Cloud className="w-5 h-5 mr-2" />
-                                      Connect to {cloudProviders.find(p => p.value === cloudProvider)?.label}
+                                      Connect to {cloudProviders.find(p => p.id === cloudProvider)?.name}
                                     </Button>
                                   </motion.div>
 

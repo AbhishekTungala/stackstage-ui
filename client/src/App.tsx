@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Pricing from "./pages/Pricing";
 import Assistant from "./pages/Assistant";
-import AnalyzeNew from "./pages/AnalyzeNew";
+import Analyze from "./pages/Analyze";
 import Results from "./pages/Results";
 import Fixes from "./pages/Fixes";
 import Diagram from "./pages/Diagram";
@@ -40,7 +40,7 @@ const App = () => (
             <Route path="/signup" component={Signup} />
             <Route path="/pricing" component={Pricing} />
             <Route path="/assistant" component={Assistant} />
-            <Route path="/analyze" component={AnalyzeNew} />
+            <Route path="/analyze" component={Analyze} />
             <Route path="/results" component={Results} />
             <Route path="/results/fixes" component={Fixes} />
             <Route path="/results/diagram" component={Diagram} />
