@@ -47,6 +47,7 @@ import {
   Sparkles,
   Crown
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const Analyze = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -994,69 +995,157 @@ resource "aws_instance" "web_server" {
                   <TabsContent value="connect" className="space-y-6 mt-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       {/* Cloud Provider Selection */}
-                      <div className="space-y-6">
-                        <div>
-                          <Label className="text-lg font-medium mb-4 block">Select Cloud Provider</Label>
-                          <div className="grid grid-cols-1 gap-4">
-                            {cloudProviders.map((provider) => (
-                              <motion.div
-                                key={provider.value}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                      <div className="space-y-4">
+                        <Label className="text-lg font-medium">Select Cloud Provider</Label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {cloudProviders.map((provider) => (
+                            <motion.div
+                              key={provider.value}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <Card 
+                                className={`cursor-pointer transition-all duration-300 relative h-24 ${
+                                  cloudProvider === provider.value 
+                                    ? 'ring-2 ring-primary shadow-lg bg-primary/5 border-primary/20' 
+                                    : 'hover:shadow-md hover:border-primary/10'
+                                }`}
+                                onClick={() => setCloudProvider(provider.value)}
                               >
-                                <Card 
-                                  className={`cursor-pointer transition-all duration-300 relative ${
-                                    cloudProvider === provider.value 
-                                      ? 'ring-2 ring-primary shadow-xl bg-primary/5' 
-                                      : 'hover:shadow-lg hover:border-primary/20'
-                                  }`}
-                                  onClick={() => setCloudProvider(provider.value)}
-                                >
-                                  <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center space-x-4">
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-${provider.color}-500/20`}>
-                                          <span className="text-2xl">{provider.icon}</span>
+                                <CardContent className="p-4 h-full flex flex-col items-center justify-center">
+                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${
+                                    provider.value === 'aws' ? 'bg-orange-500/20' :
+                                    provider.value === 'gcp' ? 'bg-blue-500/20' : 'bg-blue-600/20'
+                                  }`}>
+                                    <span className="text-lg">{provider.icon}</span>
+                                  </div>
+                                  <div className="text-center">
+                                    <h3 className="font-medium text-sm">{provider.label.split(' ')[0]}</h3>
+                                    <p className="text-xs text-muted-foreground">{provider.label.split(' ').slice(1).join(' ')}</p>
+                                  </div>
+                                  {cloudProvider === provider.value && (
+                                    <div className="absolute top-1 right-1">
+                                      <CheckCircle className="w-4 h-4 text-primary" />
+                                    </div>
+                                  )}
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          ))}
+                        </div>
+                        
+                        {/* Credential Input Fields */}
+                        <AnimatePresence>
+                          {cloudProvider && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="mt-4"
+                            >
+                              <Card className="bg-gray-50/50 dark:bg-gray-900/20 border border-gray-200/50">
+                                <CardHeader className="pb-3">
+                                  <CardTitle className="text-sm font-medium flex items-center">
+                                    <Lock className="w-4 h-4 mr-2 text-primary" />
+                                    {cloudProviders.find(p => p.value === cloudProvider)?.label} Credentials
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className="pt-0 space-y-3">
+                                  {cloudProvider === 'aws' && (
+                                    <>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <Label className="text-xs">Access Key ID</Label>
+                                          <Input placeholder="AKIA..." className="h-8 text-sm" />
                                         </div>
                                         <div>
-                                          <h3 className="font-semibold text-lg">{provider.label}</h3>
-                                          <p className="text-sm text-muted-foreground">
-                                            Professional integration
-                                          </p>
+                                          <Label className="text-xs">Secret Access Key</Label>
+                                          <Input type="password" placeholder="••••••••" className="h-8 text-sm" />
                                         </div>
                                       </div>
-                                      {cloudProvider === provider.value && (
-                                        <CheckCircle className="w-6 h-6 text-primary" />
-                                      )}
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <Label className="text-xs">Region</Label>
+                                          <Select>
+                                            <SelectTrigger className="h-8 text-sm">
+                                              <SelectValue placeholder="us-east-1" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="us-east-1">us-east-1</SelectItem>
+                                              <SelectItem value="us-west-2">us-west-2</SelectItem>
+                                              <SelectItem value="eu-west-1">eu-west-1</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs">Session Token (Optional)</Label>
+                                          <Input placeholder="Optional" className="h-8 text-sm" />
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                  
+                                  {cloudProvider === 'gcp' && (
+                                    <>
+                                      <div>
+                                        <Label className="text-xs">Service Account Key (JSON)</Label>
+                                        <textarea 
+                                          className="w-full h-16 text-xs p-2 border rounded-md bg-background" 
+                                          placeholder="Paste your service account JSON key here..."
+                                        />
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <Label className="text-xs">Project ID</Label>
+                                          <Input placeholder="my-project-123" className="h-8 text-sm" />
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs">Region</Label>
+                                          <Input placeholder="us-central1" className="h-8 text-sm" />
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                  
+                                  {cloudProvider === 'azure' && (
+                                    <>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <Label className="text-xs">Subscription ID</Label>
+                                          <Input placeholder="12345678-1234-1234..." className="h-8 text-sm" />
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs">Tenant ID</Label>
+                                          <Input placeholder="87654321-4321-4321..." className="h-8 text-sm" />
+                                        </div>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                          <Label className="text-xs">Client ID</Label>
+                                          <Input placeholder="abcdef12-3456-7890..." className="h-8 text-sm" />
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs">Client Secret</Label>
+                                          <Input type="password" placeholder="••••••••" className="h-8 text-sm" />
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                  
+                                  <div className="flex items-center justify-between pt-2">
+                                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                                      <Shield className="w-3 h-3" />
+                                      <span>Credentials encrypted and secure</span>
                                     </div>
-                                    
-                                    {/* Show credential requirements when selected */}
-                                    <AnimatePresence>
-                                      {cloudProvider === provider.value && (
-                                        <motion.div
-                                          initial={{ opacity: 0, height: 0 }}
-                                          animate={{ opacity: 1, height: "auto" }}
-                                          exit={{ opacity: 0, height: 0 }}
-                                          className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
-                                        >
-                                          <p className="text-sm font-medium mb-2">Required Credentials:</p>
-                                          <ul className="text-xs space-y-1 text-muted-foreground">
-                                            {provider.credentials.map((cred, index) => (
-                                              <li key={index} className="flex items-center">
-                                                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-                                                {cred}
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </motion.div>
-                                      )}
-                                    </AnimatePresence>
-                                  </CardContent>
-                                </Card>
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
+                                    <Button size="sm" className="h-7 px-3 text-xs">
+                                      Test Connection
+                                    </Button>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       {/* Connection Configuration */}
@@ -1384,14 +1473,9 @@ resource "aws_instance" "web_server" {
                         <Button
                           onClick={handleAnalyze}
                           disabled={!selectedFiles.length && !textInput.trim() && !cloudConnect}
-                          className="px-12 py-4 text-lg font-semibold text-white drop-shadow-sm [&>*]:text-white [&]:text-white relative overflow-hidden bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="px-12 py-4 text-lg font-semibold text-white relative overflow-hidden bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
                           size="lg"
                         >
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50"
-                            animate={{ x: ['-100%', '100%'] }}
-                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
-                          />
                           <motion.div
                             whileHover={{ rotate: 180 }}
                             transition={{ duration: 0.3 }}

@@ -25,10 +25,10 @@ export interface AnalyzeResult {
 
 export async function callPythonAnalyze(request: AnalyzeRequest): Promise<AnalyzeResult> {
   try {
-    // Use OpenAI API for architecture analysis
+    // Use OpenRouter API for architecture analysis
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenAI API key not found. Please configure OPENAI_API_KEY environment variable.");
+      throw new Error("OpenRouter API key not found. Please configure OPENAI_API_KEY environment variable.");
     }
 
     const analysisInput = request.architecture_text || request.file_content || '';
@@ -49,14 +49,16 @@ Provide a comprehensive professional analysis as a JSON object with:
 
 Focus on: security vulnerabilities, cost optimization, performance, scalability, and cloud best practices for ${request.cloud.toUpperCase()}.`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://stackstage.dev',
+        'X-Title': 'StackStage Cloud Analysis'
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'openai/gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -75,7 +77,7 @@ Focus on: security vulnerabilities, cost optimization, performance, scalability,
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -129,7 +131,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     // Check for API key
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenAI API key not found");
+      throw new Error("OpenRouter API key not found");
     }
     
     // Prepare messages for OpenAI
@@ -153,15 +155,17 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
       ...formattedMessages
     ];
     
-    // Call OpenAI API for assistant responses
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenRouter API for assistant responses
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://stackstage.dev',
+        'X-Title': 'StackStage Cloud Intelligence'
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'openai/gpt-4o-mini',
         messages: fullMessages,
         max_tokens: 1200,
         temperature: 0.15
@@ -170,7 +174,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     
     if (!response.ok) {
       const errorData = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${errorData}`);
+      throw new Error(`OpenRouter API error: ${response.status} - ${errorData}`);
     }
     
     const data = await response.json();
