@@ -210,17 +210,33 @@ const Results = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
               Issues by Category
             </h2>
-            <AnimatedList
-              items={scores.map(score => ({
-                label: score.category,
-                description: `${score.issues} issues found - ${score.status}`,
-                icon: <score.icon className={`w-5 h-5 ${score.color}`} />
-              }))}
-              showGradients={true}
-              enableArrowNavigation={true}
-              displayScrollbar={true}
-              className="max-w-2xl mx-auto"
-            />
+            <div className="max-w-2xl mx-auto space-y-3">
+              {scores.map((score, index) => {
+                const Icon = score.icon;
+                return (
+                  <div 
+                    key={index}
+                    className="flex items-center space-x-4 p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-900/70 transition-all duration-300"
+                  >
+                    <div className={`w-10 h-10 rounded-lg ${score.bgColor} flex items-center justify-center`}>
+                      <Icon className={`w-5 h-5 ${score.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground">{score.category}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {score.issues} issue{score.issues !== 1 ? 's' : ''} found - {score.status}
+                      </p>
+                    </div>
+                    <Badge 
+                      variant={score.score >= 80 ? "default" : score.score >= 60 ? "secondary" : "destructive"}
+                      className={score.score >= 80 ? "bg-green-500 text-white" : score.score >= 60 ? "bg-yellow-500 text-white" : ""}
+                    >
+                      {score.score}%
+                    </Badge>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Action Buttons */}
