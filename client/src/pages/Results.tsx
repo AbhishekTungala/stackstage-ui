@@ -26,6 +26,46 @@ import AnimatedList from "@/components/ui/animated-list";
 
 const Results = () => {
   const [overallScore] = useState(78);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportReport = async () => {
+    setIsExporting(true);
+    try {
+      // Generate and download PDF report
+      const response = await fetch('/api/export/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          analysisId: 'current',
+          format: 'pdf',
+          includeCharts: true,
+          includeDiagrams: true
+        }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `StackStage-Analysis-Report-${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        throw new Error('Failed to generate report');
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export report. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
   
   const scores = [
     {
@@ -241,7 +281,10 @@ const Results = () => {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <Card className="glass-card group hover:shadow-lg transition-all cursor-pointer">
+            <Card 
+              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
+              onClick={() => window.location.href = '/fixes'}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -256,11 +299,14 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            <Card className="glass-card group hover:shadow-lg transition-all cursor-pointer">
+            <Card 
+              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
+              onClick={() => window.location.href = '/diagram'}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-                    <Eye className="w-6 h-6 text-success" />
+                  <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <Eye className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground mb-1">View Architecture Diagram</h3>
@@ -271,11 +317,14 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            <Card className="glass-card group hover:shadow-lg transition-all cursor-pointer">
+            <Card 
+              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
+              onClick={handleExportReport}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-warning" />
+                  <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
+                    <Download className="w-6 h-6 text-orange-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground mb-1">Export Report</h3>
@@ -298,24 +347,27 @@ const Results = () => {
             <CardContent className="space-y-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <Button variant="hero" size="lg" asChild>
-                  <Link to="/results/fixes">
+                  <Link to="/fixes">
                     <Wrench className="mr-2 w-5 h-5" />
                     View All Fixes
                   </Link>
                 </Button>
                 
                 <Button variant="outline" size="lg" asChild>
-                  <Link to="/results/diagram">
+                  <Link to="/diagram">
                     <Eye className="mr-2 w-5 h-5" />
                     Architecture Diagram
                   </Link>
                 </Button>
                 
-                <Button variant="outline" size="lg" asChild>
-                  <Link to="/results/share">
-                    <Share2 className="mr-2 w-5 h-5" />
-                    Share Results
-                  </Link>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={handleExportReport}
+                  disabled={isExporting}
+                >
+                  <Download className="mr-2 w-5 h-5" />
+                  {isExporting ? 'Generating...' : 'Export Report'}
                 </Button>
               </div>
             </CardContent>
