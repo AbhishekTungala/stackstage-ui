@@ -35,7 +35,7 @@ const Fixes = () => {
   };
 
   const markAsImplemented = (fixId: string) => {
-    setImplementedFixes(prev => new Set([...prev, fixId]));
+    setImplementedFixes(prev => new Set([...Array.from(prev), fixId]));
   };
 
   const fixes = [
@@ -176,11 +176,7 @@ resource "aws_ebs_volume" "data" {
     }
   ];
 
-  const copyToClipboardOld = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
+
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

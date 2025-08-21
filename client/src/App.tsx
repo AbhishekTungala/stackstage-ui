@@ -42,6 +42,8 @@ const App = () => (
             <Route path="/assistant" component={Assistant} />
             <Route path="/analyze" component={Analyze} />
             <Route path="/results" component={Results} />
+            <Route path="/fixes" component={Fixes} />
+            <Route path="/diagram" component={Diagram} />
             <Route path="/results/fixes" component={Fixes} />
             <Route path="/results/diagram" component={Diagram} />
             <Route path="/results/share" component={Share} />
