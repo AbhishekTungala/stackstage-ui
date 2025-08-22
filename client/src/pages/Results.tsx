@@ -322,21 +322,21 @@ const Results = () => {
             {/* Premium Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {dashboardMetrics.map((metric, index) => (
-                <Card key={index} className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+                <Card key={index} className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${metric.gradient} flex items-center justify-center`}>
                         <metric.icon className="w-5 h-5 text-white" />
                       </div>
-                      <Badge variant="outline" className="text-emerald-400 border-emerald-400/30 bg-emerald-400/10">
+                      <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-400/30 bg-emerald-50 dark:bg-emerald-400/10">
                         {metric.change}
                       </Badge>
                     </div>
-                    <h3 className="text-sm font-medium text-slate-400 mb-1">{metric.title}</h3>
+                    <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">{metric.title}</h3>
                     <div className="flex items-end justify-between">
                       <div>
-                        <span className="text-2xl font-bold text-white">{metric.value}</span>
-                        <span className="text-sm text-slate-400 ml-1">{metric.suffix}</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{metric.value}</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-400 ml-1">{metric.suffix}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -554,12 +554,13 @@ const Results = () => {
                         </linearGradient>
                       </defs>
                       <PolarGrid stroke="#334155" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 14 }} tickFormatter={(value) => value} />
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
-                        tick={{ fill: '#64748b', fontSize: 10 }} 
+                        tick={{ fill: '#64748b', fontSize: 12 }} 
                         tickFormatter={(value) => `${value}%`}
+                        tickCount={5}
                       />
                       <RadarData
                         name="Current"
