@@ -18,7 +18,9 @@ import {
   Code,
   Wrench,
   Clock,
-  Loader2
+  Loader2,
+  BookOpen,
+  X
 } from "lucide-react";
 
 const Fixes = () => {
@@ -27,6 +29,10 @@ const Fixes = () => {
   const [applyingFixes, setApplyingFixes] = useState<Set<string>>(new Set());
   const [fixResults, setFixResults] = useState<Map<string, any>>(new Map());
   const [viewMode, setViewMode] = useState<Record<string, 'before' | 'after'>>({});
+  const [documentationModal, setDocumentationModal] = useState<{ isOpen: boolean; content: any }>({ 
+    isOpen: false, 
+    content: null 
+  });
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -124,6 +130,166 @@ const Fixes = () => {
 
   const markAsImplemented = (fixId: string) => {
     setImplementedFixes(prev => new Set([...Array.from(prev), fixId]));
+  };
+
+  const getDocumentationContent = (category: string, issue: any) => {
+    const baseContent = {
+      title: `${category} - ${issue.title}`,
+      description: issue.description,
+      impact: issue.impact,
+      severity: issue.severity
+    };
+
+    switch (category.toLowerCase()) {
+      case 'security':
+        return {
+          ...baseContent,
+          sections: [
+            {
+              title: "Security Overview",
+              content: [
+                "This security vulnerability exposes your infrastructure to potential threats and compliance violations.",
+                "Addressing security issues should be your highest priority as they can lead to data breaches, unauthorized access, and regulatory penalties."
+              ]
+            },
+            {
+              title: "Implementation Guide", 
+              content: [
+                "1. Review the current configuration and identify security gaps",
+                "2. Apply the recommended security hardening measures",
+                "3. Test access controls to ensure proper restrictions",
+                "4. Enable monitoring and alerting for security events",
+                "5. Document changes and update security policies"
+              ]
+            },
+            {
+              title: "Best Practices",
+              content: [
+                "• Enable encryption at rest and in transit for all data",
+                "• Implement least-privilege access controls",
+                "• Regularly audit and rotate access keys",
+                "• Enable comprehensive logging and monitoring",
+                "• Keep security policies up to date with compliance requirements"
+              ]
+            },
+            {
+              title: "Compliance Impact",
+              content: [
+                "SOC 2 Type II: Improves security controls and monitoring",
+                "GDPR: Enhances data protection and privacy measures", 
+                "HIPAA: Strengthens safeguards for protected health information",
+                "PCI DSS: Meets security requirements for payment data"
+              ]
+            }
+          ]
+        };
+
+      case 'cost optimization':
+        return {
+          ...baseContent,
+          sections: [
+            {
+              title: "Cost Optimization Overview",
+              content: [
+                "This optimization opportunity can reduce your cloud spending without impacting performance.",
+                "Right-sizing resources and optimizing configurations typically saves 15-40% on cloud costs."
+              ]
+            },
+            {
+              title: "Implementation Strategy",
+              content: [
+                "1. Analyze current resource utilization patterns",
+                "2. Identify over-provisioned or underutilized resources", 
+                "3. Apply right-sizing recommendations gradually",
+                "4. Monitor performance impact after changes",
+                "5. Set up cost monitoring and budgets for ongoing optimization"
+              ]
+            },
+            {
+              title: "Optimization Techniques",
+              content: [
+                "• Right-size EC2 instances based on CPU and memory usage",
+                "• Convert to newer generation instance types (gp2 → gp3)",
+                "• Implement auto-scaling for variable workloads",
+                "• Use Reserved Instances for predictable workloads",
+                "• Clean up unused resources and snapshots regularly"
+              ]
+            },
+            {
+              title: "ROI Calculation",
+              content: [
+                "Monthly Savings: $450-$650 per optimization",
+                "Annual Impact: $5,400-$7,800 cost reduction",
+                "Payback Period: Immediate upon implementation",
+                "Performance Impact: Minimal to zero degradation expected"
+              ]
+            }
+          ]
+        };
+
+      case 'performance':
+        return {
+          ...baseContent,
+          sections: [
+            {
+              title: "Performance Enhancement Overview", 
+              content: [
+                "This performance improvement will reduce latency and improve user experience globally.",
+                "CDN implementation typically reduces response times by 40-60% and improves cache hit ratios to 85%+."
+              ]
+            },
+            {
+              title: "Implementation Roadmap",
+              content: [
+                "1. Deploy CloudFront distribution with global edge locations",
+                "2. Configure origin access controls for security",
+                "3. Optimize cache behaviors and TTL settings",
+                "4. Enable compression for text-based content",
+                "5. Monitor performance metrics and fine-tune configuration"
+              ]
+            },
+            {
+              title: "Performance Gains",
+              content: [
+                "• 40% reduction in global response times",
+                "• 25% improvement in request handling capacity",
+                "• 85% cache hit ratio for static content",
+                "• <100ms latency from major global regions",
+                "• Improved Core Web Vitals and SEO rankings"
+              ]
+            },
+            {
+              title: "Monitoring & Optimization",
+              content: [
+                "CloudWatch Metrics: Monitor cache hit ratios and origin requests",
+                "Real User Monitoring: Track actual user experience improvements",
+                "Core Web Vitals: Measure LCP, FID, and CLS improvements",
+                "Geographic Performance: Analyze latency from different regions"
+              ]
+            }
+          ]
+        };
+
+      default:
+        return {
+          ...baseContent,
+          sections: [
+            {
+              title: "General Best Practices",
+              content: [
+                "Follow infrastructure as code principles",
+                "Implement comprehensive monitoring",
+                "Regular security audits and compliance checks"
+              ]
+            }
+          ]
+        };
+    }
+  };
+
+  const openDocumentation = (category: string, issue: any) => {
+    const content = getDocumentationContent(category, issue);
+    setDocumentationModal({ isOpen: true, content });
   };
 
   const fixes = [
@@ -520,8 +686,12 @@ resource "aws_ebs_volume" "data" {
                                       )}
                                     </Button>
                                   )}
-                                  <Button variant="outline" size="sm">
-                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => openDocumentation(category.category, issue)}
+                                  >
+                                    <BookOpen className="w-4 h-4 mr-2" />
                                     View Documentation
                                   </Button>
                                 </div>
@@ -598,6 +768,83 @@ resource "aws_ebs_volume" "data" {
       </main>
 
       <Footer />
+
+      {/* Professional Documentation Modal */}
+      {documentationModal.isOpen && documentationModal.content && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background/95 backdrop-blur border border-white/10 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden mx-4">
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div>
+                <h2 className="text-2xl font-bold">{documentationModal.content.title}</h2>
+                <p className="text-muted-foreground mt-1">{documentationModal.content.description}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setDocumentationModal({ isOpen: false, content: null })}
+                className="rounded-full"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <div className="overflow-y-auto max-h-[70vh] p-6">
+              <div className="space-y-8">
+                {documentationModal.content.sections?.map((section: any, index: number) => (
+                  <div key={index} className="space-y-4">
+                    <h3 className="text-xl font-semibold flex items-center">
+                      {section.title}
+                    </h3>
+                    <div className="space-y-3">
+                      {section.content.map((item: string, itemIndex: number) => (
+                        <div key={itemIndex} className="text-muted-foreground leading-relaxed">
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Additional Resources */}
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <h3 className="text-lg font-semibold mb-4">Additional Resources</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="glass-card">
+                      <CardContent className="p-4">
+                        <h4 className="font-medium mb-2">AWS Documentation</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Official AWS best practices and implementation guides
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="glass-card">
+                      <CardContent className="p-4">
+                        <h4 className="font-medium mb-2">Security Standards</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Industry compliance requirements and security frameworks
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 p-6 border-t border-white/10 bg-muted/10">
+              <Button
+                variant="outline"
+                onClick={() => setDocumentationModal({ isOpen: false, content: null })}
+              >
+                Close
+              </Button>
+              <Button variant="default">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open External Docs
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
