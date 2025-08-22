@@ -532,9 +532,9 @@ const Results = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             
             {/* Multi-Dimensional Radar Chart */}
-            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+            <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                <CardTitle className="text-white flex items-center">
                   <Radar className="mr-2 w-5 h-5 text-purple-400" />
                   Multi-Dimensional Analysis
                 </CardTitle>
