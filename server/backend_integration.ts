@@ -26,9 +26,9 @@ export interface AnalyzeResult {
 export async function callPythonAnalyze(request: AnalyzeRequest): Promise<AnalyzeResult> {
   try {
     // Use OpenRouter API for architecture analysis
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenRouter API key not found. Please configure OPENAI_API_KEY environment variable.");
+      throw new Error("OpenRouter API key not found. Please configure OPENROUTER_API_KEY environment variable.");
     }
 
     const analysisInput = request.architecture_text || request.file_content || '';
@@ -132,7 +132,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     console.log("Calling OpenAI API for enhanced assistant...");
     
     // Check for API key
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
       throw new Error("OpenRouter API key not found");
     }
