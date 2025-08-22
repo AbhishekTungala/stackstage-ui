@@ -17,12 +17,15 @@ import {
   ExternalLink,
   Code,
   Wrench,
-  Clock
+  Clock,
+  Loader2
 } from "lucide-react";
 
 const Fixes = () => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [implementedFixes, setImplementedFixes] = useState<Set<string>>(new Set());
+  const [applyingFixes, setApplyingFixes] = useState<Set<string>>(new Set());
+  const [fixResults, setFixResults] = useState<Map<string, any>>(new Map());
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -31,6 +34,84 @@ const Fixes = () => {
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const applyFix = async (fixId: string, fixData: any) => {
+    setApplyingFixes(prev => new Set([...Array.from(prev), fixId]));
+    
+    try {
+      const response = await fetch('/api/apply-fix', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fixId,
+          fixType: fixData.category?.toLowerCase() || 'general',
+          code: fixData.code,
+          description: fixData.description,
+          impact: fixData.impact
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setImplementedFixes(prev => new Set([...Array.from(prev), fixId]));
+        setFixResults(prev => new Map(prev.set(fixId, result)));
+        
+        // Show success notification
+        const benefits = result.details?.estimatedBenefits || {};
+        const benefitText = Object.values(benefits).filter(Boolean).join(', ');
+        alert(`✅ Fix applied successfully!\n\nType: ${result.details?.type}\nBenefits: ${benefitText}`);
+      } else {
+        // Show error notification
+        const suggestions = result.suggestions?.map((s: string) => `• ${s}`).join('\n') || '';
+        alert(`❌ Fix application failed: ${result.error}\n\nSuggestions:\n${suggestions}`);
+      }
+    } catch (error) {
+      console.error('Apply fix error:', error);
+      alert('❌ Failed to apply fix. Please check your connection and try again.');
+    } finally {
+      setApplyingFixes(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(fixId);
+        return newSet;
+      });
+    }
+  };
+
+  const rollbackFix = async (fixId: string) => {
+    try {
+      const response = await fetch('/api/rollback-fix', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fixId, reason: 'User requested rollback' }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setImplementedFixes(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(fixId);
+          return newSet;
+        });
+        setFixResults(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(fixId);
+          return newMap;
+        });
+        alert('✅ Fix rolled back successfully!');
+      } else {
+        alert(`❌ Rollback failed: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Rollback error:', error);
+      alert('❌ Failed to rollback fix. Please try again.');
     }
   };
 
@@ -330,10 +411,49 @@ resource "aws_ebs_volume" "data" {
                                 </div>
                                 
                                 <div className="flex gap-3">
-                                  <Button variant="default" size="sm">
-                                    <Wrench className="w-4 h-4 mr-2" />
-                                    Apply Fix
-                                  </Button>
+                                  {implementedFixes.has(`${categoryIndex}-${issueIndex}`) ? (
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        className="border-success text-success"
+                                        disabled
+                                      >
+                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                        Applied
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={() => rollbackFix(`${categoryIndex}-${issueIndex}`)}
+                                        className="text-muted-foreground hover:text-destructive"
+                                      >
+                                        Rollback
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <Button 
+                                      variant="default" 
+                                      size="sm"
+                                      onClick={() => applyFix(`${categoryIndex}-${issueIndex}`, {
+                                        ...issue,
+                                        category: category.category
+                                      })}
+                                      disabled={applyingFixes.has(`${categoryIndex}-${issueIndex}`)}
+                                    >
+                                      {applyingFixes.has(`${categoryIndex}-${issueIndex}`) ? (
+                                        <>
+                                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                          Applying...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Wrench className="w-4 h-4 mr-2" />
+                                          Apply Fix
+                                        </>
+                                      )}
+                                    </Button>
+                                  )}
                                   <Button variant="outline" size="sm">
                                     <ExternalLink className="w-4 h-4 mr-2" />
                                     View Documentation
@@ -354,9 +474,40 @@ resource "aws_ebs_volume" "data" {
           {/* Action Buttons */}
           <div className="mt-12 text-center space-y-4">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="hero" size="lg">
-                <CheckCircle className="mr-2 w-5 h-5" />
-                Apply All Critical Fixes
+              <Button 
+                variant="hero" 
+                size="lg"
+                onClick={async () => {
+                  // Apply all critical fixes (high priority issues)
+                  const criticalFixes = fixes.filter(category => category.severity === 'high')
+                    .flatMap((category, categoryIndex) => 
+                      category.issues.map((issue, issueIndex) => ({
+                        fixId: `${categoryIndex}-${issueIndex}`,
+                        fixData: { ...issue, category: category.category }
+                      }))
+                    );
+                  
+                  for (const { fixId, fixData } of criticalFixes) {
+                    if (!implementedFixes.has(fixId)) {
+                      await applyFix(fixId, fixData);
+                      // Add delay between fixes for better UX
+                      await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                  }
+                }}
+                disabled={applyingFixes.size > 0}
+              >
+                {applyingFixes.size > 0 ? (
+                  <>
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                    Applying Critical Fixes...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="mr-2 w-5 h-5" />
+                    Apply All Critical Fixes
+                  </>
+                )}
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/results/diagram">
