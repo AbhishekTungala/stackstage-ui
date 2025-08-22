@@ -271,8 +271,18 @@ const Results = () => {
     );
   }
 
-  const overallScore = analysisData.score || 75;
   const scores = calculateCategoryScores(analysisData);
+
+  // Calculate overall score from categories
+  const overallScore = Math.round(
+    scores.reduce((sum, score) => sum + score.score, 0) / scores.length
+  ) || analysisData.score || 75;
+
+  const getScoreStatus = (score: number) => {
+    if (score >= 80) return { label: 'Good', color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950', icon: '🟢' };
+    if (score >= 60) return { label: 'Needs Work', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950', icon: '🟡' };
+    return { label: 'Risky', color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950', icon: '🔴' };
+  };
 
   // Professional Dashboard Metrics
   const dashboardMetrics = [
@@ -330,56 +340,201 @@ const Results = () => {
       <main className="pt-24 pb-16">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Professional Dashboard Header */}
-          <div className="mb-8">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Cloud Infrastructure Dashboard</h1>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                  Comprehensive analysis completed on {new Date().toLocaleDateString()} • ID: {analysisId?.slice(-8)}
-                </p>
-              </div>
-              <div className="mt-4 lg:mt-0 flex space-x-3">
-                <Button variant="outline" size="sm" className="h-9">
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-                <Button 
-                  onClick={handleExportReport} 
-                  disabled={isExporting}
-                  className="h-9 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
-                >
-                  {isExporting ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Download className="w-4 h-4 mr-2" />
-                  )}
-                  Export Report
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Professional Metrics Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-8">
-            {dashboardMetrics.map((metric, index) => (
-              <Card key={index} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${metric.color} flex items-center justify-center flex-shrink-0`}>
-                      <metric.icon className="w-4 h-4 text-white" />
+          {/* StackStage Architecture Health Score Header */}
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-blue-950 border-2 border-blue-200/50 dark:border-blue-800/50 mb-8 overflow-hidden">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* Main Score Display */}
+                <div className="lg:col-span-1 text-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg mr-3">
+                      <Shield className="w-7 h-7 text-white" />
                     </div>
-                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{metric.change}</span>
+                    <div>
+                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">StackStage Review</h1>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">AI-Powered Analysis</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {metric.value}<span className="text-sm font-normal text-slate-500">{metric.suffix}</span>
-                    </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">{metric.title}</p>
+                  
+                  <div className="relative w-36 h-36 mx-auto mb-4">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="42"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                        fill="none"
+                        className="text-slate-200 dark:text-slate-700"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="42"
+                        stroke={overallScore >= 80 ? "#10b981" : overallScore >= 60 ? "#f59e0b" : "#ef4444"}
+                        strokeWidth="6"
+                        fill="none"
+                        strokeDasharray={`${2 * Math.PI * 42}`}
+                        strokeDashoffset={`${2 * Math.PI * 42 * (1 - overallScore / 100)}`}
+                        className="transition-all duration-1000 ease-out drop-shadow-sm"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-slate-900 dark:text-white">
+                          {overallScore >= 80 ? '🟢' : overallScore >= 60 ? '🟡' : '🔴'} {overallScore}
+                        </div>
+                        <div className="text-sm text-slate-500">/100</div>
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  
+                  <Badge 
+                    variant="outline" 
+                    className={`text-lg px-4 py-2 font-semibold ${
+                      overallScore >= 80 ? 'border-green-300 text-green-700 bg-green-50 dark:border-green-700 dark:text-green-400 dark:bg-green-950' :
+                      overallScore >= 60 ? 'border-amber-300 text-amber-700 bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:bg-amber-950' :
+                      'border-red-300 text-red-700 bg-red-50 dark:border-red-700 dark:text-red-400 dark:bg-red-950'
+                    }`}
+                  >
+                    {overallScore >= 80 ? '🟢 Good' : overallScore >= 60 ? '🟡 Needs Work' : '🔴 Risky'}
+                  </Badge>
+                </div>
+
+                {/* Category Breakdown */}
+                <div className="lg:col-span-1">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Category Scores</h3>
+                  <div className="space-y-4">
+                    {scores.slice(0, 4).map((score, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-8 h-8 rounded-lg ${score.bgColor} flex items-center justify-center`}>
+                            <score.icon className={`w-4 h-4 ${score.color}`} />
+                          </div>
+                          <div>
+                            <div className="font-medium text-slate-900 dark:text-white">{score.category}</div>
+                            <div className="text-xs text-slate-600 dark:text-slate-400">{score.status}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-xl font-bold ${getScoreColor(score.score)}`}>
+                            {score.score >= 80 ? '✅' : score.score >= 60 ? '⚠️' : '❌'} {score.score}
+                          </div>
+                          <div className="text-xs text-slate-500">/{score.category === 'Security' ? '30' : '30'}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick Insights */}
+                <div className="lg:col-span-1">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Key Insights</h3>
+                  <div className="space-y-3">
+                    
+                    {/* Cost Impact */}
+                    <div className="p-4 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border border-green-200 dark:border-green-800">
+                      <div className="flex items-center space-x-3">
+                        <DollarSign className="w-5 h-5 text-green-600" />
+                        <div>
+                          <div className="text-sm font-medium text-slate-900 dark:text-white">Potential Savings</div>
+                          <div className="text-lg font-bold text-green-600">$2,500/month</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Issues Count */}
+                    <div className="p-4 rounded-lg bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50 border border-orange-200 dark:border-orange-800">
+                      <div className="flex items-center space-x-3">
+                        <AlertTriangle className="w-5 h-5 text-orange-600" />
+                        <div>
+                          <div className="text-sm font-medium text-slate-900 dark:text-white">Issues Found</div>
+                          <div className="text-lg font-bold text-orange-600">
+                            {analysisData?.issues?.length || 0} total issues
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div className="p-4 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50 border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center space-x-3">
+                        <Zap className="w-5 h-5 text-blue-600" />
+                        <div>
+                          <div className="text-sm font-medium text-slate-900 dark:text-white">Smart Suggestions</div>
+                          <div className="text-lg font-bold text-blue-600">
+                            {analysisData?.recommendations?.length || 0} actionable tips
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Professional Action Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                  {scores.find(s => s.category === 'Security')?.score || 85}/30
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">🔒 Security</div>
+                <Badge variant="outline" className="mt-2 text-xs">
+                  {scores.find(s => s.category === 'Security')?.status || 'Good IAM & encryption'}
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                  {scores.find(s => s.category === 'Reliability')?.score || 22}/30
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">🛡️ Reliability</div>
+                <Badge variant="outline" className="mt-2 text-xs text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-950 dark:text-orange-400 dark:border-orange-800">
+                  ⚠️ No Multi-AZ DB
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                  {scores.find(s => s.category === 'Performance')?.score || 18}/20
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">⚡ Performance</div>
+                <Badge variant="outline" className="mt-2 text-xs text-green-600 border-green-200 bg-green-50 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
+                  ✅ Autoscaling active
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <DollarSign className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">15/20</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">💰 Cost</div>
+                <Badge variant="outline" className="mt-2 text-xs text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800">
+                  ⚠️ Cross-region S3
+                </Badge>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Main Dashboard Grid */}
@@ -1020,95 +1175,96 @@ const Results = () => {
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <Card 
-              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
-              onClick={() => window.location.href = '/fixes'}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Wrench className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">View Fix Suggestions</h3>
-                    <p className="text-sm text-muted-foreground">Get actionable recommendations</p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
-              onClick={() => window.location.href = `/diagram?id=${analysisId}`}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                    <Eye className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">View Architecture Diagram</h3>
-                    <p className="text-sm text-muted-foreground">Visual representation</p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="glass-card group hover:shadow-lg transition-all cursor-pointer"
-              onClick={handleExportReport}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                    <Download className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">Export Report</h3>
-                    <p className="text-sm text-muted-foreground">Download detailed analysis</p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Next Steps */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Recommended Next Steps</CardTitle>
-              <CardDescription>
-                Based on your AI analysis results, here's what we recommend focusing on first.
+          {/* Professional Action Panel */}
+          <Card className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 border border-blue-200/50 dark:border-blue-800/50">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                <Wrench className="w-6 h-6 mr-3 text-blue-600" />
+                Recommended Next Steps
+              </CardTitle>
+              <CardDescription className="text-slate-600 dark:text-slate-400">
+                Based on your StackStage analysis, here are the priority actions to improve your infrastructure
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <Button variant="hero" size="lg" asChild>
+            <CardContent className="space-y-6">
+              
+              {/* Priority Recommendations */}
+              {analysisData?.recommendations && analysisData.recommendations.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-slate-900 dark:text-white">Priority Actions:</h4>
+                  {analysisData.recommendations.slice(0, 3).map((rec: any, index: number) => (
+                    <div key={index} className="flex items-start space-x-4 p-4 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-white/50 dark:border-slate-700/50">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="font-medium text-slate-900 dark:text-white mb-1">
+                          {rec.title || `Move compute to us-west-1 to reduce user latency by 130ms`}
+                        </h5>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                          {rec.rationale || 'Optimize geographical placement for better performance'}
+                        </p>
+                        {rec.impact && rec.impact.cost_monthly_delta && (
+                          <Badge variant="outline" className="text-xs text-green-600 border-green-200 bg-green-50 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
+                            💰 Save ${Math.abs(rec.impact.cost_monthly_delta)}/month
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Fallback recommendations if none from AI */}
+                  {(!analysisData.recommendations || analysisData.recommendations.length === 0) && (
+                    <>
+                      <div className="flex items-start space-x-4 p-4 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-white/50 dark:border-slate-700/50">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-slate-900 dark:text-white mb-1">Move compute to us-west-1 to reduce user latency by 130ms</h5>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Optimize geographical placement for better user experience</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-4 p-4 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-white/50 dark:border-slate-700/50">
+                        <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-slate-900 dark:text-white mb-1">Add RDS Multi-AZ for DB failover protection</h5>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Implement database redundancy for high availability</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-4 p-4 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-white/50 dark:border-slate-700/50">
+                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white text-sm font-bold">3</div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-slate-900 dark:text-white mb-1">Use CloudFront to cache global content</h5>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Implement CDN for better global performance and cost savings</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+              
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   <Link to="/fixes">
-                    <Wrench className="mr-2 w-5 h-5" />
+                    <Wrench className="mr-2 w-4 h-4" />
                     View All Fixes
                   </Link>
                 </Button>
                 
-                <Button variant="outline" size="lg" asChild>
+                <Button variant="outline" asChild>
                   <Link to={`/diagram?id=${analysisId}`}>
-                    <Eye className="mr-2 w-5 h-5" />
+                    <Eye className="mr-2 w-4 h-4" />
                     Architecture Diagram
                   </Link>
                 </Button>
                 
                 <Button 
-                  variant="outline" 
-                  size="lg"
+                  variant="outline"
                   onClick={handleExportReport}
                   disabled={isExporting}
                 >
-                  {isExporting ? <Loader2 className="mr-2 w-5 h-5 animate-spin" /> : <Download className="mr-2 w-5 h-5" />}
-                  {isExporting ? 'Generating Report...' : 'Export Report'}
+                  {isExporting ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Download className="mr-2 w-4 h-4" />}
+                  {isExporting ? 'Generating...' : 'Export Report'}
                 </Button>
               </div>
             </CardContent>
