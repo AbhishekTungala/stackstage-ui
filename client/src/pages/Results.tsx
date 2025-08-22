@@ -339,68 +339,90 @@ const Results = () => {
             </CardContent>
           </Card>
 
-          {/* Harness-Style Professional Dashboard */}
+          {/* Modern Gradient Dashboard */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            {/* Harness-Style Radar Chart */}
-            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
-                  <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+            {/* Modern Radar Chart */}
+            <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🛡️</span>
+                    <div>
+                      <div className="text-white font-semibold">RADAR CHART</div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-white font-bold">Radar</span>
+                        <span className="text-green-400 flex items-center">
+                          <span className="mr-1">↗</span>
+                          41.67%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  Security Posture
+                  <div className="text-slate-400">⚡</div>
                 </CardTitle>
-                <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
-                  Infrastructure health across key categories
-                </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={300}>
                   <RadarChart data={scores} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                    <defs>
+                      <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#e879f9" />
+                        <stop offset="50%" stopColor="#8b5cf6" />
+                        <stop offset="100%" stopColor="#06b6d4" />
+                      </linearGradient>
+                      <filter id="radarGlow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge> 
+                          <feMergeNode in="coloredBlur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
                     <PolarGrid 
                       gridType="polygon" 
-                      stroke="#e2e8f0" 
-                      strokeOpacity={0.5}
+                      stroke="#374151" 
+                      strokeOpacity={0.3}
                       strokeWidth={1}
-                      className="dark:stroke-slate-700"
                     />
                     <PolarAngleAxis 
                       dataKey="category" 
                       tick={{ 
-                        fontSize: 11, 
-                        fill: '#64748b',
-                        fontWeight: 500
+                        fontSize: 10, 
+                        fill: '#9ca3af',
+                        fontWeight: 400
                       }}
-                      className="dark:fill-slate-400"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 100]} 
                       tick={false}
-                      stroke="#e2e8f0"
-                      strokeOpacity={0.3}
-                      className="dark:stroke-slate-700"
+                      stroke="#374151"
+                      strokeOpacity={0.2}
                     />
                     <Radar
                       name="Score"
                       dataKey="score"
-                      stroke="#22c55e"
-                      fill="#22c55e"
-                      fillOpacity={0.1}
-                      strokeWidth={2}
+                      stroke="url(#radarGradient)"
+                      fill="url(#radarGradient)"
+                      fillOpacity={0.2}
+                      strokeWidth={3}
+                      filter="url(#radarGlow)"
                       dot={{ 
-                        fill: "#22c55e", 
-                        strokeWidth: 0,
-                        r: 3
+                        fill: "#06b6d4", 
+                        strokeWidth: 2,
+                        stroke: "#ffffff",
+                        r: 4,
+                        filter: "url(#radarGlow)"
                       }}
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: 'white',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '6px',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        fontSize: '12px'
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                        fontSize: '12px',
+                        color: '#e2e8f0'
                       }}
                       formatter={(value) => [`${value}%`, 'Score']}
                     />
@@ -409,213 +431,259 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            {/* Harness-Style Line Chart */}
-            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
-                  <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+            {/* Modern Spline Chart */}
+            <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📈</span>
+                    <div>
+                      <div className="text-white font-semibold">AREA CHART</div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-white font-bold">Spline</span>
+                        <span className="text-green-400 flex items-center">
+                          <span className="mr-1">↗</span>
+                          41.67%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  Health Trend
+                  <div className="text-slate-400">⚡</div>
                 </CardTitle>
-                <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
-                  Infrastructure metrics over time
-                </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={280}>
-                  <LineChart 
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart 
                     data={[
-                      { time: 'W1', health: analysisData.score - 15, performance: analysisData.score - 20, security: analysisData.score - 10 },
-                      { time: 'W2', health: analysisData.score - 5, performance: analysisData.score - 8, security: analysisData.score - 3 },
-                      { time: 'W3', health: analysisData.score, performance: analysisData.score + 2, security: analysisData.score + 5 },
-                      { time: 'W4', health: analysisData.score + 10, performance: analysisData.score + 15, security: analysisData.score + 18 }
+                      { time: '1AM', value: analysisData.score - 15 },
+                      { time: '2AM', value: analysisData.score - 8 },
+                      { time: '3AM', value: analysisData.score - 12 },
+                      { time: '4AM', value: analysisData.score + 3 },
+                      { time: '5AM', value: analysisData.score + 8 },
+                      { time: '6AM', value: analysisData.score + 15 }
                     ]}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
                   >
+                    <defs>
+                      <linearGradient id="splineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#e879f9" />
+                        <stop offset="50%" stopColor="#8b5cf6" />
+                        <stop offset="100%" stopColor="#06b6d4" />
+                      </linearGradient>
+                      <linearGradient id="splineAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.6}/>
+                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.0}/>
+                      </linearGradient>
+                      <filter id="splineGlow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge> 
+                          <feMergeNode in="coloredBlur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
                     <CartesianGrid 
-                      strokeDasharray="1 3" 
-                      stroke="#f1f5f9" 
-                      strokeOpacity={1}
-                      className="dark:stroke-slate-800"
+                      stroke="#374151" 
+                      strokeOpacity={0.2}
+                      strokeDasharray="1 1"
                     />
                     <XAxis 
                       dataKey="time" 
                       tick={{ 
-                        fontSize: 11, 
-                        fill: '#64748b'
+                        fontSize: 10, 
+                        fill: '#9ca3af'
                       }}
-                      className="dark:fill-slate-400"
-                      axisLine={{ stroke: '#e2e8f0' }}
-                      tickLine={{ stroke: '#e2e8f0' }}
+                      axisLine={false}
+                      tickLine={false}
                     />
                     <YAxis 
                       domain={[0, 100]}
                       tick={{ 
-                        fontSize: 11, 
-                        fill: '#64748b'
+                        fontSize: 10, 
+                        fill: '#9ca3af'
                       }}
-                      className="dark:fill-slate-400"
                       axisLine={false}
                       tickLine={false}
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: 'white',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '6px',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        fontSize: '12px'
+                        backgroundColor: '#1e293b',
+                        border: '1px solid #475569',
+                        borderRadius: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                        fontSize: '12px',
+                        color: '#e2e8f0'
                       }}
-                      className="dark:bg-slate-800 dark:border-slate-700"
+                      formatter={(value) => [`${value}%`, 'Value']}
                     />
-                    <Legend 
-                      wrapperStyle={{
-                        paddingTop: '16px',
-                        fontSize: '11px'
-                      }}
-                    />
-                    <Line
+                    <Area
                       type="monotone"
-                      dataKey="health"
-                      stroke="#22c55e"
-                      strokeWidth={2}
+                      dataKey="value"
+                      stroke="url(#splineGradient)"
+                      fill="url(#splineAreaGradient)"
+                      strokeWidth={3}
+                      filter="url(#splineGlow)"
                       dot={{ 
-                        fill: "#22c55e", 
-                        strokeWidth: 0,
-                        r: 3
-                      }}
-                      activeDot={{ 
-                        r: 4, 
-                        stroke: "#22c55e", 
+                        fill: "#06b6d4", 
                         strokeWidth: 2,
-                        fill: "#ffffff"
+                        stroke: "#ffffff",
+                        r: 4,
+                        filter: "url(#splineGlow)"
                       }}
-                      name="Health"
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="performance"
-                      stroke="#3b82f6"
-                      strokeWidth={2}
-                      dot={{ 
-                        fill: "#3b82f6", 
-                        strokeWidth: 0,
-                        r: 3
-                      }}
-                      activeDot={{ 
-                        r: 4, 
-                        stroke: "#3b82f6", 
-                        strokeWidth: 2,
-                        fill: "#ffffff"
-                      }}
-                      name="Performance"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="security"
-                      stroke="#ef4444"
-                      strokeWidth={2}
-                      dot={{ 
-                        fill: "#ef4444", 
-                        strokeWidth: 0,
-                        r: 3
-                      }}
-                      activeDot={{ 
-                        r: 4, 
-                        stroke: "#ef4444", 
-                        strokeWidth: 2,
-                        fill: "#ffffff"
-                      }}
-                      name="Security"
-                    />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
           </div>
 
-          {/* Harness-Style Area Chart */}
-          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
-                <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
-                  <BarChart className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+          {/* Sales History Style Chart */}
+          <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden mb-8">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">💹</span>
+                  <div>
+                    <div className="text-white font-semibold text-xl">Sales History</div>
+                  </div>
                 </div>
-                Quality Distribution
+                <div className="text-slate-400">⚡</div>
               </CardTitle>
-              <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
-                Infrastructure quality across all categories
-              </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <ResponsiveContainer width="100%" height={320}>
-                <AreaChart data={scores} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart 
+                  data={[
+                    { time: '1AM', health: analysisData.score - 20, performance: analysisData.score - 25, security: analysisData.score - 15 },
+                    { time: '2AM', health: analysisData.score - 10, performance: analysisData.score - 15, security: analysisData.score - 8 },
+                    { time: '3AM', health: analysisData.score - 5, performance: analysisData.score - 10, security: analysisData.score - 3 },
+                    { time: '4AM', health: analysisData.score, performance: analysisData.score - 5, security: analysisData.score + 2 },
+                    { time: '5AM', health: analysisData.score + 5, performance: analysisData.score, security: analysisData.score + 8 },
+                    { time: '6AM', health: analysisData.score + 10, performance: analysisData.score + 5, security: analysisData.score + 12 },
+                    { time: '7AM', health: analysisData.score + 15, performance: analysisData.score + 10, security: analysisData.score + 18 }
+                  ]}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                >
                   <defs>
-                    <linearGradient id="harnessAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.05}/>
+                    {/* Gradients for each line */}
+                    <linearGradient id="healthLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#e879f9" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
                     </linearGradient>
+                    <linearGradient id="performanceLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#8b5cf6" />
+                      <stop offset="100%" stopColor="#06b6d4" />
+                    </linearGradient>
+                    <linearGradient id="securityLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#06b6d4" />
+                      <stop offset="100%" stopColor="#10b981" />
+                    </linearGradient>
+                    {/* Glow effects */}
+                    <filter id="lineGlowEffect">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   <CartesianGrid 
-                    strokeDasharray="1 3" 
-                    stroke="#f1f5f9" 
-                    strokeOpacity={1}
-                    className="dark:stroke-slate-800"
+                    stroke="#374151" 
+                    strokeOpacity={0.2}
+                    strokeDasharray="1 1"
                   />
                   <XAxis 
-                    dataKey="category" 
-                    angle={-20}
-                    textAnchor="end"
-                    height={60}
+                    dataKey="time" 
                     tick={{ 
                       fontSize: 11, 
-                      fill: '#64748b'
+                      fill: '#9ca3af'
                     }}
-                    className="dark:fill-slate-400"
-                    axisLine={{ stroke: '#e2e8f0' }}
-                    tickLine={{ stroke: '#e2e8f0' }}
+                    axisLine={false}
+                    tickLine={false}
                   />
                   <YAxis 
                     domain={[0, 100]}
                     tick={{ 
-                      fontSize: 11, 
-                      fill: '#64748b'
+                      fontSize: 10, 
+                      fill: '#9ca3af'
                     }}
-                    className="dark:fill-slate-400"
                     axisLine={false}
                     tickLine={false}
                   />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: 'white',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '6px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                      fontSize: '12px'
+                      backgroundColor: '#1e293b',
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                      fontSize: '12px',
+                      color: '#e2e8f0'
                     }}
-                    formatter={(value) => [`${value}%`, 'Score']}
-                    className="dark:bg-slate-800 dark:border-slate-700"
                   />
-                  <Area
+                  {/* Health line with dots */}
+                  <Line
                     type="monotone"
-                    dataKey="score"
-                    stroke="#3b82f6"
-                    fill="url(#harnessAreaGradient)"
-                    strokeWidth={2}
+                    dataKey="health"
+                    stroke="url(#healthLineGradient)"
+                    strokeWidth={4}
+                    filter="url(#lineGlowEffect)"
                     dot={{ 
-                      fill: "#3b82f6", 
+                      fill: "#e879f9", 
                       strokeWidth: 0,
-                      r: 3
+                      r: 2
                     }}
                     activeDot={{ 
-                      r: 4, 
-                      stroke: "#3b82f6", 
-                      strokeWidth: 2,
-                      fill: "#ffffff"
+                      r: 6, 
+                      stroke: "#e879f9", 
+                      strokeWidth: 3,
+                      fill: "#ffffff",
+                      filter: "url(#lineGlowEffect)"
                     }}
+                    name="Health"
                   />
-                </AreaChart>
+                  {/* Performance line with dots */}
+                  <Line
+                    type="monotone"
+                    dataKey="performance"
+                    stroke="url(#performanceLineGradient)"
+                    strokeWidth={4}
+                    filter="url(#lineGlowEffect)"
+                    dot={{ 
+                      fill: "#8b5cf6", 
+                      strokeWidth: 0,
+                      r: 2
+                    }}
+                    activeDot={{ 
+                      r: 6, 
+                      stroke: "#8b5cf6", 
+                      strokeWidth: 3,
+                      fill: "#ffffff",
+                      filter: "url(#lineGlowEffect)"
+                    }}
+                    name="Performance"
+                  />
+                  {/* Security line with dots */}
+                  <Line
+                    type="monotone"
+                    dataKey="security"
+                    stroke="url(#securityLineGradient)"
+                    strokeWidth={4}
+                    filter="url(#lineGlowEffect)"
+                    dot={{ 
+                      fill: "#06b6d4", 
+                      strokeWidth: 0,
+                      r: 2
+                    }}
+                    activeDot={{ 
+                      r: 6, 
+                      stroke: "#06b6d4", 
+                      strokeWidth: 3,
+                      fill: "#ffffff",
+                      filter: "url(#lineGlowEffect)"
+                    }}
+                    name="Security"
+                  />
+                </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
