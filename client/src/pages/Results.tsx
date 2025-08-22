@@ -341,51 +341,40 @@ const Results = () => {
 
           {/* Professional Analytics Dashboard */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Premium Radar Chart */}
-            <Card className="overflow-hidden bg-gradient-to-br from-slate-50/80 to-white/60 dark:from-slate-900/90 dark:to-slate-800/60 backdrop-blur-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl shadow-slate-900/5 dark:shadow-black/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-600/5 dark:from-blue-400/10 dark:to-purple-500/10"></div>
-              <CardHeader className="relative pb-3 bg-gradient-to-r from-transparent to-blue-50/30 dark:to-blue-950/30">
-                <CardTitle className="flex items-center gap-3 text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/25">
-                    <TrendingUp className="w-5 h-5 text-white" />
+            {/* Clean Radar Chart */}
+            <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-lg">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3 text-lg font-semibold text-slate-900 dark:text-white">
+                  <div className="p-2 bg-violet-100 dark:bg-violet-900 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                   </div>
                   Architecture Health Radar
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 font-medium">
+                <CardDescription className="text-slate-600 dark:text-slate-400">
                   Multi-dimensional infrastructure quality assessment
                 </CardDescription>
               </CardHeader>
-              <CardContent className="relative pt-4">
-                <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent dark:from-black/10 pointer-events-none"></div>
-                <ResponsiveContainer width="100%" height={340}>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
                   <RadarChart data={scores}>
                     <defs>
-                      <linearGradient id="premiumRadarGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6}/>
-                        <stop offset="50%" stopColor="#8b5cf6" stopOpacity={0.4}/>
-                        <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.2}/>
+                      <linearGradient id="cleanRadarGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05}/>
                       </linearGradient>
-                      <filter id="glow">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge> 
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
                     <PolarGrid 
                       gridType="polygon" 
-                      stroke="#94a3b8" 
-                      strokeOpacity={0.3}
-                      strokeWidth={1.5}
+                      stroke="#e2e8f0" 
+                      strokeOpacity={0.4}
+                      strokeWidth={1}
                     />
                     <PolarAngleAxis 
                       dataKey="category" 
                       tick={{ 
-                        fontSize: 12, 
+                        fontSize: 11, 
                         fill: 'currentColor',
-                        fontWeight: 600,
-                        textAnchor: 'middle'
+                        fontWeight: 500
                       }}
                       className="fill-slate-700 dark:fill-slate-300"
                     />
@@ -394,38 +383,30 @@ const Results = () => {
                       domain={[0, 100]} 
                       tick={false}
                       stroke="#e2e8f0"
-                      strokeOpacity={0.4}
+                      strokeOpacity={0.3}
                     />
                     <Radar
                       name="Quality Score"
                       dataKey="score"
-                      stroke="#3b82f6"
-                      fill="url(#premiumRadarGradient)"
-                      fillOpacity={0.4}
-                      strokeWidth={4}
+                      stroke="#8b5cf6"
+                      fill="url(#cleanRadarGradient)"
+                      fillOpacity={0.2}
+                      strokeWidth={2}
                       dot={{ 
-                        fill: "#3b82f6", 
-                        strokeWidth: 3, 
+                        fill: "#8b5cf6", 
+                        strokeWidth: 2, 
                         stroke: "#ffffff",
-                        r: 6,
-                        filter: "url(#glow)"
+                        r: 4
                       }}
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                        borderRadius: '16px',
-                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                         color: '#1e293b',
-                        fontSize: '14px',
-                        fontWeight: 500
-                      }}
-                      labelStyle={{ 
-                        color: '#0f172a', 
-                        fontWeight: 700,
-                        marginBottom: '4px'
+                        fontSize: '13px'
                       }}
                       formatter={(value) => [`${value}%`, 'Quality Score']}
                     />
@@ -434,23 +415,21 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            {/* Premium Spline Chart */}
-            <Card className="overflow-hidden bg-gradient-to-br from-emerald-50/80 to-green-50/60 dark:from-emerald-950/80 dark:to-green-950/60 backdrop-blur-2xl border border-emerald-200/50 dark:border-emerald-700/50 shadow-xl shadow-emerald-900/5 dark:shadow-black/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-600/5 dark:from-emerald-400/10 dark:to-teal-500/10"></div>
-              <CardHeader className="relative pb-3 bg-gradient-to-r from-transparent to-emerald-50/30 dark:to-emerald-950/30">
-                <CardTitle className="flex items-center gap-3 text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/25">
-                    <Zap className="w-5 h-5 text-white" />
+            {/* Clean Line Chart */}
+            <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-lg">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3 text-lg font-semibold text-slate-900 dark:text-white">
+                  <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                    <Zap className="w-5 h-5 text-green-600 dark:text-green-400" />
                   </div>
                   Infrastructure Health Trend
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 font-medium">
-                  Real-time monitoring and projected improvements
+                <CardDescription className="text-slate-600 dark:text-slate-400">
+                  Performance metrics over time
                 </CardDescription>
               </CardHeader>
-              <CardContent className="relative pt-4">
-                <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent dark:from-black/10 pointer-events-none"></div>
-                <ResponsiveContainer width="100%" height={340}>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
                   <LineChart 
                     data={[
                       { time: 'Initial', health: analysisData.score - 15, performance: analysisData.score - 20, security: analysisData.score - 10 },
@@ -459,49 +438,26 @@ const Results = () => {
                       { time: 'Projected', health: analysisData.score + 10, performance: analysisData.score + 15, security: analysisData.score + 18 }
                     ]}
                   >
-                    <defs>
-                      <linearGradient id="healthPremiumGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.6}/>
-                        <stop offset="100%" stopColor="#10b981" stopOpacity={0.1}/>
-                      </linearGradient>
-                      <linearGradient id="performancePremiumGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6}/>
-                        <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                      </linearGradient>
-                      <linearGradient id="securityPremiumGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.6}/>
-                        <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.1}/>
-                      </linearGradient>
-                      <filter id="lineGlow">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge> 
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
                     <CartesianGrid 
-                      strokeDasharray="2 6" 
+                      strokeDasharray="3 3" 
                       stroke="#e2e8f0" 
-                      strokeOpacity={0.4}
-                      horizontal={true}
-                      vertical={false}
+                      strokeOpacity={0.3}
                     />
                     <XAxis 
                       dataKey="time" 
                       tick={{ 
-                        fontSize: 12, 
+                        fontSize: 11, 
                         fill: 'currentColor',
-                        fontWeight: 600
+                        fontWeight: 500
                       }}
                       className="fill-slate-600 dark:fill-slate-400"
-                      axisLine={{ stroke: '#e2e8f0', strokeWidth: 2 }}
+                      axisLine={{ stroke: '#e2e8f0' }}
                       tickLine={false}
                     />
                     <YAxis 
                       domain={[0, 100]}
                       tick={{ 
-                        fontSize: 11, 
+                        fontSize: 10, 
                         fill: 'currentColor',
                         fontWeight: 500
                       }}
@@ -511,69 +467,54 @@ const Results = () => {
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                        borderRadius: '16px',
-                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                         color: '#1e293b',
-                        fontSize: '14px',
-                        fontWeight: 500
-                      }}
-                      labelStyle={{ 
-                        color: '#0f172a', 
-                        fontWeight: 700,
-                        marginBottom: '8px'
+                        fontSize: '13px'
                       }}
                     />
                     <Legend 
                       wrapperStyle={{
-                        paddingTop: '20px',
-                        fontSize: '14px',
-                        fontWeight: 600
+                        paddingTop: '16px',
+                        fontSize: '12px'
                       }}
                     />
                     <Line
                       type="monotone"
                       dataKey="health"
-                      stroke="#10b981"
-                      strokeWidth={4}
-                      filter="url(#lineGlow)"
+                      stroke="#22c55e"
+                      strokeWidth={2}
                       dot={{ 
-                        fill: "#10b981", 
-                        strokeWidth: 4, 
+                        fill: "#22c55e", 
+                        strokeWidth: 2, 
                         stroke: "#ffffff",
-                        r: 6,
-                        shadowColor: "#10b981",
-                        shadowBlur: 10
+                        r: 3
                       }}
                       activeDot={{ 
-                        r: 8, 
-                        stroke: "#10b981", 
-                        strokeWidth: 4,
-                        fill: "#ffffff",
-                        shadowColor: "#10b981",
-                        shadowBlur: 15
+                        r: 5, 
+                        stroke: "#22c55e", 
+                        strokeWidth: 2,
+                        fill: "#ffffff"
                       }}
                       name="Health Score"
                     />
                     <Line
                       type="monotone"
                       dataKey="performance"
-                      stroke="#3b82f6"
-                      strokeWidth={4}
-                      strokeDasharray="8 4"
-                      filter="url(#lineGlow)"
+                      stroke="#8b5cf6"
+                      strokeWidth={2}
                       dot={{ 
-                        fill: "#3b82f6", 
-                        strokeWidth: 4, 
+                        fill: "#8b5cf6", 
+                        strokeWidth: 2, 
                         stroke: "#ffffff",
-                        r: 6
+                        r: 3
                       }}
                       activeDot={{ 
-                        r: 8, 
-                        stroke: "#3b82f6", 
-                        strokeWidth: 4,
+                        r: 5, 
+                        stroke: "#8b5cf6", 
+                        strokeWidth: 2,
                         fill: "#ffffff"
                       }}
                       name="Performance"
@@ -581,20 +522,18 @@ const Results = () => {
                     <Line
                       type="monotone"
                       dataKey="security"
-                      stroke="#f59e0b"
-                      strokeWidth={4}
-                      strokeDasharray="12 6"
-                      filter="url(#lineGlow)"
+                      stroke="#ef4444"
+                      strokeWidth={2}
                       dot={{ 
-                        fill: "#f59e0b", 
-                        strokeWidth: 4, 
+                        fill: "#ef4444", 
+                        strokeWidth: 2, 
                         stroke: "#ffffff",
-                        r: 6
+                        r: 3
                       }}
                       activeDot={{ 
-                        r: 8, 
-                        stroke: "#f59e0b", 
-                        strokeWidth: 4,
+                        r: 5, 
+                        stroke: "#ef4444", 
+                        strokeWidth: 2,
                         fill: "#ffffff"
                       }}
                       name="Security"
@@ -605,69 +544,51 @@ const Results = () => {
             </Card>
           </div>
 
-          {/* Premium Architecture Quality Metrics */}
-          <Card className="overflow-hidden bg-gradient-to-br from-violet-50/80 to-purple-50/60 dark:from-violet-950/80 dark:to-purple-950/60 backdrop-blur-2xl border border-violet-200/50 dark:border-violet-700/50 shadow-xl shadow-violet-900/5 dark:shadow-black/20 mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-600/5 dark:from-violet-400/10 dark:to-purple-500/10"></div>
-            <CardHeader className="relative pb-4 bg-gradient-to-r from-transparent to-violet-50/30 dark:to-violet-950/30">
-              <CardTitle className="flex items-center gap-4 text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                <div className="p-3.5 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-lg shadow-violet-500/25">
-                  <BarChart className="w-6 h-6 text-white" />
+          {/* Clean Area Chart */}
+          <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-lg mb-8">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-slate-900 dark:text-white">
+                <div className="p-3 bg-violet-100 dark:bg-violet-900 rounded-lg">
+                  <BarChart className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                 </div>
                 Architecture Quality Metrics
               </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400 font-medium text-base mt-2">
-                Comprehensive breakdown of your infrastructure quality across all categories
+              <CardDescription className="text-slate-600 dark:text-slate-400">
+                Comprehensive breakdown of your infrastructure quality
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative pt-2">
-              <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent dark:from-black/10 pointer-events-none"></div>
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={scores} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={350}>
+                <AreaChart data={scores} margin={{ top: 10, right: 30, left: 0, bottom: 50 }}>
                   <defs>
-                    <linearGradient id="premiumAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8}/>
-                      <stop offset="20%" stopColor="#a855f7" stopOpacity={0.6}/>
-                      <stop offset="60%" stopColor="#c084fc" stopOpacity={0.3}/>
-                      <stop offset="100%" stopColor="#e879f9" stopOpacity={0.1}/>
+                    <linearGradient id="cleanAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05}/>
                     </linearGradient>
-                    <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#8b5cf6"/>
-                      <stop offset="50%" stopColor="#a855f7"/>
-                      <stop offset="100%" stopColor="#c084fc"/>
-                    </linearGradient>
-                    <filter id="areaGlow">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
                   </defs>
                   <CartesianGrid 
-                    strokeDasharray="2 8" 
+                    strokeDasharray="3 3" 
                     stroke="#e2e8f0" 
-                    strokeOpacity={0.4}
-                    horizontal={true}
-                    vertical={false}
+                    strokeOpacity={0.3}
                   />
                   <XAxis 
                     dataKey="category" 
-                    angle={-30}
+                    angle={-25}
                     textAnchor="end"
-                    height={100}
+                    height={80}
                     tick={{ 
-                      fontSize: 13, 
+                      fontSize: 11, 
                       fill: 'currentColor',
-                      fontWeight: 600
+                      fontWeight: 500
                     }}
                     className="fill-slate-700 dark:fill-slate-300"
-                    axisLine={{ stroke: '#cbd5e1', strokeWidth: 2 }}
+                    axisLine={{ stroke: '#e2e8f0' }}
                     tickLine={false}
                   />
                   <YAxis 
                     domain={[0, 100]}
                     tick={{ 
-                      fontSize: 12, 
+                      fontSize: 11, 
                       fill: 'currentColor',
                       fontWeight: 500
                     }}
@@ -677,44 +598,32 @@ const Results = () => {
                   />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      backdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(148, 163, 184, 0.2)',
-                      borderRadius: '16px',
-                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                      backgroundColor: 'white',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       color: '#1e293b',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      padding: '16px'
-                    }}
-                    labelStyle={{ 
-                      color: '#0f172a', 
-                      fontWeight: 700,
-                      marginBottom: '8px',
-                      fontSize: '18px'
+                      fontSize: '13px'
                     }}
                     formatter={(value) => [`${value}%`, 'Quality Score']}
                   />
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="url(#strokeGradient)"
-                    strokeWidth={5}
-                    fill="url(#premiumAreaGradient)"
-                    filter="url(#areaGlow)"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    fill="url(#cleanAreaGradient)"
                     dot={{ 
                       fill: "#8b5cf6", 
-                      strokeWidth: 5, 
+                      strokeWidth: 2, 
                       stroke: "#ffffff",
-                      r: 8,
-                      filter: "url(#areaGlow)"
+                      r: 4
                     }}
                     activeDot={{ 
-                      r: 12, 
+                      r: 6, 
                       stroke: "#8b5cf6", 
-                      strokeWidth: 6,
-                      fill: "#ffffff",
-                      filter: "url(#areaGlow)"
+                      strokeWidth: 2,
+                      fill: "#ffffff"
                     }}
                   />
                 </AreaChart>
