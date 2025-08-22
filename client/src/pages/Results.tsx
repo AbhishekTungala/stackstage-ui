@@ -569,8 +569,8 @@ const Results = () => {
                               textAnchor="middle"
                               dominantBaseline="middle"
                               fill={isZero ? '#64748b' : '#64748b'}
-                              fontSize={isZero ? 10 : 12}
-                              opacity={isZero ? 0.4 : 1}
+                              fontSize={isZero ? 8 : 12}
+                              opacity={isZero ? 0.15 : 1}
                             >
                               {`${value}%`}
                             </text>
@@ -691,81 +691,112 @@ const Results = () => {
           {/* Additional Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             
-            {/* Resource Distribution Donut Chart */}
+            {/* Global Infrastructure Map */}
             <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
-                  <PieChartIcon className="mr-2 w-5 h-5 text-blue-400" />
-                  Resource Distribution
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                      <Globe className="mr-2 w-5 h-5 text-purple-400" />
+                      Global Infrastructure
+                    </CardTitle>
+                    <div className="text-lg font-bold text-purple-400 mt-1">18.6K</div>
+                    <span className="text-xs text-slate-400">Active resources</span>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center">
-                  <div className="relative">
-                    <ResponsiveContainer width={200} height={200}>
-                      <PieChart>
-                        <defs>
-                          <linearGradient id="computeGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.8}/>
-                          </linearGradient>
-                          <linearGradient id="storageGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.8}/>
-                          </linearGradient>
-                          <linearGradient id="networkGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#059669" stopOpacity={0.8}/>
-                          </linearGradient>
-                          <linearGradient id="databaseGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#f59e0b" stopOpacity={1}/>
-                            <stop offset="100%" stopColor="#d97706" stopOpacity={0.8}/>
-                          </linearGradient>
-                        </defs>
-                        <Pie
-                          data={[
-                            { name: 'Compute', value: 35, fill: 'url(#computeGradient)' },
-                            { name: 'Storage', value: 25, fill: 'url(#storageGradient)' },
-                            { name: 'Network', value: 20, fill: 'url(#networkGradient)' },
-                            { name: 'Database', value: 20, fill: 'url(#databaseGradient)' }
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={80}
-                          paddingAngle={2}
-                          dataKey="value"
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #334155',
-                            borderRadius: '8px',
-                            color: '#f1f5f9'
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-bold text-slate-900 dark:text-white">100</span>
-                      <span className="text-sm text-slate-600 dark:text-slate-400 mt-3">Resources</span>
+                <div className="h-64 relative overflow-hidden">
+                  {/* World Map with Dotted Pattern */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800/30 to-slate-900/50 rounded-lg">
+                    {/* Dotted world map pattern */}
+                    <svg className="w-full h-full opacity-20" viewBox="0 0 400 200">
+                      <defs>
+                        <pattern id="dots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                          <circle cx="2" cy="2" r="0.5" fill="#64748b"/>
+                        </pattern>
+                      </defs>
+                      {/* Simplified world continents using dots */}
+                      <path d="M50 60 L120 50 L140 70 L130 90 L80 95 Z" fill="url(#dots)"/>
+                      <path d="M140 40 L200 35 L220 55 L210 85 L180 90 L150 80 Z" fill="url(#dots)"/>
+                      <path d="M250 45 L320 40 L340 65 L330 95 L280 100 L260 75 Z" fill="url(#dots)"/>
+                      <path d="M60 120 L100 115 L110 140 L90 155 L70 150 Z" fill="url(#dots)"/>
+                      <path d="M280 120 L340 115 L360 140 L350 165 L300 160 Z" fill="url(#dots)"/>
+                      <path d="M180 140 L220 135 L230 155 L210 170 L185 165 Z" fill="url(#dots)"/>
+                    </svg>
+                    
+                    {/* Cloud Region Markers */}
+                    <div className="absolute inset-0">
+                      {/* US East (N. Virginia) */}
+                      <div className="absolute top-12 left-20">
+                        <div className="relative">
+                          <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg"></div>
+                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                            us-east-1
+                            <div className="text-purple-400 font-bold">5.2K</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* US West (Oregon) */}
+                      <div className="absolute top-16 left-8">
+                        <div className="relative">
+                          <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse shadow-lg"></div>
+                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                            us-west-2
+                            <div className="text-cyan-400 font-bold">3.1K</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Europe (Ireland) */}
+                      <div className="absolute top-8 left-40">
+                        <div className="relative">
+                          <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse shadow-lg"></div>
+                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                            eu-west-1
+                            <div className="text-emerald-400 font-bold">4.8K</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Asia Pacific (Tokyo) */}
+                      <div className="absolute top-14 right-20">
+                        <div className="relative">
+                          <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse shadow-lg"></div>
+                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                            ap-northeast-1
+                            <div className="text-orange-400 font-bold">2.9K</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Asia Pacific (Sydney) */}
+                      <div className="absolute bottom-8 right-16">
+                        <div className="relative">
+                          <div className="w-3 h-3 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse shadow-lg"></div>
+                          <div className="absolute -top-8 -left-12 text-xs text-white font-medium whitespace-nowrap">
+                            ap-southeast-2
+                            <div className="text-violet-400 font-bold">2.6K</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                {/* Legend */}
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                
+                {/* Region Stats */}
+                <div className="grid grid-cols-3 gap-3 mt-4">
                   {[
-                    { name: 'Compute', icon: '⚡', color: '#3b82f6' },
-                    { name: 'Storage', icon: '💾', color: '#8b5cf6' },
-                    { name: 'Network', icon: '🌐', color: '#10b981' },
-                    { name: 'Database', icon: '🗄️', color: '#f59e0b' }
+                    { region: 'North America', count: '8.3K', percentage: '45%', color: 'from-purple-500 to-pink-500' },
+                    { region: 'Europe', count: '4.8K', percentage: '26%', color: 'from-emerald-500 to-teal-500' },
+                    { region: 'Asia Pacific', count: '5.5K', percentage: '29%', color: 'from-orange-500 to-red-500' }
                   ].map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span className="text-xs text-slate-700 dark:text-slate-300">{item.icon} {item.name}</span>
+                    <div key={index} className="text-center">
+                      <div className={`w-full h-1 bg-gradient-to-r ${item.color} rounded-full mb-2`}></div>
+                      <div className="text-xs text-slate-400">{item.region}</div>
+                      <div className="text-sm font-bold text-white">{item.count}</div>
+                      <div className="text-xs text-slate-500">{item.percentage}</div>
                     </div>
                   ))}
                 </div>
