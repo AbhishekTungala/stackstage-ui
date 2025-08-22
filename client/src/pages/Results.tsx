@@ -532,10 +532,10 @@ const Results = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             
             {/* Multi-Dimensional Radar Chart */}
-            <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <Radar className="mr-2 w-5 h-5 text-purple-400" />
+                <CardTitle className="text-slate-900 dark:text-white flex items-center">
+                  <Radar className="mr-2 w-5 h-5 text-purple-500 dark:text-purple-400" />
                   Multi-Dimensional Analysis
                 </CardTitle>
               </CardHeader>
@@ -553,8 +553,8 @@ const Results = () => {
                           <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.1}/>
                         </linearGradient>
                       </defs>
-                      <PolarGrid stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} className="dark:fill-slate-400 fill-slate-600" />
+                      <PolarGrid stroke="#334155" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} />
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
