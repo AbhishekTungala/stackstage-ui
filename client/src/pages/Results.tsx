@@ -371,9 +371,17 @@ const Results = () => {
               </h2>
               <div className="max-w-4xl mx-auto space-y-3">
                 {analysisData.issues.slice(0, 8).map((issue, index) => {
-                  const getSeverityColor = (severity?: string) => {
-                    if (!severity) return 'bg-gray-500/10 border-gray-500/20 text-gray-600';
-                    switch (severity.toLowerCase()) {
+                  // Handle both string format (from AI) and object format
+                  const issueText = typeof issue === 'string' ? issue : (issue.detail || issue.description || 'Issue found');
+                  const severity = typeof issue === 'object' ? issue.severity : (
+                    issueText.toLowerCase().includes('duplicate') ? 'high' :
+                    issueText.toLowerCase().includes('security') || issueText.toLowerCase().includes('accessible') ? 'critical' :
+                    issueText.toLowerCase().includes('lacks') || issueText.toLowerCase().includes('missing') ? 'medium' :
+                    'medium'
+                  );
+                  
+                  const getSeverityColor = (sev: string) => {
+                    switch (sev.toLowerCase()) {
                       case 'critical': return 'bg-red-500/10 border-red-500/20 text-red-600';
                       case 'high': return 'bg-orange-500/10 border-orange-500/20 text-orange-600';
                       case 'medium': return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-600';
@@ -384,28 +392,25 @@ const Results = () => {
 
                   return (
                     <div 
-                      key={issue.id || index}
+                      key={index}
                       className="flex items-start space-x-4 p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-900/70 transition-all duration-300"
                     >
                       <div className="flex-shrink-0">
-                        {issue.severity?.toLowerCase() === 'critical' ? 
+                        {severity === 'critical' ? 
                           <XCircle className="w-5 h-5 text-red-500" /> :
-                          issue.severity?.toLowerCase() === 'high' ? 
+                          severity === 'high' ? 
                           <AlertTriangle className="w-5 h-5 text-orange-500" /> :
                           <AlertTriangle className="w-5 h-5 text-yellow-500" />
                         }
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-foreground">{issue.category || 'Architecture'}</h3>
-                          <Badge variant="outline" className={getSeverityColor(issue.severity)}>
-                            {issue.severity || 'Unknown'}
+                          <h3 className="font-semibold text-foreground">Terraform Issue</h3>
+                          <Badge variant="outline" className={getSeverityColor(severity)}>
+                            {severity.charAt(0).toUpperCase() + severity.slice(1)}
                           </Badge>
                         </div>
-                        <p className="text-sm text-foreground mb-1">{issue.detail}</p>
-                        {issue.evidence && (
-                          <p className="text-xs text-muted-foreground">{issue.evidence}</p>
-                        )}
+                        <p className="text-sm text-foreground">{issueText}</p>
                       </div>
                     </div>
                   );
@@ -421,49 +426,69 @@ const Results = () => {
                 AI-Generated Recommendations
               </h2>
               <div className="max-w-4xl mx-auto space-y-4">
-                {analysisData.recommendations.slice(0, 6).map((rec, index) => (
-                  <Card key={index} className="glass-card">
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <CheckCircle className="w-5 h-5 text-primary" />
+                {analysisData.recommendations.slice(0, 6).map((rec, index) => {
+                  // Handle both object format and string format recommendations
+                  const title = rec.title || rec.description || `Recommendation ${index + 1}`;
+                  const description = rec.rationale || rec.description || '';
+                  const steps = rec.implementation_steps || rec.implementation || [];
+                  
+                  return (
+                    <Card key={index} className="glass-card">
+                      <CardContent className="p-6">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <CheckCircle className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{description}</p>
+                            {steps && steps.length > 0 && (
+                              <div className="mt-3">
+                                <h4 className="text-xs font-medium text-foreground mb-2">Implementation Steps:</h4>
+                                <ul className="text-xs text-muted-foreground space-y-1">
+                                  {steps.map((step: string, stepIndex: number) => (
+                                    <li key={stepIndex} className="flex items-start">
+                                      <span className="text-primary mr-2">•</span>
+                                      <span>{step}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {rec.impact && (
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs mt-3 pt-3 border-t border-white/10">
+                                {rec.impact.cost_monthly_delta && (
+                                  <div>
+                                    <span className="font-medium text-foreground">Cost Impact:</span>
+                                    <span className="text-muted-foreground ml-1">
+                                      ${rec.impact.cost_monthly_delta}/month
+                                    </span>
+                                  </div>
+                                )}
+                                {rec.impact.latency_ms && (
+                                  <div>
+                                    <span className="font-medium text-foreground">Latency:</span>
+                                    <span className="text-muted-foreground ml-1">
+                                      {rec.impact.latency_ms}ms improvement
+                                    </span>
+                                  </div>
+                                )}
+                                {rec.impact.risk_reduction && (
+                                  <div>
+                                    <span className="font-medium text-foreground">Risk:</span>
+                                    <span className="text-muted-foreground ml-1">
+                                      {rec.impact.risk_reduction}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-foreground mb-2">{rec.title}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{rec.rationale}</p>
-                          {rec.impact && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                              {rec.impact.cost_monthly_delta && (
-                                <div>
-                                  <span className="font-medium text-foreground">Cost Impact:</span>
-                                  <span className="text-muted-foreground ml-1">
-                                    ${rec.impact.cost_monthly_delta}/month
-                                  </span>
-                                </div>
-                              )}
-                              {rec.impact.latency_ms && (
-                                <div>
-                                  <span className="font-medium text-foreground">Latency:</span>
-                                  <span className="text-muted-foreground ml-1">
-                                    {rec.impact.latency_ms}ms improvement
-                                  </span>
-                                </div>
-                              )}
-                              {rec.impact.risk_reduction && (
-                                <div>
-                                  <span className="font-medium text-foreground">Risk:</span>
-                                  <span className="text-muted-foreground ml-1">
-                                    {rec.impact.risk_reduction}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}
