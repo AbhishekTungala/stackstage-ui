@@ -348,85 +348,129 @@ const Results = () => {
           {/* Main Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             
-            {/* Website Visitors - Circular Progress (like reference) */}
-            <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            {/* Infrastructure Health - Attractive Area Chart */}
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white">Infrastructure Health</CardTitle>
-                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+                  <CardTitle className="text-white dark:text-white text-slate-900">Infrastructure Health</CardTitle>
+                  <Button variant="ghost" size="sm" className="text-slate-400 dark:text-slate-400 text-slate-600 hover:text-white dark:hover:text-white hover:text-slate-900">
                     Export ↗
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Circular Progress */}
-                <div className="relative">
-                  <div className="w-40 h-40 mx-auto">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={visitorsData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          paddingAngle={2}
-                          dataKey="value"
-                        >
-                          {visitorsData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-bold text-white">{overallScore}</span>
-                      <span className="text-sm text-slate-400">Score</span>
-                    </div>
-                  </div>
+                {/* Gradient Area Chart */}
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={[
+                        { name: 'Mon', security: 85, performance: 92, cost: 78 },
+                        { name: 'Tue', security: 88, performance: 94, cost: 82 },
+                        { name: 'Wed', security: 92, performance: 89, cost: 85 },
+                        { name: 'Thu', security: 89, performance: 96, cost: 88 },
+                        { name: 'Fri', security: 94, performance: 98, cost: 90 },
+                        { name: 'Sat', security: 96, performance: 95, cost: 93 },
+                        { name: 'Sun', security: securityScore, performance: performanceScore, cost: costScore }
+                      ]}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="securityGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="performanceGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
+                      <XAxis dataKey="name" stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
+                      <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid #334155',
+                          borderRadius: '8px',
+                          color: '#f1f5f9'
+                        }}
+                        className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="security"
+                        stackId="1"
+                        stroke="#8b5cf6"
+                        fill="url(#securityGradient)"
+                        strokeWidth={2}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="performance"
+                        stackId="1"
+                        stroke="#06b6d4"
+                        fill="url(#performanceGradient)"
+                        strokeWidth={2}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="cost"
+                        stackId="1"
+                        stroke="#f59e0b"
+                        fill="url(#costGradient)"
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
                 
                 {/* Legend */}
-                <div className="space-y-3">
-                  {visitorsData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { name: 'Security', value: securityScore, color: '#8b5cf6', icon: '🛡️' },
+                    { name: 'Performance', value: performanceScore, color: '#06b6d4', icon: '⚡' },
+                    { name: 'Cost Optimization', value: costScore, color: '#f59e0b', icon: '💰' }
+                  ].map((item, index) => (
+                    <div key={index} className="text-center">
+                      <div className="flex items-center justify-center mb-2">
                         <div 
-                          className="w-3 h-3 rounded-full"
+                          className="w-4 h-4 rounded-full mr-2"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-slate-300">{item.name}</span>
+                        <span className="text-lg">{item.icon}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-white font-semibold">{item.value}</span>
-                        <div className="text-xs text-slate-400">30%</div>
-                      </div>
+                      <div className="text-sm text-slate-300 dark:text-slate-300 text-slate-700">{item.name}</div>
+                      <div className="text-lg font-bold text-white dark:text-white text-slate-900">{item.value}%</div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Revenue by Customer Type - Area Chart */}
-            <Card className="lg:col-span-2 bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            {/* Performance Metrics - Enhanced Spike Charts */}
+            <Card className="lg:col-span-2 bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Performance Metrics</CardTitle>
+                    <CardTitle className="text-white dark:text-white text-slate-900">Performance Metrics</CardTitle>
                     <div className="text-2xl font-bold text-emerald-400 mt-1">$240.8K</div>
                   </div>
                   <div className="flex items-center space-x-4 text-sm">
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <span className="text-slate-300">Current clients</span>
+                      <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"></div>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Response Time</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      <span className="text-slate-300">Subscribers</span>
+                      <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Throughput</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-                      <span className="text-slate-300">New customers</span>
+                      <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Error Rate</span>
                     </div>
                   </div>
                 </div>
@@ -434,20 +478,37 @@ const Results = () => {
               <CardContent>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={spikesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <BarChart 
+                      data={[
+                        { name: 'Jan', response: 120, throughput: 850, errors: 12 },
+                        { name: 'Feb', response: 95, throughput: 920, errors: 8 },
+                        { name: 'Mar', response: 110, throughput: 880, errors: 15 },
+                        { name: 'Apr', response: 85, throughput: 980, errors: 6 },
+                        { name: 'May', response: 75, throughput: 1100, errors: 4 },
+                        { name: 'Jun', response: 65, throughput: 1200, errors: 3 }
+                      ]} 
+                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    >
                       <defs>
-                        <linearGradient id="barGradient1" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="responseGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
-                          <stop offset="100%" stopColor="#1e40af" stopOpacity={0.8}/>
+                          <stop offset="50%" stopColor="#1d4ed8" stopOpacity={0.9}/>
+                          <stop offset="100%" stopColor="#1e40af" stopOpacity={0.7}/>
                         </linearGradient>
-                        <linearGradient id="barGradient2" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="throughputGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
-                          <stop offset="100%" stopColor="#6d28d9" stopOpacity={0.8}/>
+                          <stop offset="50%" stopColor="#7c3aed" stopOpacity={0.9}/>
+                          <stop offset="100%" stopColor="#6d28d9" stopOpacity={0.7}/>
+                        </linearGradient>
+                        <linearGradient id="errorsGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f97316" stopOpacity={1}/>
+                          <stop offset="50%" stopColor="#ea580c" stopOpacity={0.9}/>
+                          <stop offset="100%" stopColor="#dc2626" stopOpacity={0.7}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis dataKey="name" stroke="#94a3b8" />
-                      <YAxis stroke="#94a3b8" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
+                      <XAxis dataKey="name" stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
+                      <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
                       <Tooltip 
                         contentStyle={{
                           backgroundColor: '#1e293b',
@@ -455,9 +516,11 @@ const Results = () => {
                           borderRadius: '8px',
                           color: '#f1f5f9'
                         }}
+                        className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                       />
-                      <Bar dataKey="current" fill="url(#barGradient1)" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="issues" fill="url(#barGradient2)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="response" fill="url(#responseGradient)" radius={[6, 6, 0, 0]} maxBarSize={25} />
+                      <Bar dataKey="throughput" fill="url(#throughputGradient)" radius={[6, 6, 0, 0]} maxBarSize={25} />
+                      <Bar dataKey="errors" fill="url(#errorsGradient)" radius={[6, 6, 0, 0]} maxBarSize={25} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -469,9 +532,9 @@ const Results = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             
             {/* Multi-Dimensional Radar Chart */}
-            <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
+                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
                   <Radar className="mr-2 w-5 h-5 text-purple-400" />
                   Multi-Dimensional Analysis
                 </CardTitle>
@@ -490,13 +553,13 @@ const Results = () => {
                           <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.1}/>
                         </linearGradient>
                       </defs>
-                      <PolarGrid stroke="#334155" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                      <PolarGrid stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} className="dark:fill-slate-400 fill-slate-600" />
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
-                        tick={{ fill: '#64748b', fontSize: 10 }} 
-                        tickFormatter={(value) => `${value}%`}
+                        tick={false}
+                        tickCount={0}
                       />
                       <RadarData
                         name="Current"
@@ -522,11 +585,11 @@ const Results = () => {
             </Card>
 
             {/* Team Progress */}
-            <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white">Team Progress</CardTitle>
-                  <CardTitle className="text-white">Infrastructure Status</CardTitle>
+                  <CardTitle className="text-white dark:text-white text-slate-900">Team Progress</CardTitle>
+                  <CardTitle className="text-white dark:text-white text-slate-900">Infrastructure Status</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -539,8 +602,8 @@ const Results = () => {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="text-sm font-medium text-white">{member.name}</h4>
-                          <span className="text-sm text-slate-400">{member.progress}%</span>
+                          <h4 className="text-sm font-medium text-white dark:text-white text-slate-900">{member.name}</h4>
+                          <span className="text-sm text-slate-400 dark:text-slate-400 text-slate-600">{member.progress}%</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -561,9 +624,16 @@ const Results = () => {
                     <div className="w-32 h-32 mx-auto">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
+                          <defs>
+                            <linearGradient id="halfPieGradient" x1="0" y1="0" x2="1" y2="1">
+                              <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
+                              <stop offset="50%" stopColor="#3b82f6" stopOpacity={0.9}/>
+                              <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                            </linearGradient>
+                          </defs>
                           <Pie
                             data={[
-                              { value: 80, fill: '#3b82f6' },
+                              { value: 80, fill: 'url(#halfPieGradient)' },
                               { value: 20, fill: '#1e293b' }
                             ]}
                             cx="50%"
@@ -577,25 +647,259 @@ const Results = () => {
                         </PieChart>
                       </ResponsiveContainer>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-2xl font-bold text-white">80%</span>
-                        <span className="text-xs text-slate-400">Transactions</span>
+                        <span className="text-2xl font-bold text-white dark:text-white text-slate-900">80%</span>
+                        <span className="text-xs text-slate-400 dark:text-slate-400 text-slate-600">Transactions</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex justify-center space-x-6 mt-4 text-sm">
                     <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <span className="text-slate-300">Sell</span>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Sell</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      <span className="text-slate-300">Distribute</span>
+                      <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Distribute</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-teal-500 rounded-full"></div>
-                      <span className="text-slate-300">Return</span>
+                      <div className="w-3 h-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
+                      <span className="text-slate-300 dark:text-slate-300 text-slate-700">Return</span>
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Additional Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            {/* Resource Distribution Donut Chart */}
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                  <PieChartIcon className="mr-2 w-5 h-5 text-blue-400" />
+                  Resource Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-center justify-center">
+                  <div className="relative">
+                    <ResponsiveContainer width={200} height={200}>
+                      <PieChart>
+                        <defs>
+                          <linearGradient id="computeGradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.8}/>
+                          </linearGradient>
+                          <linearGradient id="storageGradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.8}/>
+                          </linearGradient>
+                          <linearGradient id="networkGradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#059669" stopOpacity={0.8}/>
+                          </linearGradient>
+                          <linearGradient id="databaseGradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#f59e0b" stopOpacity={1}/>
+                            <stop offset="100%" stopColor="#d97706" stopOpacity={0.8}/>
+                          </linearGradient>
+                        </defs>
+                        <Pie
+                          data={[
+                            { name: 'Compute', value: 35, fill: 'url(#computeGradient)' },
+                            { name: 'Storage', value: 25, fill: 'url(#storageGradient)' },
+                            { name: 'Network', value: 20, fill: 'url(#networkGradient)' },
+                            { name: 'Database', value: 20, fill: 'url(#databaseGradient)' }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={2}
+                          dataKey="value"
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1e293b',
+                            border: '1px solid #334155',
+                            borderRadius: '8px',
+                            color: '#f1f5f9'
+                          }}
+                          className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-lg font-bold text-white dark:text-white text-slate-900">100</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-400 text-slate-600">Resources</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Legend */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {[
+                    { name: 'Compute', icon: '⚡', color: '#3b82f6' },
+                    { name: 'Storage', icon: '💾', color: '#8b5cf6' },
+                    { name: 'Network', icon: '🌐', color: '#10b981' },
+                    { name: 'Database', icon: '🗄️', color: '#f59e0b' }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <div 
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">{item.icon} {item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cost Trends Line Chart */}
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                  <TrendingUp className="mr-2 w-5 h-5 text-green-400" />
+                  Cost Trends
+                </CardTitle>
+                <div className="text-lg font-bold text-emerald-400">-$1.2K</div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={[
+                        { month: 'Jan', current: 8200, optimized: 7500 },
+                        { month: 'Feb', current: 8500, optimized: 7600 },
+                        { month: 'Mar', current: 8800, optimized: 7400 },
+                        { month: 'Apr', current: 9100, optimized: 7200 },
+                        { month: 'May', current: 8900, optimized: 6900 },
+                        { month: 'Jun', current: 9200, optimized: 6800 }
+                      ]}
+                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <defs>
+                        <linearGradient id="currentCostGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ef4444" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#ef4444" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="optimizedCostGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
+                      <XAxis dataKey="month" stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
+                      <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" tickFormatter={(value) => `$${value/1000}K`} />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid #334155',
+                          borderRadius: '8px',
+                          color: '#f1f5f9'
+                        }}
+                        className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
+                        formatter={(value) => [`$${value}`, '']}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="current"
+                        stroke="#ef4444"
+                        fill="url(#currentCostGradient)"
+                        strokeWidth={2}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="optimized"
+                        stroke="#10b981"
+                        strokeWidth={3}
+                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6, fill: '#10b981' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                {/* Legend */}
+                <div className="flex justify-center space-x-6 mt-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">Current Costs</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">Optimized</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Security Score Gauge */}
+            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                  <Shield className="mr-2 w-5 h-5 text-blue-400" />
+                  Security Score
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center">
+                <div className="relative w-48 h-24 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <defs>
+                        <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
+                          <stop offset="50%" stopColor="#8b5cf6" stopOpacity={0.9}/>
+                          <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                        </linearGradient>
+                      </defs>
+                      <Pie
+                        data={[
+                          { value: securityScore, fill: 'url(#gaugeGradient)' },
+                          { value: 100 - securityScore, fill: '#1e293b' }
+                        ]}
+                        cx="50%"
+                        cy="100%"
+                        startAngle={180}
+                        endAngle={0}
+                        innerRadius={60}
+                        outerRadius={90}
+                        dataKey="value"
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
+                    <div className="text-center">
+                      <span className="text-3xl font-bold text-white dark:text-white text-slate-900">{securityScore}</span>
+                      <div className="text-sm text-slate-400 dark:text-slate-400 text-slate-600">Security Rating</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Security Metrics */}
+                <div className="grid grid-cols-1 gap-3 w-full">
+                  {[
+                    { label: 'Encryption', value: 98, icon: '🔒' },
+                    { label: 'Access Control', value: securityScore + 5, icon: '👤' },
+                    { label: 'Compliance', value: securityScore - 8, icon: '✅' },
+                    { label: 'Monitoring', value: securityScore + 12, icon: '👁️' }
+                  ].map((metric, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm">{metric.icon}</span>
+                        <span className="text-sm text-slate-300 dark:text-slate-300 text-slate-700">{metric.label}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-16 h-2 bg-slate-700 dark:bg-slate-700 bg-slate-300 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+                            style={{ width: `${Math.min(metric.value, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-white dark:text-white text-slate-900 font-semibold min-w-[2rem]">{Math.min(metric.value, 100)}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
