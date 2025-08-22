@@ -558,29 +558,7 @@ const Results = () => {
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
-                        tick={(props) => {
-                          const { x, y, payload } = props;
-                          const value = payload.value;
-                          const isZero = value === 0;
-                          
-                          if (isZero) {
-                            return null; // Don't render 0% values at all
-                          }
-                          
-                          return (
-                            <text
-                              x={x}
-                              y={y}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              fill="#64748b"
-                              fontSize={12}
-                              opacity={1}
-                            >
-                              {`${value}%`}
-                            </text>
-                          );
-                        }}
+                        tick={false}
                         tickCount={5}
                       />
                       <RadarData
@@ -694,130 +672,7 @@ const Results = () => {
           </div>
 
           {/* Additional Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            
-            {/* Global Infrastructure Map */}
-            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
-                      <Globe className="mr-2 w-5 h-5 text-purple-400" />
-                      Global Infrastructure
-                    </CardTitle>
-                    <div className="text-lg font-bold text-purple-400 mt-1">18.6K</div>
-                    <span className="text-xs text-slate-400">Active resources</span>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 relative overflow-hidden">
-                  {/* World Map with Dotted Pattern */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800/30 to-slate-900/50 rounded-lg">
-                    {/* Professional World Map */}
-                    <svg className="w-full h-full opacity-30" viewBox="0 0 400 200">
-                      <defs>
-                        <pattern id="mapDots" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
-                          <circle cx="1" cy="1" r="0.3" fill="#475569"/>
-                        </pattern>
-                      </defs>
-                      
-                      {/* North America */}
-                      <path d="M20 40 Q30 35 45 38 L65 42 Q80 45 85 55 L88 70 Q85 85 80 90 L70 95 Q50 98 35 95 L25 88 Q18 75 20 60 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                      
-                      {/* South America */}
-                      <path d="M55 105 Q60 100 70 103 L75 115 Q78 130 75 145 L72 160 Q68 170 60 165 L52 160 Q48 145 50 130 L53 115 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                      
-                      {/* Europe */}
-                      <path d="M160 35 Q170 32 180 35 L190 40 Q195 50 192 60 L188 70 Q180 75 170 72 L162 68 Q155 58 158 48 L160 35 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                      
-                      {/* Africa */}
-                      <path d="M150 75 Q160 72 170 75 L175 90 Q178 110 175 130 L172 145 Q168 155 160 152 L152 148 Q145 128 148 108 L150 75 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                      
-                      {/* Asia */}
-                      <path d="M200 25 Q230 22 260 28 L290 35 Q320 42 340 50 L355 65 Q350 80 340 85 L320 88 Q290 85 260 82 L230 78 Q205 75 195 65 L192 50 Q195 35 200 25 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                      
-                      {/* Australia */}
-                      <path d="M280 140 Q295 138 310 142 L320 148 Q325 155 320 162 L310 168 Q295 170 280 167 L270 162 Q265 155 270 148 L280 140 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
-                    </svg>
-                    
-                    {/* Cloud Region Markers */}
-                    <div className="absolute inset-0">
-                      {/* US East (N. Virginia) */}
-                      <div className="absolute top-12 left-20">
-                        <div className="relative">
-                          <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg border-2 border-purple-300/50"></div>
-                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
-                            us-east-1
-                            <div className="text-purple-400 font-bold text-center">5.2K</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* US West (Oregon) */}
-                      <div className="absolute top-16 left-8">
-                        <div className="relative">
-                          <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse shadow-lg border-2 border-blue-300/50"></div>
-                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
-                            us-west-2
-                            <div className="text-cyan-400 font-bold text-center">3.1K</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Europe (Ireland) */}
-                      <div className="absolute top-8 left-44">
-                        <div className="relative">
-                          <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse shadow-lg border-2 border-emerald-300/50"></div>
-                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
-                            eu-west-1
-                            <div className="text-emerald-400 font-bold text-center">4.8K</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Asia Pacific (Tokyo) */}
-                      <div className="absolute top-14 right-16">
-                        <div className="relative">
-                          <div className="w-4 h-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse shadow-lg border-2 border-orange-300/50"></div>
-                          <div className="absolute -top-10 -left-12 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
-                            ap-northeast-1
-                            <div className="text-orange-400 font-bold text-center">2.9K</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Asia Pacific (Sydney) */}
-                      <div className="absolute bottom-6 right-12">
-                        <div className="relative">
-                          <div className="w-4 h-4 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse shadow-lg border-2 border-violet-300/50"></div>
-                          <div className="absolute -top-10 -left-14 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
-                            ap-southeast-2
-                            <div className="text-violet-400 font-bold text-center">2.6K</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Region Stats */}
-                <div className="grid grid-cols-3 gap-3 mt-4">
-                  {[
-                    { region: 'North America', count: '8.3K', percentage: '45%', color: 'from-purple-500 to-pink-500' },
-                    { region: 'Europe', count: '4.8K', percentage: '26%', color: 'from-emerald-500 to-teal-500' },
-                    { region: 'Asia Pacific', count: '5.5K', percentage: '29%', color: 'from-orange-500 to-red-500' }
-                  ].map((item, index) => (
-                    <div key={index} className="text-center">
-                      <div className={`w-full h-1 bg-gradient-to-r ${item.color} rounded-full mb-2`}></div>
-                      <div className="text-xs text-slate-400">{item.region}</div>
-                      <div className="text-sm font-bold text-white">{item.count}</div>
-                      <div className="text-xs text-slate-500">{item.percentage}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
             {/* Cost Trends Line Chart */}
             <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
@@ -980,6 +835,145 @@ const Results = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Global Infrastructure Map - Full Width */}
+          <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm mb-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                    <Globe className="mr-2 w-6 h-6 text-purple-400" />
+                    Global Infrastructure Distribution
+                  </CardTitle>
+                  <div className="text-2xl font-bold text-purple-400 mt-1">18.6K</div>
+                  <span className="text-sm text-slate-400">Active resources across 5 regions</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-slate-400">Last updated</div>
+                  <div className="text-white font-medium">2 minutes ago</div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-96 relative overflow-hidden bg-gradient-to-br from-slate-800/20 to-slate-900/40 rounded-xl">
+                {/* Professional World Map */}
+                <svg className="w-full h-full" viewBox="0 0 800 400" style={{ filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.3))' }}>
+                  <defs>
+                    <radialGradient id="oceanGradient" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#1e293b" stopOpacity={0.3}/>
+                      <stop offset="100%" stopColor="#0f172a" stopOpacity={0.6}/>
+                    </radialGradient>
+                    <pattern id="continentDots" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
+                      <circle cx="1.5" cy="1.5" r="0.4" fill="#475569" opacity="0.6"/>
+                    </pattern>
+                  </defs>
+                  
+                  {/* Ocean Background */}
+                  <rect width="100%" height="100%" fill="url(#oceanGradient)"/>
+                  
+                  {/* North America - Proper Shape */}
+                  <path d="M140 100 Q160 80 180 85 L220 90 Q260 95 280 110 L300 130 Q310 150 305 170 L295 190 Q280 200 260 195 L220 190 Q180 185 160 180 L140 170 Q120 150 125 130 L130 110 Q135 100 140 100 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* South America - Elongated */}
+                  <path d="M200 220 Q210 210 225 215 L240 225 Q250 240 255 260 L260 290 Q265 320 260 350 L255 370 Q250 380 240 375 L225 370 Q210 365 200 360 L190 350 Q185 330 188 310 L192 280 Q195 250 200 220 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* Europe - Detailed */}
+                  <path d="M380 80 Q400 75 420 80 L440 85 Q460 90 470 100 L475 115 Q472 130 465 140 L450 150 Q430 155 410 150 L390 145 Q375 140 370 125 L372 110 Q375 95 380 80 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* Africa - Distinctive Shape */}
+                  <path d="M360 160 Q380 155 400 160 L420 170 Q435 185 440 205 L445 230 Q450 260 445 290 L440 320 Q435 345 425 360 L410 370 Q390 375 370 370 L350 365 Q335 355 330 340 L325 320 Q320 295 325 270 L330 240 Q335 210 345 185 L355 170 Q360 160 360 160 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* Asia - Large Continent */}
+                  <path d="M480 60 Q520 55 560 65 L600 75 Q640 85 670 100 L690 120 Q700 140 695 160 L685 180 Q670 195 650 200 L610 205 Q570 200 530 195 L490 190 Q460 180 450 160 L448 140 Q450 120 460 100 L470 80 Q480 60 480 60 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* Australia - Island Shape */}
+                  <path d="M580 280 Q610 275 635 285 L655 295 Q670 305 675 320 L680 335 Q675 350 665 360 L645 370 Q620 375 595 370 L575 365 Q560 355 555 340 L552 325 Q555 310 565 295 L575 285 Q580 280 580 280 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* Cloud Region Markers with Glow Effect */}
+                  
+                  {/* US East (N. Virginia) */}
+                  <g>
+                    <circle cx="220" cy="140" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="220" cy="140" r="5" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="220" y="115" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-east-1</text>
+                    <text x="220" y="128" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">5.2K</text>
+                  </g>
+                  
+                  {/* US West (Oregon) */}
+                  <g>
+                    <circle cx="160" cy="150" r="8" fill="none" stroke="#06b6d4" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="2.5s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="160" cy="150" r="5" fill="#06b6d4" opacity="0.9"/>
+                    <text x="160" y="125" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-west-2</text>
+                    <text x="160" y="138" textAnchor="middle" fill="#06b6d4" fontSize="14" fontWeight="bold">3.1K</text>
+                  </g>
+                  
+                  {/* Europe (Ireland) */}
+                  <g>
+                    <circle cx="390" cy="120" r="8" fill="none" stroke="#10b981" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="390" cy="120" r="5" fill="#10b981" opacity="0.9"/>
+                    <text x="390" y="95" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">eu-west-1</text>
+                    <text x="390" y="108" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">4.8K</text>
+                  </g>
+                  
+                  {/* Asia Pacific (Tokyo) */}
+                  <g>
+                    <circle cx="620" cy="140" r="8" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="2.2s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="620" cy="140" r="5" fill="#f59e0b" opacity="0.9"/>
+                    <text x="620" y="115" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-northeast-1</text>
+                    <text x="620" y="128" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">2.9K</text>
+                  </g>
+                  
+                  {/* Asia Pacific (Sydney) */}
+                  <g>
+                    <circle cx="610" cy="330" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="2.8s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.8s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="610" cy="330" r="5" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="610" y="305" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-southeast-2</text>
+                    <text x="610" y="318" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">2.6K</text>
+                  </g>
+                </svg>
+              </div>
+              
+              {/* Enhanced Region Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
+                {[
+                  { region: 'North America', count: '8.3K', percentage: '45%', color: 'from-purple-500 to-pink-500', icon: '🇺🇸' },
+                  { region: 'Europe', count: '4.8K', percentage: '26%', color: 'from-emerald-500 to-teal-500', icon: '🇪🇺' },
+                  { region: 'Asia Pacific', count: '5.5K', percentage: '29%', color: 'from-orange-500 to-red-500', icon: '🌏' },
+                  { region: 'Total Regions', count: '5', percentage: '100%', color: 'from-blue-500 to-cyan-500', icon: '🌍' },
+                  { region: 'Latency Avg', count: '45ms', percentage: 'Global', color: 'from-violet-500 to-purple-500', icon: '⚡' }
+                ].map((item, index) => (
+                  <div key={index} className="text-center bg-slate-800/30 rounded-lg p-4">
+                    <div className={`w-full h-2 bg-gradient-to-r ${item.color} rounded-full mb-3`}></div>
+                    <div className="text-2xl mb-1">{item.icon}</div>
+                    <div className="text-xs text-slate-400 mb-1">{item.region}</div>
+                    <div className="text-lg font-bold text-white">{item.count}</div>
+                    <div className="text-xs text-purple-400">{item.percentage}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Orders Status Table */}
           <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
