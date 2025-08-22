@@ -558,8 +558,24 @@ const Results = () => {
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
-                        tick={{ fill: '#64748b', fontSize: 12 }} 
-                        tickFormatter={(value) => `${value}%`}
+                        tick={(props) => {
+                          const { x, y, payload } = props;
+                          const value = payload.value;
+                          const isZero = value === 0;
+                          return (
+                            <text
+                              x={x}
+                              y={y}
+                              textAnchor="middle"
+                              dominantBaseline="middle"
+                              fill={isZero ? '#64748b' : '#64748b'}
+                              fontSize={isZero ? 10 : 12}
+                              opacity={isZero ? 0.4 : 1}
+                            >
+                              {`${value}%`}
+                            </text>
+                          );
+                        }}
                         tickCount={5}
                       />
                       <RadarData
