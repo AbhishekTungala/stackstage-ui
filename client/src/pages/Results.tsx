@@ -562,15 +562,20 @@ const Results = () => {
                           const { x, y, payload } = props;
                           const value = payload.value;
                           const isZero = value === 0;
+                          
+                          if (isZero) {
+                            return null; // Don't render 0% values at all
+                          }
+                          
                           return (
                             <text
                               x={x}
                               y={y}
                               textAnchor="middle"
                               dominantBaseline="middle"
-                              fill={isZero ? '#64748b' : '#64748b'}
-                              fontSize={isZero ? 8 : 12}
-                              opacity={isZero ? 0.15 : 1}
+                              fill="#64748b"
+                              fontSize={12}
+                              opacity={1}
                             >
                               {`${value}%`}
                             </text>
@@ -709,20 +714,31 @@ const Results = () => {
                 <div className="h-64 relative overflow-hidden">
                   {/* World Map with Dotted Pattern */}
                   <div className="absolute inset-0 bg-gradient-to-br from-slate-800/30 to-slate-900/50 rounded-lg">
-                    {/* Dotted world map pattern */}
-                    <svg className="w-full h-full opacity-20" viewBox="0 0 400 200">
+                    {/* Professional World Map */}
+                    <svg className="w-full h-full opacity-30" viewBox="0 0 400 200">
                       <defs>
-                        <pattern id="dots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-                          <circle cx="2" cy="2" r="0.5" fill="#64748b"/>
+                        <pattern id="mapDots" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
+                          <circle cx="1" cy="1" r="0.3" fill="#475569"/>
                         </pattern>
                       </defs>
-                      {/* Simplified world continents using dots */}
-                      <path d="M50 60 L120 50 L140 70 L130 90 L80 95 Z" fill="url(#dots)"/>
-                      <path d="M140 40 L200 35 L220 55 L210 85 L180 90 L150 80 Z" fill="url(#dots)"/>
-                      <path d="M250 45 L320 40 L340 65 L330 95 L280 100 L260 75 Z" fill="url(#dots)"/>
-                      <path d="M60 120 L100 115 L110 140 L90 155 L70 150 Z" fill="url(#dots)"/>
-                      <path d="M280 120 L340 115 L360 140 L350 165 L300 160 Z" fill="url(#dots)"/>
-                      <path d="M180 140 L220 135 L230 155 L210 170 L185 165 Z" fill="url(#dots)"/>
+                      
+                      {/* North America */}
+                      <path d="M20 40 Q30 35 45 38 L65 42 Q80 45 85 55 L88 70 Q85 85 80 90 L70 95 Q50 98 35 95 L25 88 Q18 75 20 60 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
+                      
+                      {/* South America */}
+                      <path d="M55 105 Q60 100 70 103 L75 115 Q78 130 75 145 L72 160 Q68 170 60 165 L52 160 Q48 145 50 130 L53 115 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
+                      
+                      {/* Europe */}
+                      <path d="M160 35 Q170 32 180 35 L190 40 Q195 50 192 60 L188 70 Q180 75 170 72 L162 68 Q155 58 158 48 L160 35 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
+                      
+                      {/* Africa */}
+                      <path d="M150 75 Q160 72 170 75 L175 90 Q178 110 175 130 L172 145 Q168 155 160 152 L152 148 Q145 128 148 108 L150 75 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
+                      
+                      {/* Asia */}
+                      <path d="M200 25 Q230 22 260 28 L290 35 Q320 42 340 50 L355 65 Q350 80 340 85 L320 88 Q290 85 260 82 L230 78 Q205 75 195 65 L192 50 Q195 35 200 25 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
+                      
+                      {/* Australia */}
+                      <path d="M280 140 Q295 138 310 142 L320 148 Q325 155 320 162 L310 168 Q295 170 280 167 L270 162 Q265 155 270 148 L280 140 Z" fill="url(#mapDots)" stroke="#64748b" strokeWidth="0.5"/>
                     </svg>
                     
                     {/* Cloud Region Markers */}
@@ -730,10 +746,10 @@ const Results = () => {
                       {/* US East (N. Virginia) */}
                       <div className="absolute top-12 left-20">
                         <div className="relative">
-                          <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg"></div>
-                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                          <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg border-2 border-purple-300/50"></div>
+                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
                             us-east-1
-                            <div className="text-purple-400 font-bold">5.2K</div>
+                            <div className="text-purple-400 font-bold text-center">5.2K</div>
                           </div>
                         </div>
                       </div>
@@ -741,43 +757,43 @@ const Results = () => {
                       {/* US West (Oregon) */}
                       <div className="absolute top-16 left-8">
                         <div className="relative">
-                          <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse shadow-lg"></div>
-                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                          <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse shadow-lg border-2 border-blue-300/50"></div>
+                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
                             us-west-2
-                            <div className="text-cyan-400 font-bold">3.1K</div>
+                            <div className="text-cyan-400 font-bold text-center">3.1K</div>
                           </div>
                         </div>
                       </div>
                       
                       {/* Europe (Ireland) */}
-                      <div className="absolute top-8 left-40">
+                      <div className="absolute top-8 left-44">
                         <div className="relative">
-                          <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse shadow-lg"></div>
-                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                          <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse shadow-lg border-2 border-emerald-300/50"></div>
+                          <div className="absolute -top-10 -left-10 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
                             eu-west-1
-                            <div className="text-emerald-400 font-bold">4.8K</div>
+                            <div className="text-emerald-400 font-bold text-center">4.8K</div>
                           </div>
                         </div>
                       </div>
                       
                       {/* Asia Pacific (Tokyo) */}
-                      <div className="absolute top-14 right-20">
+                      <div className="absolute top-14 right-16">
                         <div className="relative">
-                          <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse shadow-lg"></div>
-                          <div className="absolute -top-8 -left-8 text-xs text-white font-medium whitespace-nowrap">
+                          <div className="w-4 h-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse shadow-lg border-2 border-orange-300/50"></div>
+                          <div className="absolute -top-10 -left-12 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
                             ap-northeast-1
-                            <div className="text-orange-400 font-bold">2.9K</div>
+                            <div className="text-orange-400 font-bold text-center">2.9K</div>
                           </div>
                         </div>
                       </div>
                       
                       {/* Asia Pacific (Sydney) */}
-                      <div className="absolute bottom-8 right-16">
+                      <div className="absolute bottom-6 right-12">
                         <div className="relative">
-                          <div className="w-3 h-3 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse shadow-lg"></div>
-                          <div className="absolute -top-8 -left-12 text-xs text-white font-medium whitespace-nowrap">
+                          <div className="w-4 h-4 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse shadow-lg border-2 border-violet-300/50"></div>
+                          <div className="absolute -top-10 -left-14 text-xs text-white font-medium whitespace-nowrap bg-slate-800/80 px-2 py-1 rounded-md">
                             ap-southeast-2
-                            <div className="text-violet-400 font-bold">2.6K</div>
+                            <div className="text-violet-400 font-bold text-center">2.6K</div>
                           </div>
                         </div>
                       </div>
