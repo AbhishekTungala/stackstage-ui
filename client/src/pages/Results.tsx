@@ -585,11 +585,11 @@ const Results = () => {
             </Card>
 
             {/* Team Progress */}
-            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+            <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white dark:text-white text-slate-900">Team Progress</CardTitle>
-                  <CardTitle className="text-white dark:text-white text-slate-900">Infrastructure Status</CardTitle>
+                  <CardTitle className="text-slate-900 dark:text-white">Team Progress</CardTitle>
+                  <CardTitle className="text-slate-900 dark:text-white">Infrastructure Status</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -602,8 +602,8 @@ const Results = () => {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="text-sm font-medium text-white dark:text-white text-slate-900">{member.name}</h4>
-                          <span className="text-sm text-slate-400 dark:text-slate-400 text-slate-600">{member.progress}%</span>
+                          <h4 className="text-sm font-medium text-slate-900 dark:text-white">{member.name}</h4>
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{member.progress}%</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -647,8 +647,8 @@ const Results = () => {
                         </PieChart>
                       </ResponsiveContainer>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-2xl font-bold text-white dark:text-white text-slate-900">80%</span>
-                        <span className="text-xs text-slate-400 dark:text-slate-400 text-slate-600">Transactions</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">80%</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">Transactions</span>
                       </div>
                     </div>
                   </div>
@@ -729,9 +729,9 @@ const Results = () => {
                         />
                       </PieChart>
                     </ResponsiveContainer>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
-                      <span className="text-lg font-bold text-slate-900 dark:text-white">100</span>
-                      <span className="text-xs text-slate-600 dark:text-slate-400 mt-1">Resources</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-bold text-slate-900 dark:text-white">100</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400 mt-3">Resources</span>
                     </div>
                   </div>
                 </div>
@@ -748,7 +748,7 @@ const Results = () => {
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">{item.icon} {item.name}</span>
+                      <span className="text-xs text-slate-700 dark:text-slate-300">{item.icon} {item.name}</span>
                     </div>
                   ))}
                 </div>
@@ -756,10 +756,10 @@ const Results = () => {
             </Card>
 
             {/* Cost Trends Line Chart */}
-            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+            <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
-                  <TrendingUp className="mr-2 w-5 h-5 text-green-400" />
+                <CardTitle className="text-slate-900 dark:text-white flex items-center">
+                  <TrendingUp className="mr-2 w-5 h-5 text-green-500" />
                   Cost Trends
                 </CardTitle>
                 <div className="text-lg font-bold text-emerald-400">-$1.2K</div>
@@ -823,11 +823,11 @@ const Results = () => {
                 <div className="flex justify-center space-x-6 mt-4">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">Current Costs</span>
+                    <span className="text-xs text-slate-700 dark:text-slate-300">Current Costs</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">Optimized</span>
+                    <span className="text-xs text-slate-700 dark:text-slate-300">Optimized</span>
                   </div>
                 </div>
               </CardContent>
