@@ -511,7 +511,7 @@ const Analyze = () => {
 
       setTimeout(() => {
         setIsAnalyzing(false);
-        window.location.href = "/results";
+        window.location.href = `/results?id=${data.analysisId}`;
       }, 1000);
 
     } catch (error) {

@@ -117,6 +117,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to upload avatar" });
     }
   });
+  // Get Analysis Results by ID
+  app.get("/api/analysis/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const analysis = await storage.getAnalysis(id);
+      
+      if (!analysis) {
+        return res.status(404).json({ error: "Analysis not found" });
+      }
+
+      res.json({ success: true, analysis });
+    } catch (error) {
+      console.error('Error retrieving analysis:', error);
+      res.status(500).json({ error: "Failed to retrieve analysis" });
+    }
+  });
+
   // Infrastructure Analysis Endpoint - Real AI Backend
   app.post("/api/analyze", async (req, res) => {
     try {

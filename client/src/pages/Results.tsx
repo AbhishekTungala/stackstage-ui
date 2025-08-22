@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -23,23 +23,136 @@ import {
   Loader2
 } from "lucide-react";
 import MagicBento from "@/components/ui/magic-bento";
-import AnimatedList from "@/components/ui/animated-list";
+import { useQuery } from "@tanstack/react-query";
+
+interface AnalysisResult {
+  id: string;
+  timestamp: string;
+  score: number;
+  issues: Array<{
+    id: string;
+    severity: string;
+    category: string;
+    detail: string;
+    evidence: string;
+  }>;
+  recommendations: Array<{
+    title: string;
+    rationale: string;
+    iac_fix: string;
+    impact: {
+      latency_ms: number;
+      cost_monthly_delta: number;
+      risk_reduction: string;
+    };
+  }>;
+  cost: string;
+  diagram: string;
+  details?: any;
+}
 
 const Results = () => {
-  const [overallScore] = useState(78);
   const [isExporting, setIsExporting] = useState(false);
+  const [location] = useLocation();
+  
+  // Get analysis ID from URL query params or localStorage
+  const getAnalysisId = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlAnalysisId = urlParams.get('id');
+    const localAnalysisId = localStorage.getItem('analysisId');
+    return urlAnalysisId || localAnalysisId;
+  };
+
+  const analysisId = getAnalysisId();
+
+  // Fetch real analysis data
+  const { data: analysisData, isLoading, error } = useQuery({
+    queryKey: ['/api/analysis', analysisId],
+    queryFn: async () => {
+      const response = await fetch(`/api/analysis/${analysisId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch analysis results');
+      }
+      const result = await response.json();
+      return result.analysis;
+    },
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Calculate category scores from real data
+  const calculateCategoryScores = (analysis: AnalysisResult) => {
+    if (!analysis) return [];
+
+    const criticalIssues = analysis.issues?.filter(issue => issue.severity === 'critical')?.length || 0;
+    const highIssues = analysis.issues?.filter(issue => issue.severity === 'high')?.length || 0;
+    const mediumIssues = analysis.issues?.filter(issue => issue.severity === 'medium')?.length || 0;
+    const lowIssues = analysis.issues?.filter(issue => issue.severity === 'low')?.length || 0;
+
+    const securityIssues = analysis.issues?.filter(issue => issue.category === 'security')?.length || 0;
+    const costIssues = analysis.issues?.filter(issue => issue.category === 'cost')?.length || 0;
+    const performanceIssues = analysis.issues?.filter(issue => issue.category === 'performance')?.length || 0;
+    const reliabilityIssues = analysis.issues?.filter(issue => issue.category === 'reliability')?.length || 0;
+
+    return [
+      {
+        category: "Security",
+        score: Math.max(100 - (securityIssues * 10), 0),
+        icon: Shield,
+        color: securityIssues <= 1 ? "text-success" : securityIssues <= 3 ? "text-warning" : "text-destructive",
+        bgColor: securityIssues <= 1 ? "bg-success/10" : securityIssues <= 3 ? "bg-warning/10" : "bg-destructive/10",
+        status: securityIssues <= 1 ? "Good" : securityIssues <= 3 ? "Needs Attention" : "Critical",
+        issues: securityIssues
+      },
+      {
+        category: "Cost Optimization",
+        score: Math.max(100 - (costIssues * 8), 0),
+        icon: DollarSign,
+        color: costIssues <= 1 ? "text-success" : costIssues <= 3 ? "text-warning" : "text-destructive",
+        bgColor: costIssues <= 1 ? "bg-success/10" : costIssues <= 3 ? "bg-warning/10" : "bg-destructive/10",
+        status: costIssues <= 1 ? "Excellent" : costIssues <= 3 ? "Needs Attention" : "Poor",
+        issues: costIssues
+      },
+      {
+        category: "Performance",
+        score: Math.max(100 - (performanceIssues * 9), 0),
+        icon: Zap,
+        color: performanceIssues <= 1 ? "text-success" : performanceIssues <= 2 ? "text-warning" : "text-destructive",
+        bgColor: performanceIssues <= 1 ? "bg-success/10" : performanceIssues <= 2 ? "bg-warning/10" : "bg-destructive/10",
+        status: performanceIssues <= 1 ? "Excellent" : performanceIssues <= 2 ? "Good" : "Needs Improvement",
+        issues: performanceIssues
+      },
+      {
+        category: "Reliability",
+        score: Math.max(100 - (reliabilityIssues * 8), 0),
+        icon: CheckCircle,
+        color: reliabilityIssues <= 1 ? "text-success" : reliabilityIssues <= 2 ? "text-warning" : "text-destructive",
+        bgColor: reliabilityIssues <= 1 ? "bg-success/10" : reliabilityIssues <= 2 ? "bg-warning/10" : "bg-destructive/10",
+        status: reliabilityIssues <= 1 ? "Good" : reliabilityIssues <= 2 ? "Fair" : "Poor",
+        issues: reliabilityIssues
+      },
+      {
+        category: "Scalability",
+        score: Math.max(analysis.score - 5, 60), // Slight penalty from overall score
+        icon: TrendingUp,
+        color: analysis.score >= 80 ? "text-success" : analysis.score >= 60 ? "text-warning" : "text-destructive",
+        bgColor: analysis.score >= 80 ? "bg-success/10" : analysis.score >= 60 ? "bg-warning/10" : "bg-destructive/10",
+        status: analysis.score >= 80 ? "Good" : analysis.score >= 60 ? "Fair" : "Needs Work",
+        issues: Math.floor((100 - analysis.score) / 15)
+      }
+    ];
+  };
 
   const handleExportReport = async () => {
     setIsExporting(true);
     try {
-      // Generate and download PDF report
       const response = await fetch('/api/export/pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          analysisId: 'current',
+          analysisId: analysisId,
           format: 'pdf',
           includeCharts: true,
           includeDiagrams: true
@@ -67,54 +180,6 @@ const Results = () => {
       setIsExporting(false);
     }
   };
-  
-  const scores = [
-    {
-      category: "Security",
-      score: 85,
-      icon: Shield,
-      color: "text-success",
-      bgColor: "bg-success/10",
-      status: "Good",
-      issues: 2
-    },
-    {
-      category: "Cost Optimization",
-      score: 65,
-      icon: DollarSign,
-      color: "text-warning",
-      bgColor: "bg-warning/10",
-      status: "Needs Attention",
-      issues: 5
-    },
-    {
-      category: "Performance",
-      score: 90,
-      icon: Zap,
-      color: "text-success",
-      bgColor: "bg-success/10",
-      status: "Excellent",
-      issues: 1
-    },
-    {
-      category: "Scalability",
-      score: 72,
-      icon: TrendingUp,
-      color: "text-warning",
-      bgColor: "bg-warning/10",
-      status: "Good",
-      issues: 3
-    },
-    {
-      category: "Reliability",
-      score: 80,
-      icon: CheckCircle,
-      color: "text-success",
-      bgColor: "bg-success/10",
-      status: "Good",
-      issues: 2
-    }
-  ];
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-success";
@@ -127,6 +192,53 @@ const Results = () => {
     if (issues <= 2) return <AlertTriangle className="w-4 h-4 text-warning" />;
     return <XCircle className="w-4 h-4 text-destructive" />;
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-24 pb-16">
+          <div className="max-w-screen-xl mx-auto px-6 md:px-20">
+            <div className="text-center py-12">
+              <Loader2 className="w-12 h-12 animate-spin mx-auto mb-6" />
+              <h2 className="text-2xl font-semibold text-foreground mb-2">Loading Analysis Results</h2>
+              <p className="text-muted-foreground">Please wait while we retrieve your analysis...</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !analysisData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-24 pb-16">
+          <div className="max-w-screen-xl mx-auto px-6 md:px-20">
+            <div className="text-center py-12">
+              <XCircle className="w-12 h-12 text-destructive mx-auto mb-6" />
+              <h2 className="text-2xl font-semibold text-foreground mb-2">Analysis Not Found</h2>
+              <p className="text-muted-foreground mb-6">
+                {error instanceof Error ? error.message : 'Unable to load the analysis results.'}
+              </p>
+              <Button asChild>
+                <Link to="/analyze">
+                  <ArrowRight className="mr-2 w-4 h-4" />
+                  Start New Analysis
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const overallScore = analysisData.score || 75;
+  const scores = calculateCategoryScores(analysisData);
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,8 +253,13 @@ const Results = () => {
               <span className="text-gradient"> Analysis Results</span>
             </h1>
             <p className="text-base text-muted-foreground">
-              Your cloud infrastructure has been analyzed. Here's what we found.
+              Your cloud infrastructure has been analyzed by AI. Here's what we found.
             </p>
+            {analysisData.timestamp && (
+              <p className="text-sm text-muted-foreground">
+                Analysis completed on {new Date(analysisData.timestamp).toLocaleDateString()} at {new Date(analysisData.timestamp).toLocaleTimeString()}
+              </p>
+            )}
           </div>
 
           {/* Overall Score */}
@@ -246,39 +363,109 @@ const Results = () => {
             })}
           </div>
 
-          {/* Animated Issues List */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
-              Issues by Category
-            </h2>
-            <div className="max-w-2xl mx-auto space-y-3">
-              {scores.map((score, index) => {
-                const Icon = score.icon;
-                return (
-                  <div 
-                    key={index}
-                    className="flex items-center space-x-4 p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-900/70 transition-all duration-300"
-                  >
-                    <div className={`w-10 h-10 rounded-lg ${score.bgColor} flex items-center justify-center`}>
-                      <Icon className={`w-5 h-5 ${score.color}`} />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground">{score.category}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {score.issues} issue{score.issues !== 1 ? 's' : ''} found - {score.status}
-                      </p>
-                    </div>
-                    <Badge 
-                      variant={score.score >= 80 ? "default" : score.score >= 60 ? "secondary" : "destructive"}
-                      className={score.score >= 80 ? "bg-green-500 text-white" : score.score >= 60 ? "bg-yellow-500 text-white" : ""}
+          {/* Real AI Issues List */}
+          {analysisData.issues && analysisData.issues.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
+                Issues Found by AI Analysis
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-3">
+                {analysisData.issues.slice(0, 8).map((issue, index) => {
+                  const getSeverityColor = (severity: string) => {
+                    switch (severity.toLowerCase()) {
+                      case 'critical': return 'bg-red-500/10 border-red-500/20 text-red-600';
+                      case 'high': return 'bg-orange-500/10 border-orange-500/20 text-orange-600';
+                      case 'medium': return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-600';
+                      case 'low': return 'bg-green-500/10 border-green-500/20 text-green-600';
+                      default: return 'bg-gray-500/10 border-gray-500/20 text-gray-600';
+                    }
+                  };
+
+                  return (
+                    <div 
+                      key={issue.id || index}
+                      className="flex items-start space-x-4 p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-900/70 transition-all duration-300"
                     >
-                      {score.score}%
-                    </Badge>
-                  </div>
-                );
-              })}
+                      <div className="flex-shrink-0">
+                        {issue.severity.toLowerCase() === 'critical' ? 
+                          <XCircle className="w-5 h-5 text-red-500" /> :
+                          issue.severity.toLowerCase() === 'high' ? 
+                          <AlertTriangle className="w-5 h-5 text-orange-500" /> :
+                          <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                        }
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-foreground">{issue.category || 'Architecture'}</h3>
+                          <Badge variant="outline" className={getSeverityColor(issue.severity)}>
+                            {issue.severity}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-foreground mb-1">{issue.detail}</p>
+                        {issue.evidence && (
+                          <p className="text-xs text-muted-foreground">{issue.evidence}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Real AI Recommendations */}
+          {analysisData.recommendations && analysisData.recommendations.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
+                AI-Generated Recommendations
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-4">
+                {analysisData.recommendations.slice(0, 6).map((rec, index) => (
+                  <Card key={index} className="glass-card">
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <CheckCircle className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-foreground mb-2">{rec.title}</h3>
+                          <p className="text-sm text-muted-foreground mb-3">{rec.rationale}</p>
+                          {rec.impact && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                              {rec.impact.cost_monthly_delta && (
+                                <div>
+                                  <span className="font-medium text-foreground">Cost Impact:</span>
+                                  <span className="text-muted-foreground ml-1">
+                                    ${rec.impact.cost_monthly_delta}/month
+                                  </span>
+                                </div>
+                              )}
+                              {rec.impact.latency_ms && (
+                                <div>
+                                  <span className="font-medium text-foreground">Latency:</span>
+                                  <span className="text-muted-foreground ml-1">
+                                    {rec.impact.latency_ms}ms improvement
+                                  </span>
+                                </div>
+                              )}
+                              {rec.impact.risk_reduction && (
+                                <div>
+                                  <span className="font-medium text-foreground">Risk:</span>
+                                  <span className="text-muted-foreground ml-1">
+                                    {rec.impact.risk_reduction}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -302,7 +489,7 @@ const Results = () => {
 
             <Card 
               className="glass-card group hover:shadow-lg transition-all cursor-pointer"
-              onClick={() => window.location.href = '/diagram'}
+              onClick={() => window.location.href = `/diagram?id=${analysisId}`}
             >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
@@ -342,7 +529,7 @@ const Results = () => {
             <CardHeader>
               <CardTitle>Recommended Next Steps</CardTitle>
               <CardDescription>
-                Based on your analysis results, here's what we recommend focusing on first.
+                Based on your AI analysis results, here's what we recommend focusing on first.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -355,7 +542,7 @@ const Results = () => {
                 </Button>
                 
                 <Button variant="outline" size="lg" asChild>
-                  <Link to="/diagram">
+                  <Link to={`/diagram?id=${analysisId}`}>
                     <Eye className="mr-2 w-5 h-5" />
                     Architecture Diagram
                   </Link>
