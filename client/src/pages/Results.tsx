@@ -160,7 +160,7 @@ const Results = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-white dark:bg-slate-950">
         <Header />
         <main className="pt-24 pb-16">
           <div className="max-w-screen-xl mx-auto px-6 md:px-20">
@@ -178,7 +178,7 @@ const Results = () => {
 
   if (error || !analysisData) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-white dark:bg-slate-950">
         <Header />
         <main className="pt-24 pb-16">
           <div className="max-w-screen-xl mx-auto px-6 md:px-20">
@@ -294,7 +294,7 @@ const Results = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       <Header />
       
       <main className="pt-24 pb-16">
@@ -393,10 +393,10 @@ const Results = () => {
                       <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1e293b',
-                          border: '1px solid #334155',
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e2e8f0',
                           borderRadius: '8px',
-                          color: '#f1f5f9'
+                          color: '#0f172a'
                         }}
                         className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                       />
@@ -511,10 +511,10 @@ const Results = () => {
                       <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
                       <Tooltip 
                         contentStyle={{
-                          backgroundColor: '#1e293b',
-                          border: '1px solid #334155',
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e2e8f0',
                           borderRadius: '8px',
-                          color: '#f1f5f9'
+                          color: '#0f172a'
                         }}
                         className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                       />
@@ -558,8 +558,8 @@ const Results = () => {
                       <PolarRadiusAxis 
                         angle={90} 
                         domain={[0, 100]} 
-                        tick={false}
-                        tickCount={0}
+                        tick={{ fill: '#64748b', fontSize: 10 }} 
+                        tickFormatter={(value) => `${value}%`}
                       />
                       <RadarData
                         name="Current"
@@ -726,7 +726,6 @@ const Results = () => {
                             borderRadius: '8px',
                             color: '#f1f5f9'
                           }}
-                          className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -794,10 +793,10 @@ const Results = () => {
                       <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" tickFormatter={(value) => `$${value/1000}K`} />
                       <Tooltip 
                         contentStyle={{
-                          backgroundColor: '#1e293b',
-                          border: '1px solid #334155',
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e2e8f0',
                           borderRadius: '8px',
-                          color: '#f1f5f9'
+                          color: '#0f172a'
                         }}
                         className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                         formatter={(value) => [`$${value}`, '']}
@@ -834,69 +833,82 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            {/* Security Score Gauge */}
-            <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm">
+            {/* Response Time Trends */}
+            <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
-                  <Shield className="mr-2 w-5 h-5 text-blue-400" />
-                  Security Score
+                <CardTitle className="text-slate-900 dark:text-white flex items-center">
+                  <Activity className="mr-2 w-5 h-5 text-blue-500" />
+                  Response Time Trends
                 </CardTitle>
+                <div className="text-lg font-bold text-blue-500">125ms avg</div>
               </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <div className="relative w-48 h-24 mb-4">
+              <CardContent>
+                <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                    <AreaChart
+                      data={[
+                        { time: '00:00', response: 150, target: 100 },
+                        { time: '04:00', response: 120, target: 100 },
+                        { time: '08:00', response: 180, target: 100 },
+                        { time: '12:00', response: 95, target: 100 },
+                        { time: '16:00', response: 110, target: 100 },
+                        { time: '20:00', response: 85, target: 100 },
+                        { time: '24:00', response: 125, target: 100 }
+                      ]}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
                       <defs>
-                        <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
-                          <stop offset="50%" stopColor="#8b5cf6" stopOpacity={0.9}/>
-                          <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                        <linearGradient id="responseTimeGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1}/>
                         </linearGradient>
                       </defs>
-                      <Pie
-                        data={[
-                          { value: securityScore, fill: 'url(#gaugeGradient)' },
-                          { value: 100 - securityScore, fill: '#1e293b' }
-                        ]}
-                        cx="50%"
-                        cy="100%"
-                        startAngle={180}
-                        endAngle={0}
-                        innerRadius={60}
-                        outerRadius={90}
-                        dataKey="value"
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" />
+                      <XAxis dataKey="time" stroke="#64748b" className="dark:stroke-slate-400" />
+                      <YAxis stroke="#64748b" className="dark:stroke-slate-400" tickFormatter={(value) => `${value}ms`} />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '8px',
+                          color: '#0f172a'
+                        }}
+                        formatter={(value) => [`${value}ms`, '']}
                       />
-                    </PieChart>
+                      <Area
+                        type="monotone"
+                        dataKey="response"
+                        stroke="#3b82f6"
+                        fill="url(#responseTimeGradient)"
+                        strokeWidth={3}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="target"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        dot={false}
+                      />
+                    </AreaChart>
                   </ResponsiveContainer>
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
-                    <div className="text-center">
-                      <span className="text-3xl font-bold text-white dark:text-white text-slate-900">{securityScore}</span>
-                      <div className="text-sm text-slate-400 dark:text-slate-400 text-slate-600">Security Rating</div>
-                    </div>
-                  </div>
                 </div>
-                
-                {/* Security Metrics */}
-                <div className="grid grid-cols-1 gap-3 w-full">
+                {/* Status Indicators */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   {[
-                    { label: 'Encryption', value: 98, icon: '🔒' },
-                    { label: 'Access Control', value: securityScore + 5, icon: '👤' },
-                    { label: 'Compliance', value: securityScore - 8, icon: '✅' },
-                    { label: 'Monitoring', value: securityScore + 12, icon: '👁️' }
-                  ].map((metric, index) => (
-                    <div key={index} className="flex items-center justify-between">
+                    { label: 'Current', value: '125ms', color: 'bg-blue-500', trend: '↓ 15ms' },
+                    { label: 'Target', value: '100ms', color: 'bg-green-500', trend: 'Goal' },
+                    { label: 'Peak', value: '180ms', color: 'bg-orange-500', trend: '↑ 12%' },
+                    { label: 'Best', value: '85ms', color: 'bg-emerald-500', trend: '✓ Low' }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm">{metric.icon}</span>
-                        <span className="text-sm text-slate-300 dark:text-slate-300 text-slate-700">{metric.label}</span>
+                        <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                        <span className="text-xs text-slate-600 dark:text-slate-300">{item.label}</span>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-16 h-2 bg-slate-700 dark:bg-slate-700 bg-slate-300 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
-                            style={{ width: `${Math.min(metric.value, 100)}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-white dark:text-white text-slate-900 font-semibold min-w-[2rem]">{Math.min(metric.value, 100)}</span>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-slate-900 dark:text-white">{item.value}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">{item.trend}</div>
                       </div>
                     </div>
                   ))}
@@ -906,15 +918,15 @@ const Results = () => {
           </div>
 
           {/* Orders Status Table */}
-          <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+          <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white">Analysis Results</CardTitle>
+                <CardTitle className="text-slate-900 dark:text-white">Analysis Results</CardTitle>
                 <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-slate-300 border-slate-600">
+                  <Badge variant="outline" className="text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600">
                     Jan 2024 ↗
                   </Badge>
-                  <Button variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300">
+                  <Button variant="ghost" size="sm" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                     Create order
                   </Button>
                 </div>
@@ -924,13 +936,13 @@ const Results = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="border-slate-800">
-                    <TableHead className="text-slate-400">Order</TableHead>
-                    <TableHead className="text-slate-400">Client</TableHead>
-                    <TableHead className="text-slate-400">Date</TableHead>
-                    <TableHead className="text-slate-400">Status</TableHead>
-                    <TableHead className="text-slate-400">Country</TableHead>
-                    <TableHead className="text-slate-400">Total</TableHead>
-                    <TableHead className="text-slate-400"></TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Order</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Client</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Date</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Status</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Country</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400">Total</TableHead>
+                    <TableHead className="text-slate-600 dark:text-slate-400"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
