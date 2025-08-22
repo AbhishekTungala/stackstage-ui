@@ -871,85 +871,131 @@ const Results = () => {
                   {/* Ocean Background */}
                   <rect width="100%" height="100%" fill="url(#oceanGradient)"/>
                   
-                  {/* North America - Proper Shape */}
-                  <path d="M140 100 Q160 80 180 85 L220 90 Q260 95 280 110 L300 130 Q310 150 305 170 L295 190 Q280 200 260 195 L220 190 Q180 185 160 180 L140 170 Q120 150 125 130 L130 110 Q135 100 140 100 Z" 
+                  {/* North America - Realistic Shape */}
+                  <path d="M80 120 L90 100 L110 95 L130 100 L150 90 L170 95 L190 100 Q200 105 210 115 L220 125 Q230 140 235 155 L240 170 Q245 185 240 200 L235 215 Q225 225 210 230 L190 235 Q170 240 150 235 L130 230 Q110 225 95 215 L85 200 Q75 185 78 170 L80 155 Q82 140 80 120 Z M100 130 Q120 125 140 130 L160 135 Q180 140 190 155 L185 170 Q175 180 160 175 L140 170 Q120 165 105 155 L100 145 Q98 137 100 130 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
                   
-                  {/* South America - Elongated */}
-                  <path d="M200 220 Q210 210 225 215 L240 225 Q250 240 255 260 L260 290 Q265 320 260 350 L255 370 Q250 380 240 375 L225 370 Q210 365 200 360 L190 350 Q185 330 188 310 L192 280 Q195 250 200 220 Z" 
+                  {/* Greenland */}
+                  <path d="M180 70 Q190 65 200 70 L210 75 Q215 85 210 95 L200 100 Q190 105 180 100 L170 95 Q165 85 170 75 L180 70 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
+                  
+                  {/* South America - Distinctive Shape */}
+                  <path d="M180 250 Q190 245 200 250 L210 255 Q220 265 225 280 L230 300 Q235 320 230 340 L225 360 Q220 375 210 385 L200 390 Q185 395 175 390 L165 385 Q155 375 152 360 L150 340 Q148 320 152 300 L155 280 Q160 265 170 255 L180 250 Z M195 270 Q205 275 210 285 L215 300 Q220 315 215 330 L210 345 Q200 355 190 350 L180 345 Q170 335 175 320 L180 305 Q185 290 195 270 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
                   
-                  {/* Europe - Detailed */}
-                  <path d="M380 80 Q400 75 420 80 L440 85 Q460 90 470 100 L475 115 Q472 130 465 140 L450 150 Q430 155 410 150 L390 145 Q375 140 370 125 L372 110 Q375 95 380 80 Z" 
+                  {/* Europe - Detailed with Scandinavia */}
+                  <path d="M380 90 Q390 85 400 90 L410 95 Q420 100 425 110 L430 120 Q435 135 430 145 L425 155 Q415 165 405 160 L395 155 Q385 150 382 140 L380 125 Q378 110 380 90 Z M395 75 Q405 70 415 75 L425 80 Q430 90 425 100 L420 105 Q410 110 400 105 L395 100 Q390 90 395 75 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
                   
-                  {/* Africa - Distinctive Shape */}
-                  <path d="M360 160 Q380 155 400 160 L420 170 Q435 185 440 205 L445 230 Q450 260 445 290 L440 320 Q435 345 425 360 L410 370 Q390 375 370 370 L350 365 Q335 355 330 340 L325 320 Q320 295 325 270 L330 240 Q335 210 345 185 L355 170 Q360 160 360 160 Z" 
+                  {/* Africa - Realistic African Shape */}
+                  <path d="M370 170 Q385 165 400 170 L415 175 Q430 185 435 200 L440 220 Q445 245 440 270 L435 295 Q430 315 425 330 L420 345 Q410 360 395 365 L380 370 Q365 375 355 370 L345 365 Q335 355 332 340 L330 320 Q328 300 332 280 L335 260 Q340 240 350 220 L355 200 Q360 185 370 170 Z M380 190 Q395 195 405 205 L415 220 Q420 240 415 260 L410 280 Q400 295 385 290 L370 285 Q360 275 365 255 L370 235 Q375 215 380 190 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
                   
-                  {/* Asia - Large Continent */}
-                  <path d="M480 60 Q520 55 560 65 L600 75 Q640 85 670 100 L690 120 Q700 140 695 160 L685 180 Q670 195 650 200 L610 205 Q570 200 530 195 L490 190 Q460 180 450 160 L448 140 Q450 120 460 100 L470 80 Q480 60 480 60 Z" 
+                  {/* Asia - Large Realistic Continent */}
+                  <path d="M450 80 Q480 75 510 80 L540 85 Q570 90 600 95 L630 100 Q660 105 685 115 L700 125 Q715 140 710 155 L705 170 Q695 180 680 185 L650 190 Q620 195 590 190 L560 185 Q530 180 505 175 L480 170 Q460 165 450 150 L448 135 Q446 120 450 105 L452 90 Q451 85 450 80 Z M500 100 Q530 105 560 110 L590 115 Q620 120 645 130 L665 140 Q680 155 675 170 L670 180 Q655 185 630 180 L600 175 Q570 170 540 165 L510 160 Q485 155 475 140 L473 125 Q475 110 485 105 L500 100 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
                   
-                  {/* Australia - Island Shape */}
-                  <path d="M580 280 Q610 275 635 285 L655 295 Q670 305 675 320 L680 335 Q675 350 665 360 L645 370 Q620 375 595 370 L575 365 Q560 355 555 340 L552 325 Q555 310 565 295 L575 285 Q580 280 580 280 Z" 
+                  {/* India Subcontinent */}
+                  <path d="M520 190 Q535 185 545 195 L555 205 Q560 220 555 235 L550 245 Q540 255 525 250 L515 245 Q505 235 510 220 L515 205 Q520 190 520 190 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
+                  
+                  {/* Japan Islands */}
+                  <path d="M650 150 Q655 145 660 150 L665 155 Q670 165 665 175 L660 180 Q655 185 650 180 L645 175 Q640 165 645 155 L650 150 Z M655 140 Q660 135 665 140 L670 145 Q675 155 670 165 L665 170 Q660 175 655 170 L650 165 Q645 155 650 145 L655 140 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
+                  
+                  {/* Australia - Realistic Shape */}
+                  <path d="M580 290 Q600 285 620 290 L640 295 Q655 305 660 320 L665 335 Q670 350 665 365 L660 375 Q645 385 625 380 L605 375 Q585 370 570 365 L560 355 Q550 340 555 325 L560 310 Q565 300 580 290 Z M595 305 Q615 310 630 320 L640 335 Q645 350 640 360 L630 370 Q615 375 600 370 L585 365 Q575 355 580 340 L585 325 Q590 315 595 305 Z" 
                         fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.7"/>
+                  
+                  {/* New Zealand */}
+                  <path d="M680 340 Q685 335 690 340 L695 345 Q700 355 695 365 L690 370 Q685 375 680 370 L675 365 Q670 355 675 345 L680 340 Z M685 375 Q690 370 695 375 L700 380 Q705 390 700 400 L695 405 Q690 410 685 405 L680 400 Q675 390 680 380 L685 375 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
+                  
+                  {/* UK and Ireland */}
+                  <path d="M355 110 Q360 105 365 110 L370 115 Q375 125 370 135 L365 140 Q360 145 355 140 L350 135 Q345 125 350 115 L355 110 Z M340 115 Q345 110 350 115 L355 120 Q360 130 355 140 L350 145 Q345 150 340 145 L335 140 Q330 130 335 120 L340 115 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
+                  
+                  {/* Madagascar */}
+                  <path d="M450 320 Q455 315 460 320 L465 325 Q470 335 465 345 L460 355 Q455 365 450 360 L445 355 Q440 345 445 335 L450 320 Z" 
+                        fill="url(#continentDots)" stroke="#64748b" strokeWidth="0.8" opacity="0.6"/>
                   
                   {/* Cloud Region Markers with Glow Effect */}
                   
                   {/* US East (N. Virginia) */}
                   <g>
-                    <circle cx="220" cy="140" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
+                    <circle cx="185" cy="160" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
                       <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
                       <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="220" cy="140" r="5" fill="#8b5cf6" opacity="0.9"/>
-                    <text x="220" y="115" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-east-1</text>
-                    <text x="220" y="128" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">5.2K</text>
+                    <circle cx="185" cy="160" r="5" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="185" y="135" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-east-1</text>
+                    <text x="185" y="148" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">5.2K</text>
                   </g>
                   
                   {/* US West (Oregon) */}
                   <g>
-                    <circle cx="160" cy="150" r="8" fill="none" stroke="#06b6d4" strokeWidth="2" opacity="0.5">
+                    <circle cx="125" cy="155" r="8" fill="none" stroke="#06b6d4" strokeWidth="2" opacity="0.5">
                       <animate attributeName="r" values="8;12;8" dur="2.5s" repeatCount="indefinite"/>
                       <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.5s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="160" cy="150" r="5" fill="#06b6d4" opacity="0.9"/>
-                    <text x="160" y="125" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-west-2</text>
-                    <text x="160" y="138" textAnchor="middle" fill="#06b6d4" fontSize="14" fontWeight="bold">3.1K</text>
+                    <circle cx="125" cy="155" r="5" fill="#06b6d4" opacity="0.9"/>
+                    <text x="125" y="130" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">us-west-2</text>
+                    <text x="125" y="143" textAnchor="middle" fill="#06b6d4" fontSize="14" fontWeight="bold">3.1K</text>
                   </g>
                   
                   {/* Europe (Ireland) */}
                   <g>
-                    <circle cx="390" cy="120" r="8" fill="none" stroke="#10b981" strokeWidth="2" opacity="0.5">
+                    <circle cx="355" cy="125" r="8" fill="none" stroke="#10b981" strokeWidth="2" opacity="0.5">
                       <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
                       <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="390" cy="120" r="5" fill="#10b981" opacity="0.9"/>
-                    <text x="390" y="95" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">eu-west-1</text>
-                    <text x="390" y="108" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">4.8K</text>
+                    <circle cx="355" cy="125" r="5" fill="#10b981" opacity="0.9"/>
+                    <text x="355" y="100" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">eu-west-1</text>
+                    <text x="355" y="113" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">4.8K</text>
                   </g>
                   
                   {/* Asia Pacific (Tokyo) */}
                   <g>
-                    <circle cx="620" cy="140" r="8" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.5">
+                    <circle cx="660" cy="160" r="8" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.5">
                       <animate attributeName="r" values="8;12;8" dur="2.2s" repeatCount="indefinite"/>
                       <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.2s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="620" cy="140" r="5" fill="#f59e0b" opacity="0.9"/>
-                    <text x="620" y="115" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-northeast-1</text>
-                    <text x="620" y="128" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">2.9K</text>
+                    <circle cx="660" cy="160" r="5" fill="#f59e0b" opacity="0.9"/>
+                    <text x="660" y="135" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-northeast-1</text>
+                    <text x="660" y="148" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">2.9K</text>
                   </g>
                   
                   {/* Asia Pacific (Sydney) */}
                   <g>
-                    <circle cx="610" cy="330" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
+                    <circle cx="620" cy="340" r="8" fill="none" stroke="#8b5cf6" strokeWidth="2" opacity="0.5">
                       <animate attributeName="r" values="8;12;8" dur="2.8s" repeatCount="indefinite"/>
                       <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.8s" repeatCount="indefinite"/>
                     </circle>
-                    <circle cx="610" cy="330" r="5" fill="#8b5cf6" opacity="0.9"/>
-                    <text x="610" y="305" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-southeast-2</text>
-                    <text x="610" y="318" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">2.6K</text>
+                    <circle cx="620" cy="340" r="5" fill="#8b5cf6" opacity="0.9"/>
+                    <text x="620" y="315" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ap-southeast-2</text>
+                    <text x="620" y="328" textAnchor="middle" fill="#8b5cf6" fontSize="14" fontWeight="bold">2.6K</text>
+                  </g>
+                  
+                  {/* Europe Central (Frankfurt) */}
+                  <g>
+                    <circle cx="410" cy="130" r="8" fill="none" stroke="#ec4899" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="2.7s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2.7s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="410" cy="130" r="5" fill="#ec4899" opacity="0.9"/>
+                    <text x="410" y="105" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">eu-central-1</text>
+                    <text x="410" y="118" textAnchor="middle" fill="#ec4899" fontSize="14" fontWeight="bold">3.7K</text>
+                  </g>
+                  
+                  {/* South America (São Paulo) */}
+                  <g>
+                    <circle cx="205" cy="320" r="8" fill="none" stroke="#14b8a6" strokeWidth="2" opacity="0.5">
+                      <animate attributeName="r" values="8;12;8" dur="3.2s" repeatCount="indefinite"/>
+                      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3.2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="205" cy="320" r="5" fill="#14b8a6" opacity="0.9"/>
+                    <text x="205" y="295" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">sa-east-1</text>
+                    <text x="205" y="308" textAnchor="middle" fill="#14b8a6" fontSize="14" fontWeight="bold">1.4K</text>
                   </g>
                 </svg>
               </div>
