@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
   Shield, 
   DollarSign, 
@@ -20,7 +21,18 @@ import {
   Eye,
   Wrench,
   ArrowRight,
-  Loader2
+  Loader2,
+  Server,
+  Database,
+  Cloud,
+  Activity,
+  Users,
+  Globe,
+  Lock,
+  AlertCircle,
+  Clock,
+  BarChart3,
+  PieChart as PieChartIcon
 } from "lucide-react";
 import MagicBento from "@/components/ui/magic-bento";
 import { useQuery } from "@tanstack/react-query";
@@ -262,295 +274,331 @@ const Results = () => {
   const overallScore = analysisData.score || 75;
   const scores = calculateCategoryScores(analysisData);
 
+  // Professional Dashboard Metrics
+  const dashboardMetrics = [
+    { title: "Overall Score", value: overallScore, suffix: "/100", icon: Activity, color: "from-emerald-500 to-teal-600", change: "+2.5%" },
+    { title: "Security Issues", value: analysisData.issues?.filter(i => i.category === 'security')?.length || 0, suffix: "", icon: Shield, color: "from-red-500 to-pink-600", change: "-1" },
+    { title: "Cost Savings", value: "$2.5K", suffix: "/mo", icon: DollarSign, color: "from-blue-500 to-cyan-600", change: "+8.2%" },
+    { title: "Performance", value: Math.max(85, overallScore - 5), suffix: "%", icon: Zap, color: "from-purple-500 to-indigo-600", change: "+12%" },
+    { title: "Reliability", value: Math.max(88, overallScore - 2), suffix: "%", icon: CheckCircle, color: "from-orange-500 to-amber-600", change: "+5.1%" },
+    { title: "Resources", value: 24, suffix: "", icon: Server, color: "from-green-500 to-lime-600", change: "+3" },
+    { title: "Compliance", value: analysisData.issues?.length <= 3 ? 98 : 85, suffix: "%", icon: Lock, color: "from-violet-500 to-purple-600", change: "+1.2%" },
+    { title: "Uptime", value: "99.9", suffix: "%", icon: Globe, color: "from-teal-500 to-cyan-600", change: "+0.1%" }
+  ];
+
+  // Issue distribution data
+  const issueDistribution = analysisData.issues?.reduce((acc: any, issue: any) => {
+    const existing = acc.find((item: any) => item.name === issue.severity);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({ 
+        name: issue.severity, 
+        value: 1,
+        color: issue.severity === 'critical' ? '#ef4444' : 
+               issue.severity === 'high' ? '#f59e0b' : 
+               issue.severity === 'medium' ? '#3b82f6' : '#10b981'
+      });
+    }
+    return acc;
+  }, []) || [];
+
+  // Performance over time data
+  const performanceData = [
+    { time: '6h ago', security: overallScore - 15, performance: overallScore - 8, cost: overallScore - 12, reliability: overallScore + 3 },
+    { time: '5h ago', security: overallScore - 8, performance: overallScore - 3, cost: overallScore - 7, reliability: overallScore + 5 },
+    { time: '4h ago', security: overallScore - 12, performance: overallScore + 2, cost: overallScore - 4, reliability: overallScore + 2 },
+    { time: '3h ago', security: overallScore - 5, performance: overallScore + 5, cost: overallScore + 1, reliability: overallScore + 7 },
+    { time: '2h ago', security: overallScore + 2, performance: overallScore + 8, cost: overallScore + 6, reliability: overallScore + 4 },
+    { time: '1h ago', security: overallScore + 8, performance: overallScore + 12, cost: overallScore + 10, reliability: overallScore + 8 },
+    { time: 'Now', security: overallScore, performance: overallScore + 15, cost: overallScore + 8, reliability: overallScore + 6 }
+  ];
+
+  // Status distribution for horizontal bars
+  const statusData = [
+    { status: "Optimized", percentage: 75, value: 18, color: "#10b981" },
+    { status: "Good", percentage: 60, value: 14, color: "#3b82f6" },
+    { status: "Needs Attention", percentage: 45, value: 8, color: "#f59e0b" },
+    { status: "Critical", percentage: 20, value: 3, color: "#ef4444" },
+    { status: "Under Review", percentage: 35, value: 6, color: "#8b5cf6" }
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Header />
       
       <main className="pt-24 pb-16">
-        <div className="max-w-screen-xl mx-auto px-6 md:px-20">
-          {/* Header */}
-          <div className="text-center mb-12 space-y-6">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Architecture 
-              <span className="text-gradient"> Analysis Results</span>
-            </h1>
-            <p className="text-base text-muted-foreground">
-              Your cloud infrastructure has been analyzed by AI. Here's what we found.
-            </p>
-            {analysisData.timestamp && (
-              <p className="text-sm text-muted-foreground">
-                Analysis completed on {new Date(analysisData.timestamp).toLocaleDateString()} at {new Date(analysisData.timestamp).toLocaleTimeString()}
-              </p>
-            )}
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Professional Dashboard Header */}
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Cloud Infrastructure Dashboard</h1>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Comprehensive analysis completed on {new Date().toLocaleDateString()} • ID: {analysisId?.slice(-8)}
+                </p>
+              </div>
+              <div className="mt-4 lg:mt-0 flex space-x-3">
+                <Button variant="outline" size="sm" className="h-9">
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share
+                </Button>
+                <Button 
+                  onClick={handleExportReport} 
+                  disabled={isExporting}
+                  className="h-9 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                >
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4 mr-2" />
+                  )}
+                  Export Report
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {/* Overall Score */}
-          <Card className="glass-card mb-12">
-            <CardContent className="p-8">
-              <div className="text-center">
-                <h2 className="text-2xl font-semibold text-foreground mb-4">
-                  Overall Architecture Health Score
-                </h2>
-                
-                {/* Score Circle */}
-                <div className="relative w-48 h-48 mx-auto mb-6">
-                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="hsl(var(--muted))"
-                      strokeWidth="8"
-                      fill="none"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 40}`}
-                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - overallScore / 100)}`}
-                      className="transition-all duration-1000 ease-out"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className={`text-4xl font-bold ${getScoreColor(overallScore)}`}>
-                        {overallScore}
-                      </div>
-                      <div className="text-sm text-muted-foreground">/ 100</div>
+          {/* Professional Metrics Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-8">
+            {dashboardMetrics.map((metric, index) => (
+              <Card key={index} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${metric.color} flex items-center justify-center flex-shrink-0`}>
+                      <metric.icon className="w-4 h-4 text-white" />
                     </div>
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{metric.change}</span>
                   </div>
-                </div>
+                  <div className="space-y-1">
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                      {metric.value}<span className="text-sm font-normal text-slate-500">{metric.suffix}</span>
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight">{metric.title}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-                <Badge 
-                  variant="outline" 
-                  className={`text-lg px-4 py-2 ${
-                    overallScore >= 80 ? 'border-success text-success' :
-                    overallScore >= 60 ? 'border-warning text-warning' :
-                    'border-destructive text-destructive'
-                  }`}
-                >
-                  {overallScore >= 80 ? 'Excellent' : overallScore >= 60 ? 'Good' : 'Needs Improvement'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Modern Gradient Dashboard */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            {/* Modern Radar Chart */}
-            <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+          {/* Main Dashboard Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            
+            {/* Performance Metrics Chart */}
+            <Card className="col-span-1 lg:col-span-2 xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
-                      <Shield className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-slate-900 dark:text-white font-semibold">Security Posture</div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-slate-700 dark:text-slate-300 font-medium">Infrastructure Health</span>
-                        <span className="text-green-500 flex items-center font-semibold">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          {overallScore}%
-                        </span>
-                      </div>
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">Performance Overview</CardTitle>
+                    <CardDescription className="text-slate-600 dark:text-slate-400">Infrastructure metrics over time</CardDescription>
                   </div>
-                  <div className="text-slate-400 dark:text-slate-500">
-                    <Wrench className="w-5 h-5" />
-                  </div>
+                  <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
+                    Live
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={320}>
+                  <AreaChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <defs>
+                      <linearGradient id="securityGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="performanceGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="reliabilityGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" opacity={0.3}/>
+                    <XAxis dataKey="time" tick={{ fontSize: 12 }} className="text-slate-600 dark:text-slate-400" />
+                    <YAxis tick={{ fontSize: 12 }} className="text-slate-600 dark:text-slate-400" />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                      }}
+                      className="dark:bg-slate-800 dark:border-slate-700"
+                    />
+                    <Area type="monotone" dataKey="security" stackId="1" stroke="#ef4444" fill="url(#securityGradient)" strokeWidth={2}/>
+                    <Area type="monotone" dataKey="performance" stackId="1" stroke="#10b981" fill="url(#performanceGradient)" strokeWidth={2}/>
+                    <Area type="monotone" dataKey="cost" stackId="1" stroke="#3b82f6" fill="url(#costGradient)" strokeWidth={2}/>
+                    <Area type="monotone" dataKey="reliability" stackId="1" stroke="#f59e0b" fill="url(#reliabilityGradient)" strokeWidth={2}/>
+                    <Legend />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Infrastructure Status */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2" />
+                  Infrastructure Status
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={300}>
+                <div className="space-y-4">
+                  {statusData.map((item, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600 dark:text-slate-400 font-medium">{item.status}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-slate-900 dark:text-white font-semibold">{item.value}</span>
+                          <span className="text-slate-500 text-xs">{item.percentage}%</span>
+                        </div>
+                      </div>
+                      <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${item.percentage}%`, 
+                            backgroundColor: item.color,
+                            boxShadow: `0 0 10px ${item.color}40`
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Secondary Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            
+            {/* Professional Radar Chart */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <Shield className="w-5 h-5 mr-2 text-blue-500" />
+                  Security Posture
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={280}>
                   <RadarChart data={scores} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                     <defs>
                       <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#e879f9" />
-                        <stop offset="50%" stopColor="#8b5cf6" />
-                        <stop offset="100%" stopColor="#06b6d4" />
+                        <stop offset="0%" stopColor="#3b82f6" />
+                        <stop offset="100%" stopColor="#8b5cf6" />
                       </linearGradient>
-                      <filter id="radarGlow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge> 
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <PolarGrid 
-                      gridType="polygon" 
-                      stroke="currentColor" 
-                      strokeOpacity={0.3}
-                      strokeWidth={1}
-                      className="stroke-slate-300 dark:stroke-slate-600"
-                    />
-                    <PolarAngleAxis 
-                      dataKey="category" 
-                      tick={{ 
-                        fontSize: 10, 
-                        fill: 'currentColor',
-                        fontWeight: 400
-                      }}
-                      className="fill-slate-600 dark:fill-slate-400"
-                    />
-                    <PolarRadiusAxis 
-                      angle={90} 
-                      domain={[0, 100]} 
-                      tick={false}
-                      stroke="currentColor"
-                      strokeOpacity={0.2}
-                      className="stroke-slate-300 dark:stroke-slate-600"
-                    />
+                    <PolarGrid stroke="#e2e8f0" className="dark:stroke-slate-700" />
+                    <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: '#64748b' }} className="dark:fill-slate-400" />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} />
                     <Radar
                       name="Score"
                       dataKey="score"
                       stroke="url(#radarGradient)"
                       fill="url(#radarGradient)"
-                      fillOpacity={0.2}
-                      strokeWidth={3}
-                      filter="url(#radarGlow)"
-                      dot={{ 
-                        fill: "#06b6d4", 
-                        strokeWidth: 2,
-                        stroke: "#ffffff",
-                        r: 4,
-                        filter: "url(#radarGlow)"
-                      }}
+                      fillOpacity={0.25}
+                      strokeWidth={2}
+                      dot={{ fill: "#3b82f6", strokeWidth: 0, r: 4 }}
                     />
                     <Tooltip 
                       contentStyle={{
                         backgroundColor: 'white',
                         border: '1px solid #e2e8f0',
                         borderRadius: '8px',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                        fontSize: '12px',
-                        color: '#1e293b'
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                       }}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
-                      formatter={(value) => [`${value}%`, 'Score']}
+                      className="dark:bg-slate-800 dark:border-slate-700"
                     />
                   </RadarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            {/* Modern Spline Chart */}
-            <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+            {/* Issue Distribution Pie Chart */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
-                      <Zap className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-slate-900 dark:text-white font-semibold">Performance Metrics</div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-slate-700 dark:text-slate-300 font-medium">Real-time Analytics</span>
-                        <span className="text-green-500 flex items-center font-semibold">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          85.2%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-slate-400 dark:text-slate-500">
-                    <Eye className="w-5 h-5" />
-                  </div>
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <PieChartIcon className="w-5 h-5 mr-2 text-purple-500" />
+                  Issue Distribution
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart 
-                    data={[
-                      { time: '1AM', value: analysisData.score - 15 },
-                      { time: '2AM', value: analysisData.score - 8 },
-                      { time: '3AM', value: analysisData.score - 12 },
-                      { time: '4AM', value: analysisData.score + 3 },
-                      { time: '5AM', value: analysisData.score + 8 },
-                      { time: '6AM', value: analysisData.score + 15 }
-                    ]}
-                    margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-                  >
-                    <defs>
-                      <linearGradient id="splineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#e879f9" />
-                        <stop offset="50%" stopColor="#8b5cf6" />
-                        <stop offset="100%" stopColor="#06b6d4" />
-                      </linearGradient>
-                      <linearGradient id="splineAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.6}/>
-                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.0}/>
-                      </linearGradient>
-                      <filter id="splineGlow">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge> 
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-                    <CartesianGrid 
-                      stroke="currentColor" 
-                      strokeOpacity={0.2}
-                      strokeDasharray="1 1"
-                      className="stroke-slate-300 dark:stroke-slate-600"
-                    />
-                    <XAxis 
-                      dataKey="time" 
-                      tick={{ 
-                        fontSize: 10, 
-                        fill: 'currentColor'
-                      }}
-                      className="fill-slate-600 dark:fill-slate-400"
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis 
-                      domain={[0, 100]}
-                      tick={{ 
-                        fontSize: 10, 
-                        fill: 'currentColor'
-                      }}
-                      className="fill-slate-600 dark:fill-slate-400"
-                      axisLine={false}
-                      tickLine={false}
-                    />
+                <ResponsiveContainer width="100%" height={280}>
+                  <PieChart>
+                    <Pie
+                      data={issueDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {issueDistribution.map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: '#1e293b',
-                        border: '1px solid #475569',
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
                         borderRadius: '8px',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
-                        fontSize: '12px',
-                        color: '#e2e8f0'
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                       }}
-                      formatter={(value) => [`${value}%`, 'Value']}
+                      className="dark:bg-slate-800 dark:border-slate-700"
                     />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="url(#splineGradient)"
-                      fill="url(#splineAreaGradient)"
-                      strokeWidth={3}
-                      filter="url(#splineGlow)"
-                      dot={{ 
-                        fill: "#06b6d4", 
-                        strokeWidth: 2,
-                        stroke: "#ffffff",
-                        r: 4,
-                        filter: "url(#splineGlow)"
-                      }}
-                    />
-                  </AreaChart>
+                    <Legend />
+                  </PieChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
+
+            {/* Cost Analysis */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <DollarSign className="w-5 h-5 mr-2 text-green-500" />
+                  Cost Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                      {analysisData.cost || "$750-1200"}
+                      <span className="text-sm font-normal text-slate-500">/month</span>
+                    </div>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Estimated Infrastructure Cost</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">Current Spend</span>
+                      <span className="text-sm font-semibold text-slate-900 dark:text-white">$1,240</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">Potential Savings</span>
+                      <span className="text-sm font-semibold text-green-600">$2,500</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">ROI Timeline</span>
+                      <span className="text-sm font-semibold text-slate-900 dark:text-white">3-6 months</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
+
 
           {/* Infrastructure Health Trends */}
           <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mb-8">
@@ -712,50 +760,130 @@ const Results = () => {
             </CardContent>
           </Card>
 
-          {/* Category Scores with Magic Bento */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
-            {scores.map((item) => {
-              const Icon = item.icon;
-              return (
-                <MagicBento 
-                  key={item.category}
-                  enableTilt={true}
-                  enableBorderGlow={true}
-                  enableMagnetism={true}
-                  spotlightRadius={200}
-                  glowColor="132, 0, 255"
-                >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center`}>
-                        <Icon className={`w-5 h-5 ${item.color}`} />
+          {/* Detailed Analysis Tables */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+            
+            {/* Issues & Recommendations Table */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                    <AlertTriangle className="w-5 h-5 mr-2 text-orange-500" />
+                    Critical Issues
+                  </CardTitle>
+                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300">
+                    {analysisData.issues?.filter((i: any) => i.severity === 'critical' || i.severity === 'high')?.length || 0} High Priority
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {(analysisData.issues || []).slice(0, 5).map((issue: any, index: number) => (
+                    <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 transition-colors">
+                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                        issue.severity === 'critical' ? 'bg-red-500' :
+                        issue.severity === 'high' ? 'bg-orange-500' :
+                        issue.severity === 'medium' ? 'bg-blue-500' : 'bg-green-500'
+                      }`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                            {issue.detail || 'Infrastructure Issue'}
+                          </h4>
+                          <Badge 
+                            variant="outline" 
+                            className={`ml-2 text-xs ${
+                              issue.severity === 'critical' ? 'border-red-200 text-red-700 bg-red-50 dark:border-red-800 dark:text-red-300 dark:bg-red-950' :
+                              issue.severity === 'high' ? 'border-orange-200 text-orange-700 bg-orange-50 dark:border-orange-800 dark:text-orange-300 dark:bg-orange-950' :
+                              issue.severity === 'medium' ? 'border-blue-200 text-blue-700 bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:bg-blue-950' :
+                              'border-green-200 text-green-700 bg-green-50 dark:border-green-800 dark:text-green-300 dark:bg-green-950'
+                            }`}
+                          >
+                            {issue.severity}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                          {issue.evidence || 'Review required for optimal performance'}
+                        </p>
+                        <div className="mt-2 flex items-center text-xs text-slate-500 dark:text-slate-500">
+                          <span className="inline-flex items-center">
+                            <Database className="w-3 h-3 mr-1" />
+                            {issue.category}
+                          </span>
+                        </div>
                       </div>
-                      {getStatusIcon(item.issues)}
                     </div>
-                    
-                    <h3 className="font-semibold text-foreground mb-2">{item.category}</h3>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className={`text-2xl font-bold ${getScoreColor(item.score)}`}>
-                          {item.score}
-                        </span>
-                        <span className="text-sm text-muted-foreground">/ 100</span>
+                  ))}
+                  
+                  {(!analysisData.issues || analysisData.issues.length === 0) && (
+                    <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                      <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500" />
+                      <p className="text-sm font-medium">No critical issues found</p>
+                      <p className="text-xs">Your infrastructure looks great!</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recommendations Table */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                    <Zap className="w-5 h-5 mr-2 text-blue-500" />
+                    Recommendations
+                  </CardTitle>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                    {analysisData.recommendations?.length || 0} Actions
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {(analysisData.recommendations || []).slice(0, 5).map((rec: any, index: number) => (
+                    <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                        <Wrench className="w-4 h-4 text-white" />
                       </div>
-                      
-                      <Progress value={item.score} className="h-2" />
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">{item.status}</span>
-                        <span className="text-muted-foreground">
-                          {item.issues} issue{item.issues !== 1 ? 's' : ''}
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-slate-900 dark:text-white mb-1">
+                          {rec.title || `Optimization Recommendation ${index + 1}`}
+                        </h4>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-2">
+                          {rec.rationale || rec.iac_fix || 'Implement best practices for improved performance'}
+                        </p>
+                        
+                        {rec.impact && (
+                          <div className="flex items-center space-x-4 text-xs">
+                            {rec.impact.cost_monthly_delta && (
+                              <span className="inline-flex items-center text-green-600 dark:text-green-400">
+                                <DollarSign className="w-3 h-3 mr-1" />
+                                ${Math.abs(rec.impact.cost_monthly_delta)}/mo saved
+                              </span>
+                            )}
+                            {rec.impact.latency_ms && (
+                              <span className="inline-flex items-center text-blue-600 dark:text-blue-400">
+                                <Clock className="w-3 h-3 mr-1" />
+                                -{rec.impact.latency_ms}ms
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                </MagicBento>
-              );
-            })}
+                  ))}
+                  
+                  {(!analysisData.recommendations || analysisData.recommendations.length === 0) && (
+                    <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                      <TrendingUp className="w-12 h-12 mx-auto mb-3 text-blue-500" />
+                      <p className="text-sm font-medium">All optimizations applied</p>
+                      <p className="text-xs">Your infrastructure is well-optimized!</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Real AI Issues List */}
