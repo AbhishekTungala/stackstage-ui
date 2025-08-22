@@ -26,6 +26,7 @@ const Fixes = () => {
   const [implementedFixes, setImplementedFixes] = useState<Set<string>>(new Set());
   const [applyingFixes, setApplyingFixes] = useState<Set<string>>(new Set());
   const [fixResults, setFixResults] = useState<Map<string, any>>(new Map());
+  const [viewMode, setViewMode] = useState<Record<string, 'before' | 'after'>>({});
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -61,10 +62,16 @@ const Fixes = () => {
         setImplementedFixes(prev => new Set([...Array.from(prev), fixId]));
         setFixResults(prev => new Map(prev.set(fixId, result)));
         
-        // Show success notification
-        const benefits = result.details?.estimatedBenefits || {};
-        const benefitText = Object.values(benefits).filter(Boolean).join(', ');
-        alert(`✅ Fix applied successfully!\n\nType: ${result.details?.type}\nBenefits: ${benefitText}`);
+        // Show professional success notification with detailed changes
+        const changes = result.details?.changes || {};
+        const infrastructureChanges = result.details?.infrastructureChanges || [];
+        const validationSteps = result.details?.validationSteps || [];
+        
+        const changeDetails = changes.diff ? `\n\nCode Changes:\n${changes.diff.map(change => `  ${change}`).join('\n')}` : '';
+        const infraDetails = infrastructureChanges.length ? `\n\nInfrastructure Updates:\n${infrastructureChanges.map(change => `  • ${change}`).join('\n')}` : '';
+        const validationDetails = validationSteps.length ? `\n\nValidation Results:\n${validationSteps.map(step => `  ✓ ${step}`).join('\n')}` : '';
+        
+        alert(`✅ Fix Applied Successfully!\n\nChange ID: ${result.details?.changeId}\nType: ${result.details?.type}${changeDetails}${infraDetails}${validationDetails}`);
       } else {
         // Show error notification
         const suggestions = result.suggestions?.map((s: string) => `• ${s}`).join('\n') || '';
@@ -315,7 +322,7 @@ resource "aws_ebs_volume" "data" {
             <Card className="glass-card">
               <CardContent className="p-6 text-center">
                 <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
-                <div className="text-2xl font-bold text-success">0</div>
+                <div className="text-2xl font-bold text-success">{implementedFixes.size}</div>
                 <div className="text-sm text-muted-foreground">Fixed Issues</div>
               </CardContent>
             </Card>
@@ -405,9 +412,68 @@ resource "aws_ebs_volume" "data" {
                                 </div>
                                 
                                 <div className="relative">
-                                  <pre className="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto">
-                                    <code>{issue.code}</code>
-                                  </pre>
+                                  {implementedFixes.has(`${categoryIndex}-${issueIndex}`) && fixResults.has(`${categoryIndex}-${issueIndex}`) ? (
+                                    <div className="space-y-4">
+                                      <div className="flex gap-2">
+                                        <button
+                                          onClick={() => setViewMode(prevMode => ({ 
+                                            ...prevMode, 
+                                            [`${categoryIndex}-${issueIndex}`]: 
+                                              prevMode[`${categoryIndex}-${issueIndex}`] === 'after' ? 'before' : 'after' 
+                                          }))}
+                                          className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                        >
+                                          Show {(viewMode[`${categoryIndex}-${issueIndex}`] || 'before') === 'before' ? 'Updated Code' : 'Original Code'}
+                                        </button>
+                                        <div className="text-xs text-muted-foreground flex items-center">
+                                          <CheckCircle className="w-3 h-3 mr-1 text-success" />
+                                          Applied: {fixResults.get(`${categoryIndex}-${issueIndex}`)?.details?.changeId}
+                                        </div>
+                                      </div>
+                                      
+                                      <pre className="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto border-l-4 border-success">
+                                        <code>
+                                          {(viewMode[`${categoryIndex}-${issueIndex}`] || 'before') === 'after' 
+                                            ? fixResults.get(`${categoryIndex}-${issueIndex}`)?.details?.changes?.after || issue.code
+                                            : issue.code
+                                          }
+                                        </code>
+                                      </pre>
+                                      
+                                      {/* Show detailed changes */}
+                                      {fixResults.get(`${categoryIndex}-${issueIndex}`)?.details?.changes?.diff && (
+                                        <div className="bg-green-50 dark:bg-green-950/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                                          <h5 className="font-medium text-green-900 dark:text-green-100 mb-2 flex items-center">
+                                            <CheckCircle className="w-4 h-4 mr-2" />
+                                            Configuration Changes Applied
+                                          </h5>
+                                          <div className="text-sm space-y-1">
+                                            {fixResults.get(`${categoryIndex}-${issueIndex}`).details.changes.diff.map((change, idx) => (
+                                              <div key={idx} className="font-mono text-green-700 dark:text-green-300">
+                                                {change}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Show infrastructure changes */}
+                                      {fixResults.get(`${categoryIndex}-${issueIndex}`)?.details?.infrastructureChanges && (
+                                        <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                                          <h5 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Infrastructure Updates</h5>
+                                          <div className="text-sm space-y-1">
+                                            {fixResults.get(`${categoryIndex}-${issueIndex}`).details.infrastructureChanges.map((change, idx) => (
+                                              <div key={idx} className="text-blue-700 dark:text-blue-300">• {change}</div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <pre className="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto">
+                                      <code>{issue.code}</code>
+                                    </pre>
+                                  )}
                                 </div>
                                 
                                 <div className="flex gap-3">
