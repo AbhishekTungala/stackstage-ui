@@ -678,30 +678,37 @@ const Results = () => {
               </CardContent>
             </Card>
 
-            {/* Issue Distribution Pie Chart */}
+            {/* Spike Lines Chart */}
             <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-                  <PieChartIcon className="w-5 h-5 mr-2 text-purple-500" />
-                  Issue Distribution
+                  <Activity className="w-5 h-5 mr-2 text-purple-500" />
+                  Resource Spike Analysis
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <ResponsiveContainer width="100%" height={280}>
-                  <PieChart>
-                    <Pie
-                      data={issueDistribution}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {issueDistribution.map((entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
+                  <LineChart
+                    data={[
+                      { time: '00:00', cpu: 45, memory: 62, network: 78, spikes: 12 },
+                      { time: '04:00', cpu: 38, memory: 55, network: 45, spikes: 8 },
+                      { time: '08:00', cpu: 92, memory: 88, network: 95, spikes: 45 },
+                      { time: '12:00', cpu: 78, memory: 72, network: 85, spikes: 32 },
+                      { time: '16:00', cpu: 95, memory: 91, network: 88, spikes: 48 },
+                      { time: '20:00', cpu: 52, memory: 48, network: 62, spikes: 18 },
+                      { time: '24:00', cpu: 41, memory: 38, network: 42, spikes: 9 }
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <defs>
+                      <linearGradient id="spikeGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-700" opacity={0.3}/>
+                    <XAxis dataKey="time" tick={{ fontSize: 12 }} className="text-slate-600 dark:text-slate-400" />
+                    <YAxis tick={{ fontSize: 12 }} className="text-slate-600 dark:text-slate-400" />
                     <Tooltip 
                       contentStyle={{
                         backgroundColor: 'white',
@@ -711,8 +718,18 @@ const Results = () => {
                       }}
                       className="dark:bg-slate-800 dark:border-slate-700"
                     />
-                    <Legend />
-                  </PieChart>
+                    <Line 
+                      type="monotone" 
+                      dataKey="spikes" 
+                      stroke="#ef4444" 
+                      strokeWidth={3}
+                      dot={{ fill: '#ef4444', strokeWidth: 2, r: 6 }}
+                      activeDot={{ r: 8, stroke: '#ef4444', strokeWidth: 2, fill: '#ffffff' }}
+                    />
+                    <Line type="monotone" dataKey="cpu" stroke="#3b82f6" strokeWidth={2} strokeDasharray="5 5" />
+                    <Line type="monotone" dataKey="memory" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
+                    <Line type="monotone" dataKey="network" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" />
+                  </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -755,17 +772,103 @@ const Results = () => {
           </div>
 
 
-          {/* Infrastructure Health Trends */}
+          {/* Advanced Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            
+            {/* Heatmap Chart */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2 text-orange-500" />
+                  Resource Usage Heatmap
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-7 gap-1 mb-4">
+                  {Array.from({ length: 21 }, (_, i) => {
+                    const intensity = Math.random() * 100;
+                    const getHeatColor = (value: number) => {
+                      if (value < 25) return 'bg-blue-100 dark:bg-blue-900';
+                      if (value < 50) return 'bg-green-200 dark:bg-green-800';
+                      if (value < 75) return 'bg-yellow-300 dark:bg-yellow-700';
+                      return 'bg-red-400 dark:bg-red-600';
+                    };
+                    return (
+                      <div
+                        key={i}
+                        className={`w-8 h-8 rounded ${getHeatColor(intensity)} border border-white dark:border-slate-800 cursor-pointer hover:scale-110 transition-transform`}
+                        title={`Usage: ${Math.round(intensity)}%`}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between items-center text-xs text-slate-500">
+                  <span>Less</span>
+                  <div className="flex space-x-1">
+                    <div className="w-3 h-3 bg-blue-100 dark:bg-blue-900 rounded"></div>
+                    <div className="w-3 h-3 bg-green-200 dark:bg-green-800 rounded"></div>
+                    <div className="w-3 h-3 bg-yellow-300 dark:bg-yellow-700 rounded"></div>
+                    <div className="w-3 h-3 bg-red-400 dark:bg-red-600 rounded"></div>
+                  </div>
+                  <span>More</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Polar Area Chart */}
+            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <PieChartIcon className="w-5 h-5 mr-2 text-cyan-500" />
+                  Service Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ResponsiveContainer width="100%" height={280}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Compute', value: 35, fill: '#3b82f6' },
+                        { name: 'Storage', value: 25, fill: '#10b981' },
+                        { name: 'Network', value: 20, fill: '#f59e0b' },
+                        { name: 'Database', value: 15, fill: '#ef4444' },
+                        { name: 'Cache', value: 5, fill: '#8b5cf6' }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={450}
+                    >
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                      }}
+                      className="dark:bg-slate-800 dark:border-slate-700"
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Radar Chart with Polygon Fill */}
           <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mb-8">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-                    <TrendingUp className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+                    <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-slate-900 dark:text-white font-semibold text-xl">Infrastructure Health Trends</div>
-                    <div className="text-slate-600 dark:text-slate-400 text-sm font-medium">Real-time monitoring & alerts</div>
+                    <div className="text-slate-900 dark:text-white font-semibold text-xl">Multi-Dimensional Performance Radar</div>
+                    <div className="text-slate-600 dark:text-slate-400 text-sm font-medium">Comprehensive infrastructure assessment</div>
                   </div>
                 </div>
                 <div className="text-slate-400 dark:text-slate-500">
@@ -775,66 +878,73 @@ const Results = () => {
             </CardHeader>
             <CardContent className="pt-0">
               <ResponsiveContainer width="100%" height={400}>
-                <LineChart 
+                <RadarChart 
                   data={[
-                    { time: '1AM', health: analysisData.score - 20, performance: analysisData.score - 25, security: analysisData.score - 15 },
-                    { time: '2AM', health: analysisData.score - 10, performance: analysisData.score - 15, security: analysisData.score - 8 },
-                    { time: '3AM', health: analysisData.score - 5, performance: analysisData.score - 10, security: analysisData.score - 3 },
-                    { time: '4AM', health: analysisData.score, performance: analysisData.score - 5, security: analysisData.score + 2 },
-                    { time: '5AM', health: analysisData.score + 5, performance: analysisData.score, security: analysisData.score + 8 },
-                    { time: '6AM', health: analysisData.score + 10, performance: analysisData.score + 5, security: analysisData.score + 12 },
-                    { time: '7AM', health: analysisData.score + 15, performance: analysisData.score + 10, security: analysisData.score + 18 }
+                    { subject: 'Security', current: scores.find(s => s.category === 'Security')?.score || 85, target: 95, industry: 78 },
+                    { subject: 'Performance', current: scores.find(s => s.category === 'Performance')?.score || 88, target: 92, industry: 82 },
+                    { subject: 'Reliability', current: scores.find(s => s.category === 'Reliability')?.score || 79, target: 90, industry: 85 },
+                    { subject: 'Cost Efficiency', current: scores.find(s => s.category === 'Cost Optimization')?.score || 72, target: 85, industry: 75 },
+                    { subject: 'Scalability', current: scores.find(s => s.category === 'Scalability')?.score || 81, target: 88, industry: 80 },
+                    { subject: 'Compliance', current: 89, target: 95, industry: 87 }
                   ]}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  margin={{ top: 40, right: 80, bottom: 40, left: 80 }}
                 >
                   <defs>
-                    {/* Gradients for each line */}
-                    <linearGradient id="healthLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#e879f9" />
-                      <stop offset="100%" stopColor="#8b5cf6" />
+                    <linearGradient id="currentGradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                      <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.2}/>
                     </linearGradient>
-                    <linearGradient id="performanceLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#06b6d4" />
+                    <linearGradient id="targetGradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#059669" stopOpacity={0.1}/>
                     </linearGradient>
-                    <linearGradient id="securityLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#06b6d4" />
-                      <stop offset="100%" stopColor="#10b981" />
+                    <linearGradient id="industryGradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.4}/>
+                      <stop offset="100%" stopColor="#d97706" stopOpacity={0.1}/>
                     </linearGradient>
-                    {/* Glow effects */}
-                    <filter id="lineGlowEffect">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
                   </defs>
-                  <CartesianGrid 
-                    stroke="currentColor" 
-                    strokeOpacity={0.2}
-                    strokeDasharray="1 1"
-                    className="stroke-slate-300 dark:stroke-slate-600"
+                  <PolarGrid 
+                    stroke="#e2e8f0" 
+                    className="dark:stroke-slate-700" 
+                    strokeWidth={1}
+                    opacity={0.5}
                   />
-                  <XAxis 
-                    dataKey="time" 
-                    tick={{ 
-                      fontSize: 11, 
-                      fill: 'currentColor'
-                    }}
-                    className="fill-slate-600 dark:fill-slate-400"
-                    axisLine={false}
-                    tickLine={false}
+                  <PolarAngleAxis 
+                    dataKey="subject" 
+                    tick={{ fontSize: 12, fill: '#64748b' }} 
+                    className="dark:fill-slate-400"
                   />
-                  <YAxis 
-                    domain={[0, 100]}
-                    tick={{ 
-                      fontSize: 10, 
-                      fill: 'currentColor'
-                    }}
-                    className="fill-slate-600 dark:fill-slate-400"
-                    axisLine={false}
-                    tickLine={false}
+                  <PolarRadiusAxis 
+                    angle={90} 
+                    domain={[0, 100]} 
+                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                    className="dark:fill-slate-500"
+                  />
+                  <Radar
+                    name="Current"
+                    dataKey="current"
+                    stroke="#3b82f6"
+                    fill="url(#currentGradient)"
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 5 }}
+                  />
+                  <Radar
+                    name="Target"
+                    dataKey="target"
+                    stroke="#10b981"
+                    fill="url(#targetGradient)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ fill: '#10b981', strokeWidth: 1, r: 3 }}
+                  />
+                  <Radar
+                    name="Industry Avg"
+                    dataKey="industry"
+                    stroke="#f59e0b"
+                    fill="url(#industryGradient)"
+                    strokeWidth={2}
+                    strokeDasharray="10 5"
+                    dot={{ fill: '#f59e0b', strokeWidth: 1, r: 3 }}
                   />
                   <Tooltip 
                     contentStyle={{
@@ -847,70 +957,13 @@ const Results = () => {
                     }}
                     className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                   />
-                  {/* Health line with dots */}
-                  <Line
-                    type="monotone"
-                    dataKey="health"
-                    stroke="url(#healthLineGradient)"
-                    strokeWidth={4}
-                    filter="url(#lineGlowEffect)"
-                    dot={{ 
-                      fill: "#e879f9", 
-                      strokeWidth: 0,
-                      r: 2
+                  <Legend 
+                    wrapperStyle={{
+                      paddingTop: '20px',
+                      fontSize: '12px'
                     }}
-                    activeDot={{ 
-                      r: 6, 
-                      stroke: "#e879f9", 
-                      strokeWidth: 3,
-                      fill: "#ffffff",
-                      filter: "url(#lineGlowEffect)"
-                    }}
-                    name="Health"
                   />
-                  {/* Performance line with dots */}
-                  <Line
-                    type="monotone"
-                    dataKey="performance"
-                    stroke="url(#performanceLineGradient)"
-                    strokeWidth={4}
-                    filter="url(#lineGlowEffect)"
-                    dot={{ 
-                      fill: "#8b5cf6", 
-                      strokeWidth: 0,
-                      r: 2
-                    }}
-                    activeDot={{ 
-                      r: 6, 
-                      stroke: "#8b5cf6", 
-                      strokeWidth: 3,
-                      fill: "#ffffff",
-                      filter: "url(#lineGlowEffect)"
-                    }}
-                    name="Performance"
-                  />
-                  {/* Security line with dots */}
-                  <Line
-                    type="monotone"
-                    dataKey="security"
-                    stroke="url(#securityLineGradient)"
-                    strokeWidth={4}
-                    filter="url(#lineGlowEffect)"
-                    dot={{ 
-                      fill: "#06b6d4", 
-                      strokeWidth: 0,
-                      r: 2
-                    }}
-                    activeDot={{ 
-                      r: 6, 
-                      stroke: "#06b6d4", 
-                      strokeWidth: 3,
-                      fill: "#ffffff",
-                      filter: "url(#lineGlowEffect)"
-                    }}
-                    name="Security"
-                  />
-                </LineChart>
+                </RadarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
