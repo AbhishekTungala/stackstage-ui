@@ -373,14 +373,18 @@ const Results = () => {
                 {analysisData.issues.slice(0, 8).map((issue, index) => {
                   // Handle both string format (from AI) and object format
                   const issueText = typeof issue === 'string' ? issue : (issue.detail || issue.description || 'Issue found');
-                  const severity = typeof issue === 'object' ? issue.severity : (
+                  const detectedSeverity = typeof issue === 'object' && issue.severity ? issue.severity : (
                     issueText.toLowerCase().includes('duplicate') ? 'high' :
                     issueText.toLowerCase().includes('security') || issueText.toLowerCase().includes('accessible') ? 'critical' :
                     issueText.toLowerCase().includes('lacks') || issueText.toLowerCase().includes('missing') ? 'medium' :
                     'medium'
                   );
                   
+                  // Ensure severity is always a valid string
+                  const severity = detectedSeverity || 'medium';
+                  
                   const getSeverityColor = (sev: string) => {
+                    if (!sev) return 'bg-gray-500/10 border-gray-500/20 text-gray-600';
                     switch (sev.toLowerCase()) {
                       case 'critical': return 'bg-red-500/10 border-red-500/20 text-red-600';
                       case 'high': return 'bg-orange-500/10 border-orange-500/20 text-orange-600';
