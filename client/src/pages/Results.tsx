@@ -730,8 +730,8 @@ const Results = () => {
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-lg font-bold text-white dark:text-white text-slate-900">100</span>
-                      <span className="text-xs text-slate-400 dark:text-slate-400 text-slate-600">Resources</span>
+                      <span className="text-lg font-bold text-slate-900 dark:text-white mb-1">100</span>
+                      <span className="text-xs text-slate-600 dark:text-slate-400">Resources</span>
                     </div>
                   </div>
                 </div>
