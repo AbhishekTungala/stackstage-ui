@@ -342,23 +342,27 @@ const Results = () => {
           {/* Modern Gradient Dashboard */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
             {/* Modern Radar Chart */}
-            <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden">
+            <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+                <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">🛡️</span>
+                    <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
+                      <Shield className="w-5 h-5 text-white" />
+                    </div>
                     <div>
-                      <div className="text-white font-semibold">RADAR CHART</div>
+                      <div className="text-slate-900 dark:text-white font-semibold">Security Posture</div>
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-white font-bold">Radar</span>
-                        <span className="text-green-400 flex items-center">
-                          <span className="mr-1">↗</span>
-                          41.67%
+                        <span className="text-slate-700 dark:text-slate-300 font-medium">Infrastructure Health</span>
+                        <span className="text-green-500 flex items-center font-semibold">
+                          <TrendingUp className="w-3 h-3 mr-1" />
+                          {overallScore}%
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-slate-400">⚡</div>
+                  <div className="text-slate-400 dark:text-slate-500">
+                    <Wrench className="w-5 h-5" />
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
@@ -380,24 +384,27 @@ const Results = () => {
                     </defs>
                     <PolarGrid 
                       gridType="polygon" 
-                      stroke="#374151" 
+                      stroke="currentColor" 
                       strokeOpacity={0.3}
                       strokeWidth={1}
+                      className="stroke-slate-300 dark:stroke-slate-600"
                     />
                     <PolarAngleAxis 
                       dataKey="category" 
                       tick={{ 
                         fontSize: 10, 
-                        fill: '#9ca3af',
+                        fill: 'currentColor',
                         fontWeight: 400
                       }}
+                      className="fill-slate-600 dark:fill-slate-400"
                     />
                     <PolarRadiusAxis 
                       angle={90} 
                       domain={[0, 100]} 
                       tick={false}
-                      stroke="#374151"
+                      stroke="currentColor"
                       strokeOpacity={0.2}
+                      className="stroke-slate-300 dark:stroke-slate-600"
                     />
                     <Radar
                       name="Score"
@@ -417,13 +424,14 @@ const Results = () => {
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: '#1e293b',
-                        border: '1px solid #475569',
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
                         borderRadius: '8px',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                         fontSize: '12px',
-                        color: '#e2e8f0'
+                        color: '#1e293b'
                       }}
+                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                       formatter={(value) => [`${value}%`, 'Score']}
                     />
                   </RadarChart>
@@ -432,23 +440,27 @@ const Results = () => {
             </Card>
 
             {/* Modern Spline Chart */}
-            <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden">
+            <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+                <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">📈</span>
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
+                      <Zap className="w-5 h-5 text-white" />
+                    </div>
                     <div>
-                      <div className="text-white font-semibold">AREA CHART</div>
+                      <div className="text-slate-900 dark:text-white font-semibold">Performance Metrics</div>
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-white font-bold">Spline</span>
-                        <span className="text-green-400 flex items-center">
-                          <span className="mr-1">↗</span>
-                          41.67%
+                        <span className="text-slate-700 dark:text-slate-300 font-medium">Real-time Analytics</span>
+                        <span className="text-green-500 flex items-center font-semibold">
+                          <TrendingUp className="w-3 h-3 mr-1" />
+                          85.2%
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-slate-400">⚡</div>
+                  <div className="text-slate-400 dark:text-slate-500">
+                    <Eye className="w-5 h-5" />
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
@@ -483,16 +495,18 @@ const Results = () => {
                       </filter>
                     </defs>
                     <CartesianGrid 
-                      stroke="#374151" 
+                      stroke="currentColor" 
                       strokeOpacity={0.2}
                       strokeDasharray="1 1"
+                      className="stroke-slate-300 dark:stroke-slate-600"
                     />
                     <XAxis 
                       dataKey="time" 
                       tick={{ 
                         fontSize: 10, 
-                        fill: '#9ca3af'
+                        fill: 'currentColor'
                       }}
+                      className="fill-slate-600 dark:fill-slate-400"
                       axisLine={false}
                       tickLine={false}
                     />
@@ -500,8 +514,9 @@ const Results = () => {
                       domain={[0, 100]}
                       tick={{ 
                         fontSize: 10, 
-                        fill: '#9ca3af'
+                        fill: 'currentColor'
                       }}
+                      className="fill-slate-600 dark:fill-slate-400"
                       axisLine={false}
                       tickLine={false}
                     />
@@ -537,17 +552,22 @@ const Results = () => {
             </Card>
           </div>
 
-          {/* Sales History Style Chart */}
-          <Card className="bg-slate-950 border border-slate-800 shadow-lg overflow-hidden mb-8">
+          {/* Infrastructure Health Trends */}
+          <Card className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mb-8">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center justify-between text-lg font-medium text-white">
+              <CardTitle className="flex items-center justify-between text-lg font-medium text-slate-900 dark:text-white">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">💹</span>
+                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
                   <div>
-                    <div className="text-white font-semibold text-xl">Sales History</div>
+                    <div className="text-slate-900 dark:text-white font-semibold text-xl">Infrastructure Health Trends</div>
+                    <div className="text-slate-600 dark:text-slate-400 text-sm font-medium">Real-time monitoring & alerts</div>
                   </div>
                 </div>
-                <div className="text-slate-400">⚡</div>
+                <div className="text-slate-400 dark:text-slate-500">
+                  <CheckCircle className="w-6 h-6" />
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -588,16 +608,18 @@ const Results = () => {
                     </filter>
                   </defs>
                   <CartesianGrid 
-                    stroke="#374151" 
+                    stroke="currentColor" 
                     strokeOpacity={0.2}
                     strokeDasharray="1 1"
+                    className="stroke-slate-300 dark:stroke-slate-600"
                   />
                   <XAxis 
                     dataKey="time" 
                     tick={{ 
                       fontSize: 11, 
-                      fill: '#9ca3af'
+                      fill: 'currentColor'
                     }}
+                    className="fill-slate-600 dark:fill-slate-400"
                     axisLine={false}
                     tickLine={false}
                   />
@@ -605,20 +627,22 @@ const Results = () => {
                     domain={[0, 100]}
                     tick={{ 
                       fontSize: 10, 
-                      fill: '#9ca3af'
+                      fill: 'currentColor'
                     }}
+                    className="fill-slate-600 dark:fill-slate-400"
                     axisLine={false}
                     tickLine={false}
                   />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #475569',
+                      backgroundColor: 'white',
+                      border: '1px solid #e2e8f0',
                       borderRadius: '8px',
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                       fontSize: '12px',
-                      color: '#e2e8f0'
+                      color: '#1e293b'
                     }}
+                    className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"
                   />
                   {/* Health line with dots */}
                   <Line
