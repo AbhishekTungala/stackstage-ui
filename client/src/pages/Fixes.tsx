@@ -771,8 +771,8 @@ resource "aws_ebs_volume" "data" {
 
       {/* Professional Documentation Modal */}
       {documentationModal.isOpen && documentationModal.content && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background/95 backdrop-blur border border-white/10 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-background/95 backdrop-blur border border-white/10 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <div>
                 <h2 className="text-2xl font-bold">{documentationModal.content.title}</h2>
@@ -788,7 +788,7 @@ resource "aws_ebs_volume" "data" {
               </Button>
             </div>
             
-            <div className="overflow-y-auto max-h-[70vh] p-6">
+            <div className="overflow-y-auto flex-1 p-6">
               <div className="space-y-8">
                 {documentationModal.content.sections?.map((section: any, index: number) => (
                   <div key={index} className="space-y-4">
@@ -830,17 +830,22 @@ resource "aws_ebs_volume" "data" {
               </div>
             </div>
             
-            <div className="flex justify-end gap-3 p-6 border-t border-white/10 bg-muted/10">
-              <Button
-                variant="outline"
-                onClick={() => setDocumentationModal({ isOpen: false, content: null })}
-              >
-                Close
-              </Button>
-              <Button variant="default">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Open External Docs
-              </Button>
+            <div className="flex flex-col sm:flex-row justify-between gap-3 p-6 border-t border-white/10 bg-muted/10">
+              <div className="text-sm text-muted-foreground flex items-center">
+                📖 Professional implementation guides for enterprise infrastructure
+              </div>
+              <div className="flex gap-3 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  onClick={() => setDocumentationModal({ isOpen: false, content: null })}
+                >
+                  Close
+                </Button>
+                <Button variant="default">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  External Docs
+                </Button>
+              </div>
             </div>
           </div>
         </div>
