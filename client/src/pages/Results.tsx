@@ -342,7 +342,7 @@ const Results = () => {
           {/* Harness-Style Professional Dashboard */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
             {/* Harness-Style Radar Chart */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
                   <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
@@ -410,7 +410,7 @@ const Results = () => {
             </Card>
 
             {/* Harness-Style Line Chart */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
                   <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
@@ -536,7 +536,7 @@ const Results = () => {
           </div>
 
           {/* Harness-Style Area Chart */}
-          <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base font-medium text-slate-900 dark:text-slate-100">
                 <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-center">
