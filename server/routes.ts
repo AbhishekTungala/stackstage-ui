@@ -264,7 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Convert to PDF using PDFKit - Professional SaaS Dashboard Style
         const doc = new PDFDocument({ 
-          margin: 40,
+          margin: 30,
           size: 'A4',
           bufferPages: true 
         });
@@ -276,173 +276,217 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.on('end', () => resolve(Buffer.concat(chunks)));
         });
         
-        // Helper function to draw gradient rectangles
-        const drawGradientRect = (x: number, y: number, width: number, height: number, startColor: string, endColor: string) => {
-          // Simple gradient effect using rectangles with varying opacity
-          for (let i = 0; i < height; i += 2) {
-            const ratio = i / height;
-            const opacity = 1 - (ratio * 0.3);
-            doc.fillColor(startColor, opacity).rect(x, y + i, width, 2).fill();
+        // Helper function to create gradient effects
+        const createGradientBar = (x: number, y: number, width: number, height: number, color: string, value: number) => {
+          // Create gradient effect by layering multiple rectangles
+          const segments = 20;
+          const segmentWidth = width / segments;
+          
+          for (let i = 0; i < segments; i++) {
+            const opacity = 1 - (i / segments) * 0.6; // Fade from 100% to 40%
+            const segmentX = x + (i * segmentWidth);
+            doc.fillColor(color, opacity).rect(segmentX, y, segmentWidth, height).fill();
           }
         };
         
         // Professional Header with gradient background
-        doc.rect(0, 0, 612, 120).fillColor('#1e40af').fill();
-        doc.fontSize(28).fillColor('#ffffff').text('StackStage', 50, 30, { align: 'left' });
-        doc.fontSize(14).fillColor('#bfdbfe').text('Premium Cloud Architecture Analysis Report', 50, 65);
-        doc.fontSize(10).fillColor('#93c5fd').text('Build with Confidence - Enterprise AI-Powered Insights', 50, 85);
+        doc.rect(0, 0, 612, 100).fillColor('#1e3a8a').fill();
+        doc.rect(0, 0, 612, 100).fillColor('#3b82f6', 0.7).fill();
         
-        // Score badge in top right
-        const scoreX = 450;
-        const scoreY = 30;
-        doc.circle(scoreX + 25, scoreY + 25, 40).fillColor(scoreColor).fill();
-        doc.fontSize(20).fillColor('#ffffff').text(score.toString(), scoreX + 15, scoreY + 18);
-        doc.fontSize(8).fillColor('#ffffff').text('/100', scoreX + 35, scoreY + 32);
+        doc.fontSize(32).fillColor('#ffffff').text('StackStage', 40, 25, { align: 'left' });
+        doc.fontSize(14).fillColor('#dbeafe').text('Premium Cloud Architecture Analysis Report', 40, 60);
+        doc.fontSize(10).fillColor('#bfdbfe').text('Build with Confidence - Enterprise AI-Powered Insights', 40, 78);
         
-        doc.y = 140;
+        // Score badge in top right with gradient effect
+        const scoreX = 480;
+        const scoreY = 25;
+        doc.circle(scoreX, scoreY + 20, 35).fillColor('#ffffff').fill();
+        doc.circle(scoreX, scoreY + 20, 32).fillColor(scoreColor).fill();
+        doc.fontSize(18).fillColor('#ffffff').text(score.toString(), scoreX - 12, scoreY + 12);
+        doc.fontSize(8).fillColor('#ffffff').text('/100', scoreX + 8, scoreY + 28);
         
-        // Executive Summary Section with modern styling
-        doc.rect(50, doc.y, 520, 30).fillColor('#f8fafc').fill();
-        doc.fontSize(18).fillColor('#1e293b').text('📊 Executive Summary', 60, doc.y + 8);
-        doc.moveDown(1.5);
+        doc.y = 120;
         
-        // Metrics Dashboard Grid
+        // Executive Summary Section
+        doc.rect(40, doc.y, 540, 25).fillColor('#f1f5f9').fill();
+        doc.fontSize(16).fillColor('#1e293b').text('EXECUTIVE SUMMARY', 50, doc.y + 6);
+        doc.moveDown(2);
+        
+        // Metrics Dashboard Grid with Professional Cards
         const metrics = [
-          { label: 'Security', value: analysis.security_score || Math.max(40, score - 5), color: '#ef4444' },
-          { label: 'Performance', value: analysis.performance_score || Math.max(45, score + 2), color: '#10b981' },
-          { label: 'Cost Optimization', value: analysis.cost_score || Math.max(35, score - 10), color: '#f59e0b' },
-          { label: 'Reliability', value: analysis.reliability_score || Math.max(40, score - 8), color: '#8b5cf6' }
+          { label: 'Security Score', value: analysis.security_score || Math.max(40, score - 5), color: '#ef4444', bgColor: '#fef2f2' },
+          { label: 'Performance', value: analysis.performance_score || Math.max(45, score + 2), color: '#10b981', bgColor: '#f0fdf4' },
+          { label: 'Cost Optimization', value: analysis.cost_score || Math.max(35, score - 10), color: '#f59e0b', bgColor: '#fffbeb' },
+          { label: 'Reliability', value: analysis.reliability_score || Math.max(40, score - 8), color: '#8b5cf6', bgColor: '#faf5ff' }
         ];
         
         const startY = doc.y;
         metrics.forEach((metric, index) => {
-          const x = 60 + (index % 2) * 250;
+          const x = 50 + (index % 2) * 270;
           const y = startY + Math.floor(index / 2) * 80;
           
-          // Metric card with shadow effect
-          doc.rect(x - 5, y - 3, 230, 65).fillColor('#f1f5f9').fill();
-          doc.rect(x, y, 220, 60).fillColor('#ffffff').fill();
+          // Professional metric card with gradient
+          doc.rect(x, y, 250, 70).fillColor('#ffffff').fill();
+          doc.rect(x, y, 250, 70).strokeColor('#e2e8f0').stroke();
+          doc.rect(x, y, 250, 25).fillColor(metric.bgColor).fill();
           
           // Metric title
-          doc.fontSize(12).fillColor('#64748b').text(metric.label, x + 10, y + 10);
+          doc.fontSize(11).fillColor('#64748b').text(metric.label.toUpperCase(), x + 15, y + 8);
           
-          // Metric value with color
-          doc.fontSize(24).fillColor(metric.color).text(`${metric.value}`, x + 10, y + 25);
-          doc.fontSize(10).fillColor('#94a3b8').text('/100', x + 60, y + 35);
+          // Large metric value
+          doc.fontSize(28).fillColor(metric.color).text(metric.value.toString(), x + 15, y + 30);
+          doc.fontSize(12).fillColor('#94a3b8').text('/100', x + 80, y + 45);
           
-          // Progress bar
-          const barWidth = 150;
-          const barHeight = 6;
-          const barX = x + 10;
-          const barY = y + 48;
+          // Gradient progress bar
+          const barWidth = 200;
+          const barHeight = 8;
+          const barX = x + 15;
+          const barY = y + 55;
           
-          // Background bar
+          // Background
           doc.rect(barX, barY, barWidth, barHeight).fillColor('#e2e8f0').fill();
           
-          // Progress bar with gradient effect
+          // Gradient progress
           const progressWidth = (metric.value / 100) * barWidth;
-          doc.rect(barX, barY, progressWidth, barHeight).fillColor(metric.color).fill();
+          createGradientBar(barX, barY, progressWidth, barHeight, metric.color, metric.value);
         });
         
-        doc.y = startY + 170;
+        doc.y = startY + 180;
         
-        // Analysis Details Section
-        doc.rect(50, doc.y, 520, 25).fillColor('#fee2e2').fill();
-        doc.fontSize(16).fillColor('#dc2626').text('🚨 Critical Issues Identified', 60, doc.y + 6);
-        doc.moveDown(1.2);
+        // Critical Issues Section
+        doc.rect(40, doc.y, 540, 25).fillColor('#fef2f2').fill();
+        doc.fontSize(14).fillColor('#dc2626').text('CRITICAL ISSUES IDENTIFIED', 50, doc.y + 6);
+        doc.moveDown(1.5);
         
-        // Parse and display issues properly
+        // Parse and display issues with better formatting
         if (analysis.issues && analysis.issues.length > 0) {
-          analysis.issues.slice(0, 6).forEach((issueItem: any, index: number) => {
+          analysis.issues.slice(0, 5).forEach((issueItem: any, index: number) => {
             let issueText = '';
             
             if (typeof issueItem === 'object' && issueItem !== null) {
-              issueText = issueItem.detail || issueItem.title || issueItem.description || JSON.stringify(issueItem);
+              issueText = issueItem.detail || issueItem.title || issueItem.description || String(issueItem);
             } else {
               issueText = String(issueItem);
             }
             
-            // Issue item with professional styling
+            // Professional issue card
             const itemY = doc.y;
-            doc.rect(60, itemY - 2, 500, 25).fillColor('#fef2f2').fill();
-            doc.fontSize(10).fillColor('#dc2626').text(`${index + 1}.`, 70, itemY + 5);
-            doc.fontSize(10).fillColor('#374151').text(issueText, 85, itemY + 5, { width: 470 });
-            doc.moveDown(1.2);
+            doc.rect(50, itemY, 520, 30).fillColor('#ffffff').fill();
+            doc.rect(50, itemY, 520, 30).strokeColor('#fee2e2').stroke();
+            
+            // Issue number badge
+            doc.circle(65, itemY + 15, 8).fillColor('#dc2626').fill();
+            doc.fontSize(8).fillColor('#ffffff').text((index + 1).toString(), 62, itemY + 12);
+            
+            // Issue text with proper wrapping
+            doc.fontSize(9).fillColor('#374151').text(issueText, 85, itemY + 8, { 
+              width: 470,
+              height: 20,
+              ellipsis: true
+            });
+            
+            doc.moveDown(1.8);
           });
         }
         
         doc.moveDown(1);
         
         // Recommendations Section
-        doc.rect(50, doc.y, 520, 25).fillColor('#dcfce7').fill();
-        doc.fontSize(16).fillColor('#16a34a').text('✅ AI-Powered Recommendations', 60, doc.y + 6);
-        doc.moveDown(1.2);
+        doc.rect(40, doc.y, 540, 25).fillColor('#f0fdf4').fill();
+        doc.fontSize(14).fillColor('#16a34a').text('AI-POWERED RECOMMENDATIONS', 50, doc.y + 6);
+        doc.moveDown(1.5);
         
-        // Parse and display recommendations properly
+        // Parse and display recommendations with better formatting
         if (analysis.recommendations && analysis.recommendations.length > 0) {
-          analysis.recommendations.slice(0, 6).forEach((recItem: any, index: number) => {
+          analysis.recommendations.slice(0, 5).forEach((recItem: any, index: number) => {
             let recText = '';
             
             if (typeof recItem === 'object' && recItem !== null) {
-              recText = recItem.title || recItem.detail || recItem.description || JSON.stringify(recItem);
+              recText = recItem.title || recItem.detail || recItem.description || String(recItem);
             } else {
               recText = String(recItem);
             }
             
-            // Recommendation item with professional styling
+            // Professional recommendation card
             const itemY = doc.y;
-            doc.rect(60, itemY - 2, 500, 25).fillColor('#f0fdf4').fill();
-            doc.fontSize(10).fillColor('#16a34a').text(`${index + 1}.`, 70, itemY + 5);
-            doc.fontSize(10).fillColor('#374151').text(recText, 85, itemY + 5, { width: 470 });
-            doc.moveDown(1.2);
+            doc.rect(50, itemY, 520, 25).fillColor('#ffffff').fill();
+            doc.rect(50, itemY, 520, 25).strokeColor('#dcfce7').stroke();
+            
+            // Recommendation number badge
+            doc.circle(65, itemY + 12, 7).fillColor('#16a34a').fill();
+            doc.fontSize(8).fillColor('#ffffff').text((index + 1).toString(), 62, itemY + 9);
+            
+            // Recommendation text
+            doc.fontSize(9).fillColor('#374151').text(recText, 85, itemY + 6, { 
+              width: 470,
+              height: 15,
+              ellipsis: true
+            });
+            
+            doc.moveDown(1.5);
           });
         }
         
-        // Cost Analysis Chart
+        // Professional Cost Analysis Chart
         doc.moveDown(2);
-        doc.rect(50, doc.y, 520, 25).fillColor('#fef3c7').fill();
-        doc.fontSize(16).fillColor('#d97706').text('💰 Cost Analysis', 60, doc.y + 6);
-        doc.moveDown(1.5);
+        doc.rect(40, doc.y, 540, 25).fillColor('#fef3c7').fill();
+        doc.fontSize(14).fillColor('#d97706').text('COST BREAKDOWN ANALYSIS', 50, doc.y + 6);
+        doc.moveDown(2);
         
-        // Simple cost breakdown chart
+        // Enhanced cost breakdown with gradients
         const chartY = doc.y;
         const costItems = [
-          { label: 'Compute Resources', percentage: 45, color: '#3b82f6' },
-          { label: 'Storage & Database', percentage: 25, color: '#10b981' },
-          { label: 'Network & CDN', percentage: 20, color: '#f59e0b' },
-          { label: 'Security & Monitoring', percentage: 10, color: '#8b5cf6' }
+          { label: 'Compute Resources', percentage: 45, color: '#3b82f6', lightColor: '#dbeafe' },
+          { label: 'Storage & Database', percentage: 25, color: '#10b981', lightColor: '#d1fae5' },
+          { label: 'Network & CDN', percentage: 20, color: '#f59e0b', lightColor: '#fef3c7' },
+          { label: 'Security & Monitoring', percentage: 10, color: '#8b5cf6', lightColor: '#f3e8ff' }
         ];
         
+        // Create professional bar chart
         let currentX = 60;
         costItems.forEach((item, index) => {
-          const width = (item.percentage / 100) * 400;
-          doc.rect(currentX, chartY, width, 20).fillColor(item.color).fill();
+          const width = (item.percentage / 100) * 480;
           
-          // Add percentage label
-          if (width > 30) {
-            doc.fontSize(8).fillColor('#ffffff').text(`${item.percentage}%`, currentX + 5, chartY + 6);
+          // Background with gradient
+          doc.rect(currentX, chartY, width, 25).fillColor(item.lightColor).fill();
+          createGradientBar(currentX, chartY, width, 25, item.color, item.percentage);
+          
+          // Percentage label on bar if space allows
+          if (width > 40) {
+            doc.fontSize(10).fillColor('#ffffff').text(`${item.percentage}%`, currentX + 10, chartY + 8);
           }
           
           currentX += width;
         });
         
-        // Legend
-        doc.moveDown(1.5);
+        // Professional legend with cards
+        doc.moveDown(2);
+        const legendStartY = doc.y;
         costItems.forEach((item, index) => {
-          const legendY = doc.y + (index * 12);
-          doc.rect(60, legendY, 10, 8).fillColor(item.color).fill();
-          doc.fontSize(9).fillColor('#374151').text(`${item.label} (${item.percentage}%)`, 75, legendY);
+          const legendX = 60 + (index % 2) * 260;
+          const legendY = legendStartY + Math.floor(index / 2) * 25;
+          
+          // Legend card
+          doc.rect(legendX, legendY, 240, 20).fillColor('#ffffff').fill();
+          doc.rect(legendX, legendY, 240, 20).strokeColor('#e2e8f0').stroke();
+          
+          // Color indicator
+          doc.rect(legendX + 8, legendY + 6, 12, 8).fillColor(item.color).fill();
+          
+          // Legend text
+          doc.fontSize(9).fillColor('#374151').text(`${item.label}`, legendX + 25, legendY + 6);
+          doc.fontSize(9).fillColor('#64748b').text(`${item.percentage}%`, legendX + 200, legendY + 6);
         });
         
-        // Footer with professional styling
-        doc.rect(0, 750, 612, 50).fillColor('#1e293b').fill();
+        // Professional Footer
+        doc.rect(0, 770, 612, 52).fillColor('#1e293b').fill();
         doc.fontSize(10).fillColor('#94a3b8').text(
-          `Generated by StackStage • ${new Date().toLocaleDateString()} • Analysis ID: ${analysisId.slice(-8)}`,
-          0, 765, { align: 'center' }
+          `Generated by StackStage Professional Analysis Platform`,
+          0, 785, { align: 'center' }
         );
-        doc.fontSize(8).fillColor('#64748b').text(
-          `Estimated Monthly Cost: ${analysis.cost || 'Calculating...'}`,
-          0, 780, { align: 'center' }
+        doc.fontSize(9).fillColor('#64748b').text(
+          `Report Date: ${new Date().toLocaleDateString()} | Analysis ID: ${analysisId.slice(-8)} | Cost: ${analysis.cost || 'Calculating...'}`,
+          0, 800, { align: 'center' }
         );
         
         doc.end();
