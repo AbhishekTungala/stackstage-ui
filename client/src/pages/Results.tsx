@@ -1061,18 +1061,6 @@ const Results = () => {
                     </text>
                   </Marker>
 
-                  {/* Connection Lines Between Major Regions */}
-                  <g stroke="#8b5cf6" strokeWidth="1" strokeDasharray="3,3" fill="none" opacity="0.4">
-                    <line x1={-77.4} y1={39.0} x2={4.9} y2={52.3}>
-                      <animate attributeName="strokeDashoffset" values="0;6" dur="3s" repeatCount="indefinite"/>
-                    </line>
-                    <line x1={4.9} y1={52.3} x2={139.7} y2={35.7}>
-                      <animate attributeName="strokeDashoffset" values="0;6" dur="4s" repeatCount="indefinite"/>
-                    </line>
-                    <line x1={-77.4} y1={39.0} x2={139.7} y2={35.7}>
-                      <animate attributeName="strokeDashoffset" values="0;9" dur="5s" repeatCount="indefinite"/>
-                    </line>
-                  </g>
 
                 </ComposableMap>
                 
@@ -1089,154 +1077,54 @@ const Results = () => {
                 </div>
               </div>
               
-              {/* Premium Cloud Provider Legend & Stats */}
-              <div className="mt-8 space-y-6">
+              {/* Simple Legend */}
+              <div className="mt-6 space-y-4">
                 
-                {/* Cloud Provider Legend */}
-                <div className="bg-slate-800/40 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                    <Cloud className="mr-2 w-5 h-5 text-purple-400" />
-                    Cloud Service Providers
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500"></div>
-                      <div>
-                        <div className="text-white font-medium">Amazon Web Services</div>
-                        <div className="text-sm text-slate-400">12.1K users across 4 regions</div>
+                {/* Cloud Providers - Simple */}
+                <div className="bg-slate-800/30 rounded-lg p-4 backdrop-blur-sm">
+                  <h3 className="text-sm font-medium text-slate-300 mb-3">Cloud Providers</h3>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                        <span className="text-sm text-white">AWS</span>
+                        <span className="text-xs text-slate-400">12.1K users</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span className="text-sm text-white">GCP</span>
+                        <span className="text-xs text-slate-400">9.3K users</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
+                        <span className="text-sm text-white">Azure</span>
+                        <span className="text-xs text-slate-400">7.4K users</span>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-                      <div>
-                        <div className="text-white font-medium">Google Cloud Platform</div>
-                        <div className="text-sm text-slate-400">9.3K users across 2 regions</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></div>
-                      <div>
-                        <div className="text-white font-medium">Microsoft Azure</div>
-                        <div className="text-sm text-slate-400">7.4K users across 2 regions</div>
-                      </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-emerald-400">99.97%</div>
+                      <div className="text-xs text-slate-400">Global Uptime</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Regional Performance Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  {[
-                    { 
-                      region: 'North America East', 
-                      provider: 'AWS',
-                      users: '8.4K', 
-                      latency: '23ms', 
-                      uptime: '99.98%',
-                      color: 'from-orange-500 to-red-500',
-                      providerColor: 'text-orange-400',
-                      icon: '🇺🇸'
-                    },
-                    { 
-                      region: 'North America West', 
-                      provider: 'GCP',
-                      users: '5.7K', 
-                      latency: '31ms', 
-                      uptime: '99.97%',
-                      color: 'from-blue-500 to-cyan-500',
-                      providerColor: 'text-blue-400',
-                      icon: '🌎'
-                    },
-                    { 
-                      region: 'Europe Central', 
-                      provider: 'Azure',
-                      users: '6.2K', 
-                      latency: '28ms', 
-                      uptime: '99.99%',
-                      color: 'from-cyan-500 to-blue-600',
-                      providerColor: 'text-cyan-400',
-                      icon: '🇪🇺'
-                    },
-                    { 
-                      region: 'Asia Pacific', 
-                      provider: 'AWS',
-                      users: '4.1K', 
-                      latency: '41ms', 
-                      uptime: '99.96%',
-                      color: 'from-orange-500 to-red-500',
-                      providerColor: 'text-orange-400',
-                      icon: '🌏'
-                    },
-                    { 
-                      region: 'Australia', 
-                      provider: 'AWS',
-                      users: '2.8K', 
-                      latency: '52ms', 
-                      uptime: '99.95%',
-                      color: 'from-orange-500 to-red-500',
-                      providerColor: 'text-orange-400',
-                      icon: '🇦🇺'
-                    },
-                    { 
-                      region: 'Global Average', 
-                      provider: 'All',
-                      users: '24.8K', 
-                      latency: '42ms', 
-                      uptime: '99.97%',
-                      color: 'from-purple-500 to-pink-500',
-                      providerColor: 'text-purple-400',
-                      icon: '🌍'
-                    }
-                  ].map((region, index) => (
-                    <div key={index} className="bg-slate-800/40 rounded-lg p-4 border border-slate-700/30 backdrop-blur-sm hover:bg-slate-700/40 transition-all duration-300">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="text-2xl">{region.icon}</div>
-                        <div className={`text-xs font-medium px-2 py-1 rounded-full ${region.providerColor} bg-current/10`}>
-                          {region.provider}
-                        </div>
-                      </div>
-                      <div className={`w-full h-1 bg-gradient-to-r ${region.color} rounded-full mb-3`}></div>
-                      <div className="space-y-2">
-                        <div className="text-xs text-slate-400 font-medium">{region.region}</div>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>
-                            <div className="text-slate-500">Users</div>
-                            <div className="text-white font-bold">{region.users}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-500">Latency</div>
-                            <div className="text-emerald-400 font-bold">{region.latency}</div>
-                          </div>
-                        </div>
-                        <div className="pt-2 border-t border-slate-700/50">
-                          <div className="text-slate-500 text-xs">Uptime</div>
-                          <div className="text-emerald-400 font-bold text-sm">{region.uptime}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Live Data Traffic Indicator */}
-                <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/40 rounded-xl p-4 border border-slate-600/30 backdrop-blur-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-6 bg-gradient-to-t from-purple-500 to-purple-300 rounded-sm animate-pulse"></div>
-                        <div className="w-2 h-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-sm animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="w-2 h-8 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                        <div className="w-2 h-5 bg-gradient-to-t from-orange-500 to-orange-300 rounded-sm animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-                      </div>
-                      <div>
-                        <div className="text-white font-semibold">Live Traffic Monitor</div>
-                        <div className="text-sm text-slate-400">Real-time user activity across all regions</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                        1,247/min
-                      </div>
-                      <div className="text-xs text-slate-400">Requests per minute</div>
-                    </div>
+                {/* Quick Stats */}
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
+                    <div className="text-lg font-bold text-white">24.8K</div>
+                    <div className="text-xs text-slate-400">Total Users</div>
+                  </div>
+                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
+                    <div className="text-lg font-bold text-emerald-400">8</div>
+                    <div className="text-xs text-slate-400">Regions</div>
+                  </div>
+                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
+                    <div className="text-lg font-bold text-purple-400">42ms</div>
+                    <div className="text-xs text-slate-400">Avg Latency</div>
+                  </div>
+                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
+                    <div className="text-lg font-bold text-cyan-400">1.2K</div>
+                    <div className="text-xs text-slate-400">Requests/min</div>
                   </div>
                 </div>
 
