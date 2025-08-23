@@ -1150,144 +1150,104 @@ const Results = () => {
                   <p className="text-slate-600 dark:text-slate-400 mt-2">AI-powered insights to improve your cloud architecture</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-emerald-500">$18.4K</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Est. Annual Savings</div>
+                  <div className="text-2xl font-bold text-emerald-500">
+                    {analysisData?.cost || 'Calculating...'}
+                  </div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">Monthly Cost Range</div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 
-                {/* Cost Optimization */}
-                <div className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-6 border border-emerald-200/50 dark:border-emerald-800/50">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mr-4">
-                        <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                {/* AI-Generated Issues */}
+                {analysisData?.issues && analysisData.issues.length > 0 && (
+                  <div className="bg-gradient-to-r from-red-50/80 to-orange-50/80 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg p-6 border border-red-200/50 dark:border-red-800/50">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mr-4">
+                          <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 dark:text-white">Security & Compliance Issues</h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{analysisData.issues.length} issues identified by AI analysis</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white">Cost Optimization</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Reduce spending by 47%</p>
-                      </div>
-                    </div>
-                    <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700">
-                      High Impact
-                    </Badge>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Right-size EC2 instances</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$8,200/year</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Reserved instance optimization</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$4,100/year</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">S3 storage class optimization</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$2,300/year</span>
-                      </div>
+                      <Badge className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700">
+                        Critical
+                      </Badge>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Unused load balancers</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$1,800/year</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Idle RDS instances</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$1,200/year</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Orphaned EBS volumes</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$800/year</span>
-                      </div>
+                      {analysisData.issues.slice(0, 6).map((issue: string, index: number) => (
+                        <div key={index} className="flex items-start justify-between">
+                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">{issue}</span>
+                          <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Security Improvements */}
-                <div className="bg-gradient-to-r from-red-50/80 to-orange-50/80 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg p-6 border border-red-200/50 dark:border-red-800/50">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mr-4">
-                        <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
+                {/* AI-Generated Recommendations */}
+                {analysisData?.recommendations && analysisData.recommendations.length > 0 && (
+                  <div className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-6 border border-emerald-200/50 dark:border-emerald-800/50">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mr-4">
+                          <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-slate-900 dark:text-white">AI Recommendations</h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{analysisData.recommendations.length} optimization suggestions</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white">Security Enhancements</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">7 critical vulnerabilities found</p>
-                      </div>
+                      <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700">
+                        AI-Powered
+                      </Badge>
                     </div>
-                    <Badge className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700">
-                      Critical
-                    </Badge>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Enable S3 bucket encryption</span>
-                      <CheckCircle className="w-4 h-4 text-red-500" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Configure VPC security groups</span>
-                      <CheckCircle className="w-4 h-4 text-red-500" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Implement IAM least privilege</span>
-                      <CheckCircle className="w-4 h-4 text-red-500" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700 dark:text-slate-300">Enable CloudTrail logging</span>
-                      <CheckCircle className="w-4 h-4 text-red-500" />
+                    <div className="space-y-3">
+                      {analysisData.recommendations.map((rec: string, index: number) => (
+                        <div key={index} className="flex items-start justify-between">
+                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">{rec}</span>
+                          <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Performance Optimization */}
+                {/* Architecture Score */}
                 <div className="bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-blue-200/50 dark:border-blue-800/50">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
                       <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
-                        <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white">Performance Optimization</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Improve response time by 68%</p>
+                        <h3 className="font-semibold text-slate-900 dark:text-white">Architecture Quality Score</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Overall infrastructure assessment</p>
                       </div>
                     </div>
-                    <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700">
-                      Medium Impact
-                    </Badge>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Enable CloudFront CDN</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-340ms</span>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                        {analysisData?.score || 0}/100
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Optimize database queries</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-180ms</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Implement auto-scaling</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-120ms</span>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Cache optimization</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-200ms</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Load balancer tuning</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-90ms</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">EBS optimization</span>
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-75ms</span>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        {(analysisData?.score || 0) >= 80 ? 'Excellent' : 
+                         (analysisData?.score || 0) >= 60 ? 'Good' : 
+                         (analysisData?.score || 0) >= 40 ? 'Fair' : 'Needs Improvement'}
                       </div>
                     </div>
                   </div>
+                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 mb-4">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${analysisData?.score || 0}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                    {analysisData?.summary || 'AI analysis provides comprehensive insights into your cloud architecture quality, security posture, and optimization opportunities.'}
+                  </p>
                 </div>
 
               </div>
