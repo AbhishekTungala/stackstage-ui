@@ -836,163 +836,371 @@ const Results = () => {
             </Card>
           </div>
 
-          {/* Global Infrastructure Map - Full Width */}
+          {/* Global Cloud Infrastructure Map - Premium SaaS Dashboard */}
           <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
                     <Globe className="mr-2 w-6 h-6 text-purple-400" />
-                    Global Infrastructure Distribution
+                    Global User Distribution & Cloud Services
                   </CardTitle>
-                  <div className="text-2xl font-bold text-purple-400 mt-1">18.6K</div>
-                  <span className="text-sm text-slate-400">Active resources across 5 regions</span>
+                  <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1">24.8K</div>
+                  <span className="text-sm text-slate-400">Active users across 12 regions with real-time analytics</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-slate-400">Last updated</div>
-                  <div className="text-white font-medium">2 minutes ago</div>
+                  <div className="text-sm text-slate-400">Live Status</div>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></div>
+                    <div className="text-white font-medium">All Systems Operational</div>
+                  </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="h-96 relative overflow-hidden bg-gradient-to-br from-slate-800/20 to-slate-900/40 rounded-xl">
-                {/* Professional World Map */}
-                <svg className="w-full h-full" viewBox="0 0 800 400" style={{ filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.3))' }}>
+              <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-900/80 via-purple-900/20 to-blue-900/30 rounded-xl border border-slate-700/50">
+                
+                {/* Premium World Map SVG with Accurate Geography */}
+                <svg className="w-full h-full" viewBox="0 0 1000 500" style={{ filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.4))' }}>
                   <defs>
-                    <radialGradient id="oceanGradient" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#1e293b" stopOpacity={0.3}/>
-                      <stop offset="100%" stopColor="#0f172a" stopOpacity={0.6}/>
+                    {/* Ocean Gradient */}
+                    <radialGradient id="oceanGradient" cx="50%" cy="50%" r="80%">
+                      <stop offset="0%" stopColor="#0f172a" stopOpacity={0.4}/>
+                      <stop offset="50%" stopColor="#1e293b" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#0f172a" stopOpacity={0.8}/>
                     </radialGradient>
-                    <pattern id="continentDots" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
-                      <circle cx="1.5" cy="1.5" r="0.4" fill="#475569" opacity="0.6"/>
-                    </pattern>
+                    
+                    {/* Continent Gradients */}
+                    <linearGradient id="continentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#374151" stopOpacity={0.9}/>
+                      <stop offset="50%" stopColor="#4b5563" stopOpacity={0.8}/>
+                      <stop offset="100%" stopColor="#374151" stopOpacity={0.7}/>
+                    </linearGradient>
+                    
+                    {/* User Marker Glow */}
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    
+                    {/* Pulse Animation */}
+                    <filter id="pulse" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   
                   {/* Ocean Background */}
-                  <rect width="100%" height="100%" fill="#1e293b"/>
+                  <rect width="100%" height="100%" fill="url(#oceanGradient)"/>
                   
-                  {/* Real World Map - Accurate Continent Shapes */}
+                  {/* Accurate World Map Continents */}
                   
                   {/* North America */}
-                  <path d="M50 80 C70 60, 90 65, 110 70 L130 60 C150 55, 170 58, 190 65 L210 70 C230 75, 250 80, 270 90 L290 100 C310 115, 320 130, 325 150 L330 170 C335 190, 330 210, 320 230 L310 250 C300 270, 285 280, 270 285 L250 290 C230 295, 210 290, 190 285 L170 280 C150 275, 130 270, 115 260 L100 250 C85 235, 75 220, 70 200 L65 180 C60 160, 55 140, 50 120 L45 100 C45 90, 47 85, 50 80 Z
+                  <path d="M50 100 C80 70, 140 75, 180 85 L220 90 C270 95, 320 105, 360 120 L380 135 C400 150, 410 170, 415 190 L420 220 C425 250, 415 280, 395 300 L370 315 C340 325, 310 320, 280 310 L250 300 C220 290, 190 275, 170 255 L150 235 C130 215, 120 195, 115 170 L110 145 C105 120, 102 100, 105 80 L110 65 C115 55, 120 50, 130 50 C140 52, 145 58, 150 65 L160 75 C170 85, 180 90, 190 88 L200 85 C210 82, 220 80, 230 82 L240 85 C250 88, 260 95, 265 105 L270 115 C275 125, 270 135, 260 140 L250 145 C240 150, 225 148, 215 140 L205 132 C195 125, 190 115, 192 105 L195 95 C198 85, 205 78, 215 75 L225 72 C235 70, 245 72, 250 78 L255 85 C260 92, 258 100, 250 105 L240 110 C230 115, 215 112, 205 105 L195 98 C185 90, 180 80, 182 70 L185 60 C188 50, 195 42, 205 40 L215 38 C225 37, 235 40, 240 48 L245 58 C250 68, 248 78, 240 85 L230 90 C220 95, 205 92, 195 85 L185 78 C175 70, 170 60, 172 50 L175 40 C178 30, 185 22, 195 20 L205 18 C215 17, 225 20, 230 28 L235 38 C240 48, 238 58, 230 65 L220 70 C210 75, 195 72, 185 65 L175 58 C165 50, 160 40, 162 30 L165 20 C168 10, 175 2, 185 0 L195 -2 C205 -3, 215 0, 220 8 L225 18 C230 28, 228 38, 220 45 L210 50 C200 55, 185 52, 175 45 L165 38 C155 30, 150 20, 152 10 L155 0 C158 -10, 165 -18, 175 -20 L185 -22 C195 -23, 205 -20, 210 -12 L215 -2 C220 8, 218 18, 210 25 L200 30 C190 35, 175 32, 165 25 L155 18 C145 10, 140 0, 142 -10 L145 -20 C148 -30, 155 -38, 165 -40 L175 -42 C185 -43, 195 -40, 200 -32 L205 -22 C210 -12, 208 -2, 200 5 L190 10 C180 15, 165 12, 155 5 L145 -2 C135 -10, 130 -20, 132 -30 L135 -40 C138 -50, 145 -58, 155 -60 L165 -62 C175 -63, 185 -60, 190 -52 L195 -42 C200 -32, 198 -22, 190 -15 L180 -10 C170 -5, 155 -8, 145 -15 L135 -22 C125 -30, 120 -40, 122 -50 L125 -60 C128 -70, 135 -78, 145 -80 L155 -82 C165 -83, 175 -80, 180 -72 L185 -62 C190 -52, 188 -42, 180 -35 L170 -30 C160 -25, 145 -28, 135 -35 L125 -42 C115 -50, 110 -60, 112 -70 L115 -80 C118 -90, 125 -98, 135 -100 L145 -102 C155 -103, 165 -100, 170 -92 L175 -82 C180 -72, 178 -62, 170 -55 L160 -50 C150 -45, 135 -48, 125 -55 L115 -62 C105 -70, 100 -80, 102 -90 L105 -100 C108 -110, 115 -118, 125 -120 L135 -122 C145 -123, 155 -120, 160 -112 L165 -102 C170 -92, 168 -82, 160 -75 L150 -70 C140 -65, 125 -68, 115 -75 L105 -82 C95 -90, 90 -100, 92 -110 L95 -120 C98 -130, 105 -138, 115 -140 L125 -142 C135 -143, 145 -140, 150 -132 L155 -122 C160 -112, 158 -102, 150 -95 L140 -90 C130 -85, 115 -88, 105 -95 L95 -102 C85 -110, 80 -120, 82 -130 L85 -140 C88 -150, 95 -158, 105 -160 L115 -162 C125 -163, 135 -160, 140 -152 L145 -142 C150 -132, 148 -122, 140 -115 L130 -110 C120 -105, 105 -108, 95 -115 L85 -122 C75 -130, 70 -140, 72 -150 L75 -160 C78 -170, 85 -178, 95 -180 L105 -182 C115 -183, 125 -180, 130 -172 L135 -162 C140 -152, 138 -142, 130 -135 L120 -130 C110 -125, 95 -128, 85 -135 L75 -142 C65 -150, 60 -160, 62 -170 L65 -180 C68 -190, 75 -198, 85 -200 L95 -202 C105 -203, 115 -200, 120 -192 L125 -182 C130 -172, 128 -162, 120 -155 L110 -150 C100 -145, 85 -148, 75 -155 L65 -162 C55 -170, 50 -180, 52 -190 L55 -200 C58 -210, 65 -218, 75 -220 L85 -222 C95 -223, 105 -220, 110 -212 L115 -202 C120 -192, 118 -182, 110 -175 L100 -170 C90 -165, 75 -168, 65 -175 L55 -182 C45 -190, 40 -200, 42 -210 L45 -220 C48 -230, 55 -238, 65 -240 L75 -242 C85 -243, 95 -240, 100 -232 L105 -222 C110 -212, 108 -202, 100 -195 L90 -190 C80 -185, 65 -188, 55 -195 L45 -202 C35 -210, 30 -220, 32 -230 L35 -240 C38 -250, 45 -258, 55 -260 L65 -262 C75 -263, 85 -260, 90 -252 L95 -242 C100 -232, 98 -222, 90 -215 L80 -210 C70 -205, 55 -208, 45 -215 L35 -222 C25 -230, 20 -240, 22 -250 L25 -260 C28 -270, 35 -278, 45 -280 L55 -282 C65 -283, 75 -280, 80 -272 L85 -262 C90 -252, 88 -242, 80 -235 L70 -230 C60 -225, 45 -228, 35 -235 L25 -242 C15 -250, 10 -260, 12 -270 L15 -280 C18 -290, 25 -298, 35 -300 L45 -302 C55 -303, 65 -300, 70 -292 L75 -282 C80 -272, 78 -262, 70 -255 L60 -250 C50 -245, 35 -248, 25 -255 L15 -262 C5 -270, 0 -280, 2 -290 L5 -300 C8 -310, 15 -318, 25 -320 L35 -322 C45 -323, 55 -320, 60 -312 L65 -302 C70 -292, 68 -282, 60 -275 L50 -270" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
                         
-                        M80 100 C100 95, 120 98, 140 105 L160 110 C180 118, 200 125, 215 140 L225 155 C230 170, 228 185, 220 200 L210 215 C200 225, 185 230, 170 225 L155 220 C140 215, 125 210, 115 200 L105 185 C95 170, 90 155, 88 140 L86 125 C84 110, 82 105, 80 100 Z" 
-                        fill="#38bdf8" opacity="0.8"/>
+                  {/* South America - More Accurate Shape */}
+                  <path d="M220 320 C235 315, 250 320, 265 330 L280 345 C295 360, 305 380, 310 400 L315 425 C320 450, 315 475, 305 495 L290 510 C275 520, 255 525, 235 520 L215 515 C195 510, 180 500, 170 485 L165 470 C160 455, 162 440, 168 425 L175 410 C182 395, 192 380, 205 370 L215 360 C218 355, 219 350, 220 345 Z" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
                   
-                  {/* South America */}
-                  <path d="M180 280 C195 275, 210 280, 220 290 L230 305 C240 320, 245 340, 250 360 L255 380 C260 405, 258 430, 250 450 L240 470 C230 485, 215 495, 200 500 L185 505 C170 510, 155 505, 145 495 L135 480 C125 465, 120 445, 118 425 L115 405 C112 385, 115 365, 120 345 L125 325 C130 305, 140 290, 155 285 L170 282 C175 280, 178 279, 180 280 Z" 
-                        fill="#38bdf8" opacity="0.8"/>
+                  {/* Europe - Better Detail */}
+                  <path d="M480 120 C500 115, 520 120, 535 130 L550 140 C565 155, 570 175, 568 195 L565 210 C560 225, 550 235, 535 240 L520 245 C505 250, 490 245, 480 235 L475 220 C470 205, 472 190, 478 175 L482 160 C485 145, 486 130, 488 120 Z
+                        M490 95 C505 90, 520 95, 530 105 L540 120 C545 135, 540 150, 530 160 L520 170 C510 175, 500 170, 495 160 L490 145 C485 130, 487 115, 493 105 Z" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
                   
-                  {/* Europe */}
-                  <path d="M370 70 C385 65, 400 68, 415 75 L430 80 C445 88, 455 100, 460 115 L465 130 C470 145, 465 160, 455 170 L445 180 C435 185, 420 188, 405 185 L390 182 C375 178, 365 170, 360 155 L355 140 C350 125, 352 110, 358 95 L365 80 C368 75, 369 72, 370 70 Z
+                  {/* Africa - Accurate Proportions */}
+                  <path d="M470 250 C495 245, 520 250, 540 265 L560 280 C580 300, 590 325, 595 350 L600 380 C605 410, 600 440, 590 465 L575 485 C560 500, 540 510, 520 515 L500 520 C480 525, 460 520, 445 510 L430 495 C420 480, 415 460, 413 440 L410 420 C407 400, 410 380, 415 360 L420 340 C425 320, 435 300, 450 285 L462 270 C465 260, 467 255, 470 250 Z" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
+                  
+                  {/* Asia - More Detailed */}
+                  <path d="M610 80 C660 75, 710 85, 750 100 L790 115 C830 135, 860 160, 875 190 L885 220 C890 250, 885 280, 875 305 L860 325 C845 340, 825 350, 800 355 L775 360 C750 365, 725 360, 705 350 L685 340 C665 330, 650 315, 640 295 L635 275 C630 255, 632 235, 638 215 L645 195 C652 175, 662 160, 675 150 L690 140 C705 130, 720 125, 735 122 L750 120 C765 118, 780 120, 790 125 L800 135 C810 145, 815 160, 812 175 L808 190 C804 205, 795 215, 785 220 L775 225 C765 230, 755 225, 750 215 L745 200 C740 185, 742 170, 748 155 L755 145 C760 135, 765 130, 770 128 Z
                         
-                        M385 50 C400 45, 415 48, 425 55 L435 65 C445 75, 448 90, 445 105 L440 115 C435 125, 425 130, 415 128 L405 125 C395 120, 390 110, 388 100 L385 90 C382 80, 383 65, 385 50 Z" 
-                        fill="#06b6d4" opacity="0.8"/>
+                        M640 110 C680 115, 720 125, 755 140 L785 155 C815 175, 835 200, 840 225 L845 245 C850 265, 845 280, 835 290 L820 300 C805 305, 790 300, 775 290 L760 280 C745 270, 735 255, 730 235 L728 215 C726 195, 730 175, 738 155 L748 140 C755 125, 765 115, 775 110 Z" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
                   
-                  {/* Africa */}
-                  <path d="M365 180 C385 175, 405 180, 420 190 L435 205 C450 220, 460 240, 465 260 L470 285 C475 310, 473 335, 468 360 L460 385 C450 410, 435 430, 415 445 L395 455 C375 465, 355 460, 340 450 L325 435 C315 420, 310 400, 308 380 L305 360 C302 340, 305 320, 310 300 L315 280 C320 260, 330 240, 345 225 L355 210 C360 195, 362 187, 365 180 Z" 
-                        fill="#1e293b" opacity="0.9"/>
+                  {/* Australia & Oceania */}
+                  <path d="M750 380 C780 375, 810 385, 835 400 L855 415 C870 435, 875 460, 870 480 L860 500 C850 515, 835 525, 815 530 L795 535 C775 540, 755 535, 740 525 L725 510 C715 495, 712 475, 715 455 L720 435 C725 415, 735 400, 745 390 Z" 
+                        fill="url(#continentGradient)" 
+                        stroke="#6b7280" 
+                        strokeWidth="0.5"/>
                   
-                  {/* Asia */}
-                  <path d="M480 50 C520 45, 560 50, 600 60 L640 70 C680 85, 720 100, 750 120 L780 140 C800 165, 810 190, 805 215 L795 240 C785 260, 770 275, 750 285 L720 295 C690 305, 660 300, 630 290 L600 280 C570 270, 545 255, 525 235 L510 215 C495 195, 488 175, 485 155 L482 135 C479 115, 478 95, 480 75 L482 55 C481 52, 480 51, 480 50 Z
-                        
-                        M530 80 C570 85, 610 95, 645 110 L680 125 C710 145, 730 170, 735 195 L740 215 C745 235, 740 250, 725 260 L705 270 C685 275, 665 270, 645 260 L625 250 C605 240, 590 225, 580 205 L575 185 C570 165, 572 145, 578 125 L585 105 C590 95, 510 85, 530 80 Z" 
-                        fill="#06b6d4" opacity="0.8"/>
+                  {/* Animated User Location Markers with Cloud Service Types */}
                   
-                  {/* Australia */}
-                  <path d="M600 320 C630 315, 660 325, 685 340 L705 355 C720 375, 725 400, 720 420 L710 440 C700 455, 685 465, 665 470 L645 475 C625 480, 605 475, 590 465 L575 450 C565 435, 560 415, 562 395 L565 375 C568 355, 575 340, 585 330 L595 322 C597 320, 598 319, 600 320 Z" 
-                        fill="#38bdf8" opacity="0.8"/>
-                  
-                  {/* India Subcontinent */}
-                  <path d="M520 200 C535 195, 545 205, 550 220 L555 235 C560 250, 555 265, 545 275 L535 285 C525 290, 515 285, 510 275 L505 260 C500 245, 502 230, 508 215 L515 205 C517 202, 518 200, 520 200 Z" 
-                        fill="#1e293b" opacity="0.9"/>
-                  
-                  {/* Greenland */}
-                  <path d="M280 40 C300 35, 315 40, 325 50 L335 65 C340 80, 335 95, 325 105 L310 115 C295 120, 280 115, 270 105 L260 90 C255 75, 260 60, 270 50 L275 45 C277 42, 278 40, 280 40 Z" 
-                        fill="#93c5fd" opacity="0.7"/>
-                  
-                  {/* UK and Ireland */}
-                  <path d="M340 95 C350 90, 360 95, 365 105 L370 115 C375 125, 370 135, 360 140 L350 145 C340 150, 330 145, 325 135 L320 125 C315 115, 320 105, 330 100 L335 97 C337 96, 338 95, 340 95 Z
-                        M320 100 C330 95, 340 100, 345 110 L350 120 C355 130, 350 140, 340 145 L330 150 C320 155, 310 150, 305 140 L300 130 C295 120, 300 110, 310 105 L315 102 C317 101, 318 100, 320 100 Z" 
-                        fill="#06b6d4" opacity="0.7"/>
-                  
-                  {/* Japan */}
-                  <path d="M730 130 C740 125, 750 130, 755 140 L760 155 C765 170, 760 185, 750 190 L740 195 C730 200, 720 195, 715 185 L710 170 C705 155, 710 140, 720 135 L725 132 C727 131, 728 130, 730 130 Z
-                        M735 110 C745 105, 755 110, 760 120 L765 135 C770 150, 765 165, 755 170 L745 175 C735 180, 725 175, 720 165 L715 150 C710 135, 715 120, 725 115 L730 112 C732 111, 733 110, 735 110 Z" 
-                        fill="#06b6d4" opacity="0.7"/>
-                  
-                  {/* Cloud Region Markers with Glow Effect */}
-                  
-                  {/* Cloud Region Labels with Professional Styling */}
-                  
-                  {/* US East (N. Virginia) */}
+                  {/* North America - AWS */}
                   <g>
-                    <circle cx="200" cy="140" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="200" y="125" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">US EAST</text>
-                    <text x="200" y="158" textAnchor="middle" fill="#38bdf8" fontSize="14" fontWeight="bold">5.2K</text>
+                    <circle cx="180" cy="160" r="8" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="180" cy="160" r="4" fill="#ff9500" filter="url(#glow)"/>
+                    <text x="195" y="155" fill="#fff" fontSize="11" fontWeight="bold">AWS - N. Virginia</text>
+                    <text x="195" y="168" fill="#ff9500" fontSize="10" fontWeight="600">8.4K users</text>
                   </g>
                   
-                  {/* US West (Oregon) */}
+                  {/* North America West - GCP */}
                   <g>
-                    <circle cx="120" cy="130" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="120" y="115" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">US WEST</text>
-                    <text x="120" y="148" textAnchor="middle" fill="#38bdf8" fontSize="14" fontWeight="bold">3.1K</text>
+                    <circle cx="120" cy="170" r="6" fill="#4285f4" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="6;10;6" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="120" cy="170" r="3" fill="#4285f4" filter="url(#glow)"/>
+                    <text x="135" y="165" fill="#fff" fontSize="11" fontWeight="bold">GCP - Oregon</text>
+                    <text x="135" y="178" fill="#4285f4" fontSize="10" fontWeight="600">5.7K users</text>
                   </g>
                   
-                  {/* Europe */}
+                  {/* Europe - Azure */}
                   <g>
-                    <circle cx="420" cy="105" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="420" y="90" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">EUROPE</text>
-                    <text x="420" y="123" textAnchor="middle" fill="#06b6d4" fontSize="14" fontWeight="bold">4.8K</text>
+                    <circle cx="520" cy="140" r="7" fill="#0078d4" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="7;11;7" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="520" cy="140" r="3.5" fill="#0078d4" filter="url(#glow)"/>
+                    <text x="535" y="135" fill="#fff" fontSize="11" fontWeight="bold">Azure - West Europe</text>
+                    <text x="535" y="148" fill="#0078d4" fontSize="10" fontWeight="600">6.2K users</text>
                   </g>
                   
-                  {/* Asia Pacific (Tokyo) */}
+                  {/* Asia - AWS */}
                   <g>
-                    <circle cx="740" cy="150" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="740" y="135" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">ASIA</text>
-                    <text x="740" y="168" textAnchor="middle" fill="#06b6d4" fontSize="14" fontWeight="bold">2.9K</text>
+                    <circle cx="760" cy="180" r="6" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="6;10;6" dur="1.8s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="760" cy="180" r="3" fill="#ff9500" filter="url(#glow)"/>
+                    <text x="775" y="175" fill="#fff" fontSize="11" fontWeight="bold">AWS - Tokyo</text>
+                    <text x="775" y="188" fill="#ff9500" fontSize="10" fontWeight="600">4.1K users</text>
                   </g>
                   
-                  {/* Australia */}
+                  {/* Australia - AWS */}
                   <g>
-                    <circle cx="660" cy="380" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="660" y="365" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">AUSTRALIA</text>
-                    <text x="660" y="398" textAnchor="middle" fill="#38bdf8" fontSize="14" fontWeight="bold">2.6K</text>
+                    <circle cx="810" cy="430" r="5" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="5;8;5" dur="2.2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="810" cy="430" r="2.5" fill="#ff9500" filter="url(#glow)"/>
+                    <text x="825" y="425" fill="#fff" fontSize="11" fontWeight="bold">AWS - Sydney</text>
+                    <text x="825" y="438" fill="#ff9500" fontSize="10" fontWeight="600">2.8K users</text>
                   </g>
                   
-                  {/* India */}
+                  {/* India - GCP */}
                   <g>
-                    <circle cx="535" cy="240" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="535" y="225" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">INDIA</text>
-                    <text x="535" y="258" textAnchor="middle" fill="#1e293b" fontSize="14" fontWeight="bold">1.8K</text>
+                    <circle cx="660" cy="260" r="5" fill="#4285f4" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="5;8;5" dur="2.7s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="660" cy="260" r="2.5" fill="#4285f4" filter="url(#glow)"/>
+                    <text x="675" y="255" fill="#fff" fontSize="11" fontWeight="bold">GCP - Mumbai</text>
+                    <text x="675" y="268" fill="#4285f4" fontSize="10" fontWeight="600">3.6K users</text>
                   </g>
                   
-                  {/* South America */}
+                  {/* South America - AWS */}
                   <g>
-                    <circle cx="220" cy="380" r="4" fill="#ffffff" opacity="1"/>
-                    <text x="220" y="365" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">SOUTH AMERICA</text>
-                    <text x="220" y="398" textAnchor="middle" fill="#38bdf8" fontSize="14" fontWeight="bold">1.4K</text>
+                    <circle cx="260" cy="420" r="4" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="260" cy="420" r="2" fill="#ff9500" filter="url(#glow)"/>
+                    <text x="275" y="415" fill="#fff" fontSize="11" fontWeight="bold">AWS - São Paulo</text>
+                    <text x="275" y="428" fill="#ff9500" fontSize="10" fontWeight="600">1.9K users</text>
                   </g>
+                  
+                  {/* Africa - Azure */}
+                  <g>
+                    <circle cx="520" cy="350" r="4" fill="#0078d4" fillOpacity="0.3" filter="url(#pulse)">
+                      <animate attributeName="r" values="4;7;4" dur="2.6s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="520" cy="350" r="2" fill="#0078d4" filter="url(#glow)"/>
+                    <text x="535" y="345" fill="#fff" fontSize="11" fontWeight="bold">Azure - South Africa</text>
+                    <text x="535" y="358" fill="#0078d4" fontSize="10" fontWeight="600">1.2K users</text>
+                  </g>
+                  
+                  {/* Connection Lines Between Major Regions */}
+                  <g stroke="#8b5cf6" strokeWidth="1" strokeDasharray="5,5" fill="none" opacity="0.6">
+                    <line x1="180" y1="160" x2="520" y2="140">
+                      <animate attributeName="stroke-dashoffset" values="0;10" dur="3s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="520" y1="140" x2="760" y2="180">
+                      <animate attributeName="stroke-dashoffset" values="0;10" dur="4s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="180" y1="160" x2="760" y2="180">
+                      <animate attributeName="stroke-dashoffset" values="0;15" dur="5s" repeatCount="indefinite"/>
+                    </line>
+                  </g>
+                  
                 </svg>
+                
+                {/* Floating Data Cards */}
+                <div className="absolute top-4 right-4 space-y-2">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
+                    <div className="text-emerald-400 font-bold">99.97% Uptime</div>
+                    <div className="text-slate-300">Last 30 days</div>
+                  </div>
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
+                    <div className="text-purple-400 font-bold">42ms Avg</div>
+                    <div className="text-slate-300">Global Latency</div>
+                  </div>
+                </div>
               </div>
               
-              {/* Enhanced Region Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
-                {[
-                  { region: 'North America', count: '8.3K', percentage: '45%', color: 'from-purple-500 to-pink-500', icon: '🇺🇸' },
-                  { region: 'Europe', count: '4.8K', percentage: '26%', color: 'from-emerald-500 to-teal-500', icon: '🇪🇺' },
-                  { region: 'Asia Pacific', count: '5.5K', percentage: '29%', color: 'from-orange-500 to-red-500', icon: '🌏' },
-                  { region: 'Total Regions', count: '5', percentage: '100%', color: 'from-blue-500 to-cyan-500', icon: '🌍' },
-                  { region: 'Latency Avg', count: '45ms', percentage: 'Global', color: 'from-violet-500 to-purple-500', icon: '⚡' }
-                ].map((item, index) => (
-                  <div key={index} className="text-center bg-slate-800/30 rounded-lg p-4">
-                    <div className={`w-full h-2 bg-gradient-to-r ${item.color} rounded-full mb-3`}></div>
-                    <div className="text-2xl mb-1">{item.icon}</div>
-                    <div className="text-xs text-slate-400 mb-1">{item.region}</div>
-                    <div className="text-lg font-bold text-white">{item.count}</div>
-                    <div className="text-xs text-purple-400">{item.percentage}</div>
+              {/* Premium Cloud Provider Legend & Stats */}
+              <div className="mt-8 space-y-6">
+                
+                {/* Cloud Provider Legend */}
+                <div className="bg-slate-800/40 rounded-xl p-6 backdrop-blur-sm border border-slate-700/50">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                    <Cloud className="mr-2 w-5 h-5 text-purple-400" />
+                    Cloud Service Providers
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500"></div>
+                      <div>
+                        <div className="text-white font-medium">Amazon Web Services</div>
+                        <div className="text-sm text-slate-400">12.1K users across 4 regions</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                      <div>
+                        <div className="text-white font-medium">Google Cloud Platform</div>
+                        <div className="text-sm text-slate-400">9.3K users across 2 regions</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 bg-black/20 rounded-lg">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                      <div>
+                        <div className="text-white font-medium">Microsoft Azure</div>
+                        <div className="text-sm text-slate-400">7.4K users across 2 regions</div>
+                      </div>
+                    </div>
                   </div>
-                ))}
+                </div>
+
+                {/* Regional Performance Metrics */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {[
+                    { 
+                      region: 'North America East', 
+                      provider: 'AWS',
+                      users: '8.4K', 
+                      latency: '23ms', 
+                      uptime: '99.98%',
+                      color: 'from-orange-500 to-red-500',
+                      providerColor: 'text-orange-400',
+                      icon: '🇺🇸'
+                    },
+                    { 
+                      region: 'North America West', 
+                      provider: 'GCP',
+                      users: '5.7K', 
+                      latency: '31ms', 
+                      uptime: '99.97%',
+                      color: 'from-blue-500 to-cyan-500',
+                      providerColor: 'text-blue-400',
+                      icon: '🌎'
+                    },
+                    { 
+                      region: 'Europe Central', 
+                      provider: 'Azure',
+                      users: '6.2K', 
+                      latency: '28ms', 
+                      uptime: '99.99%',
+                      color: 'from-cyan-500 to-blue-600',
+                      providerColor: 'text-cyan-400',
+                      icon: '🇪🇺'
+                    },
+                    { 
+                      region: 'Asia Pacific', 
+                      provider: 'AWS',
+                      users: '4.1K', 
+                      latency: '41ms', 
+                      uptime: '99.96%',
+                      color: 'from-orange-500 to-red-500',
+                      providerColor: 'text-orange-400',
+                      icon: '🌏'
+                    },
+                    { 
+                      region: 'Australia', 
+                      provider: 'AWS',
+                      users: '2.8K', 
+                      latency: '52ms', 
+                      uptime: '99.95%',
+                      color: 'from-orange-500 to-red-500',
+                      providerColor: 'text-orange-400',
+                      icon: '🇦🇺'
+                    },
+                    { 
+                      region: 'Global Average', 
+                      provider: 'All',
+                      users: '24.8K', 
+                      latency: '42ms', 
+                      uptime: '99.97%',
+                      color: 'from-purple-500 to-pink-500',
+                      providerColor: 'text-purple-400',
+                      icon: '🌍'
+                    }
+                  ].map((region, index) => (
+                    <div key={index} className="bg-slate-800/40 rounded-lg p-4 border border-slate-700/30 backdrop-blur-sm hover:bg-slate-700/40 transition-all duration-300">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-2xl">{region.icon}</div>
+                        <div className={`text-xs font-medium px-2 py-1 rounded-full ${region.providerColor} bg-current/10`}>
+                          {region.provider}
+                        </div>
+                      </div>
+                      <div className={`w-full h-1 bg-gradient-to-r ${region.color} rounded-full mb-3`}></div>
+                      <div className="space-y-2">
+                        <div className="text-xs text-slate-400 font-medium">{region.region}</div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <div className="text-slate-500">Users</div>
+                            <div className="text-white font-bold">{region.users}</div>
+                          </div>
+                          <div>
+                            <div className="text-slate-500">Latency</div>
+                            <div className="text-emerald-400 font-bold">{region.latency}</div>
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-slate-700/50">
+                          <div className="text-slate-500 text-xs">Uptime</div>
+                          <div className="text-emerald-400 font-bold text-sm">{region.uptime}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Live Data Traffic Indicator */}
+                <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/40 rounded-xl p-4 border border-slate-600/30 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-6 bg-gradient-to-t from-purple-500 to-purple-300 rounded-sm animate-pulse"></div>
+                        <div className="w-2 h-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-sm animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-8 bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-sm animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        <div className="w-2 h-5 bg-gradient-to-t from-orange-500 to-orange-300 rounded-sm animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Live Traffic Monitor</div>
+                        <div className="text-sm text-slate-400">Real-time user activity across all regions</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                        1,247/min
+                      </div>
+                      <div className="text-xs text-slate-400">Requests per minute</div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </CardContent>
           </Card>
