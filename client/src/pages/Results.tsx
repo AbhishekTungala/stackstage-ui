@@ -831,23 +831,27 @@ const Results = () => {
             </Card>
           </div>
 
-          {/* Global Cloud Infrastructure Map - Premium SaaS Dashboard */}
+          {/* Infrastructure Location Analysis - Real Data */}
           <Card className="bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-slate-900 dark:text-white flex items-center">
                     <Globe className="mr-2 w-6 h-6 text-purple-400" />
-                    Global User Distribution & Cloud Services
+                    Infrastructure Location Analysis
                   </CardTitle>
-                  <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1">24.8K</div>
-                  <span className="text-sm text-slate-600 dark:text-slate-400">Active users across 12 regions with real-time analytics</span>
+                  <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1">
+                    {analysisData?.location || 'Location Detection'}
+                  </div>
+                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                    {analysisData?.region ? `Detected region: ${analysisData.region}` : 'No location data detected in analysis'}
+                  </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Live Status</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">Analysis Status</div>
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></div>
-                    <div className="text-slate-900 dark:text-white font-medium">All Systems Operational</div>
+                    <div className="text-slate-900 dark:text-white font-medium">Analysis Complete</div>
                   </div>
                 </div>
               </div>
@@ -855,224 +859,97 @@ const Results = () => {
             <CardContent>
               <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-100/80 via-purple-100/20 to-blue-100/30 dark:from-slate-900/80 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border border-slate-300/50 dark:border-slate-700/50">
                 
-                {/* Professional World Map using React Simple Maps */}
-                <ComposableMap
-                  projectionConfig={{
-                    scale: 120,
-                    center: [0, 20]
-                  }}
-                  width={800}
-                  height={400}
-                  className="w-full h-full"
-                  style={{ filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.4))' }}
-                >
-                  <defs>
-                    <linearGradient id="geographyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#d1d5db" stopOpacity="0.9"/>
-                      <stop offset="50%" stopColor="#9ca3af" stopOpacity="0.8"/>
-                      <stop offset="100%" stopColor="#d1d5db" stopOpacity="0.7"/>
-                    </linearGradient>
-                    <linearGradient id="geographyGradientDark" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#374151" stopOpacity="0.9"/>
-                      <stop offset="50%" stopColor="#4b5563" stopOpacity="0.8"/>
-                      <stop offset="100%" stopColor="#374151" stopOpacity="0.7"/>
-                    </linearGradient>
-                  </defs>
-                  
-                  <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas/countries-110m.json">
-                    {({ geographies }) =>
-                      geographies.map((geo) => (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill="url(#geographyGradient)"
-                          stroke="#6b7280"
-                          strokeWidth={0.3}
-                          style={{
-                            default: { outline: "none" },
-                            hover: { outline: "none", fill: "#9ca3af" },
-                            pressed: { outline: "none" },
-                          }}
-                          className="dark:fill-[url(#geographyGradientDark)] dark:hover:fill-[#4b5563]"
-                        />
-                      ))
-                    }
-                  </Geographies>
-
-                  {/* Cloud Service Location Markers */}
-                  
-                  {/* North America East - AWS N. Virginia */}
-                  <Marker coordinates={[-77.4, 39.0]}>
-                    <g>
-                      <circle r={8} fill="#ff9500" fillOpacity={0.3}>
-                        <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={4} fill="#ff9500" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[-60, 42]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      AWS - N. Virginia
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[-60, 36]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
-                      8.4K users
-                    </text>
-                  </Marker>
-
-                  {/* North America West - GCP Oregon */}
-                  <Marker coordinates={[-123.0, 45.5]}>
-                    <g>
-                      <circle r={6} fill="#4285f4" fillOpacity={0.3}>
-                        <animate attributeName="r" values="6;10;6" dur="2.5s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={3} fill="#4285f4" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[-105, 48]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      GCP - Oregon
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[-105, 42]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#4285f4">
-                      5.7K users
-                    </text>
-                  </Marker>
-
-                  {/* Europe - Azure West Europe (Netherlands) */}
-                  <Marker coordinates={[4.9, 52.3]}>
-                    <g>
-                      <circle r={7} fill="#0078d4" fillOpacity={0.3}>
-                        <animate attributeName="r" values="7;11;7" dur="3s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={3.5} fill="#0078d4" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[20, 58]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      Azure - West Europe
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[20, 52]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#0078d4">
-                      6.2K users
-                    </text>
-                  </Marker>
-
-                  {/* Asia Pacific - AWS Tokyo */}
-                  <Marker coordinates={[139.7, 35.7]}>
-                    <g>
-                      <circle r={6} fill="#ff9500" fillOpacity={0.3}>
-                        <animate attributeName="r" values="6;10;6" dur="1.8s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={3} fill="#ff9500" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[155, 40]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      AWS - Tokyo
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[155, 34]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
-                      4.1K users
-                    </text>
-                  </Marker>
-
-                  {/* Australia - AWS Sydney */}
-                  <Marker coordinates={[151.2, -33.9]}>
-                    <g>
-                      <circle r={5} fill="#ff9500" fillOpacity={0.3}>
-                        <animate attributeName="r" values="5;8;5" dur="2.2s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={2.5} fill="#ff9500" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[165, -30]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      AWS - Sydney
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[165, -36]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
-                      2.8K users
-                    </text>
-                  </Marker>
-
-                  {/* India - GCP Mumbai */}
-                  <Marker coordinates={[72.8, 19.1]}>
-                    <g>
-                      <circle r={5} fill="#4285f4" fillOpacity={0.3}>
-                        <animate attributeName="r" values="5;8;5" dur="2.7s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={2.5} fill="#4285f4" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[85, 25]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      GCP - Mumbai
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[85, 19]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#4285f4">
-                      3.6K users
-                    </text>
-                  </Marker>
-
-                  {/* South America - AWS São Paulo */}
-                  <Marker coordinates={[-46.6, -23.5]}>
-                    <g>
-                      <circle r={4} fill="#ff9500" fillOpacity={0.3}>
-                        <animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={2} fill="#ff9500" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[-25, -20]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      AWS - São Paulo
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[-25, -26]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
-                      1.9K users
-                    </text>
-                  </Marker>
-
-                  {/* Africa - Azure South Africa */}
-                  <Marker coordinates={[28.0, -26.2]}>
-                    <g>
-                      <circle r={4} fill="#0078d4" fillOpacity={0.3}>
-                        <animate attributeName="r" values="4;7;4" dur="2.6s" repeatCount="indefinite"/>
-                      </circle>
-                      <circle r={2} fill="#0078d4" opacity={0.9}/>
-                    </g>
-                  </Marker>
-                  <Marker coordinates={[45, -22]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
-                      Azure - South Africa
-                    </text>
-                  </Marker>
-                  <Marker coordinates={[45, -28]}>
-                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#0078d4">
-                      1.2K users
-                    </text>
-                  </Marker>
-
-
-                </ComposableMap>
+                {analysisData?.region || analysisData?.location ? (
+                  /* Show real location data if available */
+                  <ComposableMap
+                    projectionConfig={{
+                      scale: 120,
+                      center: [0, 20]
+                    }}
+                    width={800}
+                    height={400}
+                    className="w-full h-full"
+                    style={{ filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.4))' }}
+                  >
+                    <defs>
+                      <linearGradient id="geographyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#d1d5db" stopOpacity="0.9"/>
+                        <stop offset="50%" stopColor="#9ca3af" stopOpacity="0.8"/>
+                        <stop offset="100%" stopColor="#d1d5db" stopOpacity="0.7"/>
+                      </linearGradient>
+                      <linearGradient id="geographyGradientDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#374151" stopOpacity="0.9"/>
+                        <stop offset="50%" stopColor="#4b5563" stopOpacity="0.8"/>
+                        <stop offset="100%" stopColor="#374151" stopOpacity="0.7"/>
+                      </linearGradient>
+                    </defs>
+                    
+                    <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas/countries-110m.json">
+                      {({ geographies }) =>
+                        geographies.map((geo) => (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill="url(#geographyGradient)"
+                            stroke="#6b7280"
+                            strokeWidth={0.3}
+                            style={{
+                              default: { outline: "none" },
+                              hover: { outline: "none", fill: "#9ca3af" },
+                              pressed: { outline: "none" },
+                            }}
+                            className="dark:fill-[url(#geographyGradientDark)] dark:hover:fill-[#4b5563]"
+                          />
+                        ))
+                      }
+                    </Geographies>
+                    
+                    {/* Real detected location marker */}
+                    <Marker coordinates={[0, 20]}>
+                      <g>
+                        <circle r={8} fill="#8b5cf6" fillOpacity={0.3}>
+                          <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle r={4} fill="#8b5cf6" opacity={0.9}/>
+                      </g>
+                    </Marker>
+                    <Marker coordinates={[15, 25]}>
+                      <text textAnchor="start" fontSize={12} fontWeight="bold" fill="#8b5cf6">
+                        {analysisData?.region || analysisData?.location || 'Detected Region'}
+                      </text>
+                    </Marker>
+                  </ComposableMap>
+                ) : (
+                  /* No location data detected */
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="mb-6">
+                      <Globe className="w-24 h-24 text-slate-400 dark:text-slate-600 mx-auto mb-4" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                      No Location Data Detected
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-center max-w-md">
+                      The infrastructure analysis did not contain specific location or region information. 
+                      Location detection requires explicit region specifications in your configuration.
+                    </p>
+                    <div className="mt-6 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                      <div className="flex items-center text-blue-600 dark:text-blue-400">
+                        <Info className="w-4 h-4 mr-2" />
+                        <span className="text-sm">Add region specifications to enable location tracking</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
-                {/* Floating Data Cards */}
+                {/* Real Analysis Status Card */}
                 <div className="absolute top-4 right-4 space-y-2">
                   <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
-                    <div className="text-emerald-400 font-bold">99.97% Uptime</div>
-                    <div className="text-slate-300">Last 30 days</div>
+                    <div className="text-emerald-400 font-bold">{overallScore}/100</div>
+                    <div className="text-slate-300">Architecture Score</div>
                   </div>
                   <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs">
-                    <div className="text-purple-400 font-bold">42ms Avg</div>
-                    <div className="text-slate-300">Global Latency</div>
+                    <div className="text-purple-400 font-bold">{numIssues} Issues</div>
+                    <div className="text-slate-300">Found in Analysis</div>
                   </div>
                 </div>
               </div>
@@ -1080,51 +957,51 @@ const Results = () => {
               {/* Simple Legend */}
               <div className="mt-6 space-y-4">
                 
-                {/* Cloud Providers - Simple */}
+                {/* Analysis Summary */}
                 <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-4 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
-                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Cloud Providers</h3>
+                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Analysis Results</h3>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                        <span className="text-sm text-slate-900 dark:text-white">AWS</span>
-                        <span className="text-xs text-slate-600 dark:text-slate-400">12.1K users</span>
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span className="text-sm text-slate-900 dark:text-white">Issues</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">{numIssues} found</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-slate-900 dark:text-white">GCP</span>
-                        <span className="text-xs text-slate-600 dark:text-slate-400">9.3K users</span>
+                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <span className="text-sm text-slate-900 dark:text-white">Recommendations</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">{numRecommendations} suggestions</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-                        <span className="text-sm text-slate-900 dark:text-white">Azure</span>
-                        <span className="text-xs text-slate-600 dark:text-slate-400">7.4K users</span>
+                        <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span className="text-sm text-slate-900 dark:text-white">Score</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">{overallScore}/100</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-emerald-400">99.97%</div>
-                      <div className="text-xs text-slate-600 dark:text-slate-400">Global Uptime</div>
+                      <div className="text-lg font-bold text-emerald-400">{analysisData?.cost || 'Calculating...'}</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400">Estimated Cost</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Stats */}
+                {/* Real Analysis Metrics */}
                 <div className="grid grid-cols-4 gap-3">
                   <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="text-lg font-bold text-slate-900 dark:text-white">24.8K</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">Total Users</div>
+                    <div className="text-lg font-bold text-slate-900 dark:text-white">{overallScore}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Overall Score</div>
                   </div>
                   <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="text-lg font-bold text-emerald-500 dark:text-emerald-400">8</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">Regions</div>
+                    <div className="text-lg font-bold text-red-500 dark:text-red-400">{numIssues}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Issues Found</div>
                   </div>
                   <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="text-lg font-bold text-purple-500 dark:text-purple-400">42ms</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">Avg Latency</div>
+                    <div className="text-lg font-bold text-emerald-500 dark:text-emerald-400">{numRecommendations}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Recommendations</div>
                   </div>
                   <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="text-lg font-bold text-cyan-500 dark:text-cyan-400">1.2K</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">Requests/min</div>
+                    <div className="text-lg font-bold text-cyan-500 dark:text-cyan-400">{securityScore}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Security Score</div>
                   </div>
                 </div>
 
