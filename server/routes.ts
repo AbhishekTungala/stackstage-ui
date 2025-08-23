@@ -262,11 +262,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 </body>
 </html>`;
 
-        // Convert to PDF using PDFKit - Professional SaaS Dashboard Style
+        // Convert to PDF using PDFKit - SIMPLE SOLID COLORS APPROACH
         const doc = new PDFDocument({ 
           margin: 30,
-          size: 'A4',
-          bufferPages: true 
+          size: 'A4'
         });
         const chunks: Buffer[] = [];
         
@@ -276,114 +275,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.on('end', () => resolve(Buffer.concat(chunks)));
         });
         
-        // Helper function to create vibrant gradient effects
-        const createGradientBar = (x: number, y: number, width: number, height: number, color: string, value: number) => {
-          // Create strong, visible gradient effect
-          const segments = 15;
-          const segmentWidth = width / segments;
-          
-          for (let i = 0; i < segments; i++) {
-            const opacity = 1 - (i / segments) * 0.3; // Fade from 100% to 70% (more visible)
-            const segmentX = x + (i * segmentWidth);
-            doc.fillColor(color, opacity).rect(segmentX, y, segmentWidth, height).fill();
-          }
-        };
+        // SOLID COLOR HEADER - NO GRADIENTS
+        doc.rect(0, 0, 612, 80).fillColor('#1e3a8a').fill();
         
-        // Helper function to create circular progress charts
-        const createCircularProgress = (centerX: number, centerY: number, radius: number, percentage: number, color: string) => {
-          // Background circle
-          doc.circle(centerX, centerY, radius + 2).fillColor('#e5e7eb').fill();
-          doc.circle(centerX, centerY, radius).fillColor('#ffffff').fill();
-          
-          // Progress arc (simplified as circles for visibility)
-          const progressRadius = (percentage / 100) * radius;
-          doc.circle(centerX, centerY, progressRadius).fillColor(color).fill();
-          
-          // Center text
-          doc.fontSize(12).fillColor('#ffffff').text(percentage.toString(), centerX - 8, centerY - 6);
-        };
+        doc.fontSize(32).fillColor('#ffffff').text('StackStage', 40, 20);
+        doc.fontSize(14).fillColor('#ffffff').text('Premium Cloud Architecture Analysis Report', 40, 50);
         
-        // Professional Header with vibrant gradient background
-        doc.rect(0, 0, 612, 100).fillColor('#1e40af').fill();
-        doc.rect(0, 0, 612, 100).fillColor('#3b82f6', 0.8).fill();
+        // SIMPLE SCORE BADGE
+        const scoreX = 500;
+        const scoreY = 20;
+        doc.circle(scoreX, scoreY + 15, 25).fillColor('#ffffff').fill();
+        doc.circle(scoreX, scoreY + 15, 22).fillColor(scoreColor).fill();
+        doc.fontSize(14).fillColor('#ffffff').text(score.toString(), scoreX - 8, scoreY + 8);
         
-        doc.fontSize(32).fillColor('#ffffff').text('StackStage', 40, 25, { align: 'left' });
-        doc.fontSize(14).fillColor('#dbeafe').text('Premium Cloud Architecture Analysis Report', 40, 60);
-        doc.fontSize(10).fillColor('#bfdbfe').text('Build with Confidence - Enterprise AI-Powered Insights', 40, 78);
+        doc.y = 100;
         
-        // Score badge in top right with gradient effect
-        const scoreX = 480;
-        const scoreY = 25;
-        doc.circle(scoreX, scoreY + 20, 35).fillColor('#ffffff').fill();
-        doc.circle(scoreX, scoreY + 20, 32).fillColor(scoreColor).fill();
-        doc.fontSize(18).fillColor('#ffffff').text(score.toString(), scoreX - 12, scoreY + 12);
-        doc.fontSize(8).fillColor('#ffffff').text('/100', scoreX + 8, scoreY + 28);
-        
-        doc.y = 120;
-        
-        // Executive Summary Section
-        doc.rect(40, doc.y, 540, 25).fillColor('#f1f5f9').fill();
-        doc.fontSize(16).fillColor('#1e293b').text('EXECUTIVE SUMMARY', 50, doc.y + 6);
+        // EXECUTIVE SUMMARY
+        doc.rect(40, doc.y, 540, 20).fillColor('#f8f9fa').fill();
+        doc.fontSize(14).fillColor('#000000').text('EXECUTIVE SUMMARY', 50, doc.y + 5);
         doc.moveDown(2);
         
-        // Metrics Dashboard Grid with Professional Cards
+        // SIMPLE METRICS WITH SOLID BARS
         const metrics = [
-          { label: 'Security Score', value: analysis.security_score || Math.max(40, score - 5), color: '#ef4444', bgColor: '#fef2f2' },
-          { label: 'Performance', value: analysis.performance_score || Math.max(45, score + 2), color: '#10b981', bgColor: '#f0fdf4' },
-          { label: 'Cost Optimization', value: analysis.cost_score || Math.max(35, score - 10), color: '#f59e0b', bgColor: '#fffbeb' },
-          { label: 'Reliability', value: analysis.reliability_score || Math.max(40, score - 8), color: '#8b5cf6', bgColor: '#faf5ff' }
+          { label: 'Security', value: analysis.security_score || Math.max(40, score - 5), color: '#dc3545' },
+          { label: 'Performance', value: analysis.performance_score || Math.max(45, score + 2), color: '#28a745' },
+          { label: 'Cost', value: analysis.cost_score || Math.max(35, score - 10), color: '#ffc107' },
+          { label: 'Reliability', value: analysis.reliability_score || Math.max(40, score - 8), color: '#6f42c1' }
         ];
         
         const startY = doc.y;
         metrics.forEach((metric, index) => {
           const x = 50 + (index % 2) * 270;
-          const y = startY + Math.floor(index / 2) * 80;
+          const y = startY + Math.floor(index / 2) * 60;
           
-          // Professional metric card with gradient
-          doc.rect(x, y, 250, 70).fillColor('#ffffff').fill();
-          doc.rect(x, y, 250, 70).strokeColor('#e2e8f0').stroke();
-          doc.rect(x, y, 250, 25).fillColor(metric.bgColor).fill();
+          // SIMPLE METRIC CARD
+          doc.rect(x, y, 250, 50).fillColor('#ffffff').fill();
+          doc.rect(x, y, 250, 50).strokeColor('#000000').stroke();
           
-          // Metric title
-          doc.fontSize(11).fillColor('#64748b').text(metric.label.toUpperCase(), x + 15, y + 8);
+          // METRIC LABEL
+          doc.fontSize(10).fillColor('#000000').text(metric.label.toUpperCase(), x + 10, y + 8);
           
-          // Large metric value
-          doc.fontSize(28).fillColor(metric.color).text(metric.value.toString(), x + 15, y + 30);
-          doc.fontSize(12).fillColor('#94a3b8').text('/100', x + 80, y + 45);
+          // LARGE VALUE
+          doc.fontSize(20).fillColor(metric.color).text(`${metric.value}`, x + 10, y + 20);
+          doc.fontSize(10).fillColor('#666666').text('/100', x + 60, y + 25);
           
-          // Enhanced progress bar with stronger visuals
-          const barWidth = 200;
-          const barHeight = 12;
-          const barX = x + 15;
-          const barY = y + 52;
+          // SOLID PROGRESS BAR
+          const barWidth = 180;
+          const barHeight = 8;
+          const barX = x + 10;
+          const barY = y + 35;
           
-          // Background with border
-          doc.rect(barX, barY, barWidth, barHeight).fillColor('#e5e7eb').fill();
-          doc.rect(barX, barY, barWidth, barHeight).strokeColor('#d1d5db').stroke();
+          // Background
+          doc.rect(barX, barY, barWidth, barHeight).fillColor('#e9ecef').fill();
+          doc.rect(barX, barY, barWidth, barHeight).strokeColor('#000000').stroke();
           
-          // Strong gradient progress
+          // Progress - SOLID COLOR
           const progressWidth = (metric.value / 100) * barWidth;
-          
-          // Solid color base
           doc.rect(barX, barY, progressWidth, barHeight).fillColor(metric.color).fill();
-          
-          // Gradient overlay for effect
-          createGradientBar(barX, barY, progressWidth, barHeight, metric.color, metric.value);
-          
-          // Add circular progress indicator
-          createCircularProgress(x + 200, y + 35, 15, metric.value, metric.color);
         });
         
-        doc.y = startY + 180;
+        doc.y = startY + 140;
         
-        // Critical Issues Section
-        doc.rect(40, doc.y, 540, 25).fillColor('#fef2f2').fill();
-        doc.fontSize(14).fillColor('#dc2626').text('CRITICAL ISSUES IDENTIFIED', 50, doc.y + 6);
+        // ISSUES SECTION
+        doc.rect(40, doc.y, 540, 20).fillColor('#f8d7da').fill();
+        doc.fontSize(12).fillColor('#000000').text('CRITICAL ISSUES IDENTIFIED', 50, doc.y + 5);
         doc.moveDown(1.5);
         
-        // Parse and display issues with better formatting
+        // Display issues with simple formatting
         if (analysis.issues && analysis.issues.length > 0) {
-          analysis.issues.slice(0, 5).forEach((issueItem: any, index: number) => {
+          analysis.issues.slice(0, 4).forEach((issueItem: any, index: number) => {
             let issueText = '';
             
             if (typeof issueItem === 'object' && issueItem !== null) {
@@ -392,36 +352,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               issueText = String(issueItem);
             }
             
-            // Professional issue card
             const itemY = doc.y;
-            doc.rect(50, itemY, 520, 30).fillColor('#ffffff').fill();
-            doc.rect(50, itemY, 520, 30).strokeColor('#fee2e2').stroke();
+            doc.rect(50, itemY, 520, 25).fillColor('#ffffff').fill();
+            doc.rect(50, itemY, 520, 25).strokeColor('#000000').stroke();
             
-            // Issue number badge
-            doc.circle(65, itemY + 15, 8).fillColor('#dc2626').fill();
-            doc.fontSize(8).fillColor('#ffffff').text((index + 1).toString(), 62, itemY + 12);
+            // Simple number
+            doc.fontSize(10).fillColor('#dc3545').text(`${index + 1}.`, 60, itemY + 8);
             
-            // Issue text with proper wrapping
-            doc.fontSize(9).fillColor('#374151').text(issueText, 85, itemY + 8, { 
-              width: 470,
-              height: 20,
-              ellipsis: true
+            // Issue text
+            doc.fontSize(9).fillColor('#000000').text(issueText, 80, itemY + 8, { 
+              width: 480,
+              height: 15
             });
             
-            doc.moveDown(1.8);
+            doc.moveDown(1.5);
           });
         }
         
         doc.moveDown(1);
         
-        // Recommendations Section
-        doc.rect(40, doc.y, 540, 25).fillColor('#f0fdf4').fill();
-        doc.fontSize(14).fillColor('#16a34a').text('AI-POWERED RECOMMENDATIONS', 50, doc.y + 6);
+        // RECOMMENDATIONS SECTION
+        doc.rect(40, doc.y, 540, 20).fillColor('#d4edda').fill();
+        doc.fontSize(12).fillColor('#000000').text('AI-POWERED RECOMMENDATIONS', 50, doc.y + 5);
         doc.moveDown(1.5);
         
-        // Parse and display recommendations with better formatting
+        // Display recommendations with simple formatting
         if (analysis.recommendations && analysis.recommendations.length > 0) {
-          analysis.recommendations.slice(0, 5).forEach((recItem: any, index: number) => {
+          analysis.recommendations.slice(0, 4).forEach((recItem: any, index: number) => {
             let recText = '';
             
             if (typeof recItem === 'object' && recItem !== null) {
@@ -430,120 +387,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
               recText = String(recItem);
             }
             
-            // Professional recommendation card
             const itemY = doc.y;
             doc.rect(50, itemY, 520, 25).fillColor('#ffffff').fill();
-            doc.rect(50, itemY, 520, 25).strokeColor('#dcfce7').stroke();
+            doc.rect(50, itemY, 520, 25).strokeColor('#000000').stroke();
             
-            // Recommendation number badge
-            doc.circle(65, itemY + 12, 7).fillColor('#16a34a').fill();
-            doc.fontSize(8).fillColor('#ffffff').text((index + 1).toString(), 62, itemY + 9);
+            // Simple number
+            doc.fontSize(10).fillColor('#28a745').text(`${index + 1}.`, 60, itemY + 8);
             
             // Recommendation text
-            doc.fontSize(9).fillColor('#374151').text(recText, 85, itemY + 6, { 
-              width: 470,
-              height: 15,
-              ellipsis: true
+            doc.fontSize(9).fillColor('#000000').text(recText, 80, itemY + 8, { 
+              width: 480,
+              height: 15
             });
             
             doc.moveDown(1.5);
           });
         }
         
-        // Professional Cost Analysis Chart
+        // SIMPLE COST ANALYSIS CHART
         doc.moveDown(2);
-        doc.rect(40, doc.y, 540, 25).fillColor('#fef3c7').fill();
-        doc.fontSize(14).fillColor('#d97706').text('COST BREAKDOWN ANALYSIS', 50, doc.y + 6);
-        doc.moveDown(2);
+        doc.rect(40, doc.y, 540, 20).fillColor('#fff3cd').fill();
+        doc.fontSize(12).fillColor('#000000').text('COST BREAKDOWN ANALYSIS', 50, doc.y + 5);
+        doc.moveDown(1.5);
         
-        // Enhanced cost breakdown with gradients
+        // SIMPLE SOLID COLOR BAR CHART
         const chartY = doc.y;
         const costItems = [
-          { label: 'Compute Resources', percentage: 45, color: '#3b82f6', lightColor: '#dbeafe' },
-          { label: 'Storage & Database', percentage: 25, color: '#10b981', lightColor: '#d1fae5' },
-          { label: 'Network & CDN', percentage: 20, color: '#f59e0b', lightColor: '#fef3c7' },
-          { label: 'Security & Monitoring', percentage: 10, color: '#8b5cf6', lightColor: '#f3e8ff' }
+          { label: 'Compute Resources', percentage: 45, color: '#007bff' },
+          { label: 'Storage & Database', percentage: 25, color: '#28a745' },
+          { label: 'Network & CDN', percentage: 20, color: '#ffc107' },
+          { label: 'Security & Monitoring', percentage: 10, color: '#6f42c1' }
         ];
         
-        // Create enhanced 3D-style bar chart
+        // HORIZONTAL BAR CHART - SIMPLE AND VISIBLE
         let currentX = 60;
         costItems.forEach((item, index) => {
           const width = (item.percentage / 100) * 480;
-          const height = 35;
+          const height = 30;
           
-          // Shadow effect
-          doc.rect(currentX + 3, chartY + 3, width, height).fillColor('#000000', 0.2).fill();
-          
-          // Main bar with solid color
+          // SOLID COLOR BAR
           doc.rect(currentX, chartY, width, height).fillColor(item.color).fill();
+          doc.rect(currentX, chartY, width, height).strokeColor('#000000').stroke();
           
-          // Gradient overlay for 3D effect
-          for (let i = 0; i < height; i += 2) {
-            const opacity = 0.9 - (i / height) * 0.4;
-            doc.rect(currentX, chartY + i, width, 2).fillColor(item.color, opacity).fill();
-          }
-          
-          // Top highlight
-          doc.rect(currentX, chartY, width, 5).fillColor('#ffffff', 0.3).fill();
-          
-          // Percentage label with shadow
-          if (width > 50) {
-            doc.fontSize(11).fillColor('#000000', 0.5).text(`${item.percentage}%`, currentX + 12, chartY + 14);
-            doc.fontSize(11).fillColor('#ffffff').text(`${item.percentage}%`, currentX + 10, chartY + 12);
+          // PERCENTAGE LABEL - BLACK ON WHITE BACKGROUND
+          if (width > 40) {
+            doc.rect(currentX + 5, chartY + 5, 35, 20).fillColor('#ffffff').fill();
+            doc.fontSize(10).fillColor('#000000').text(`${item.percentage}%`, currentX + 8, chartY + 10);
           }
           
           currentX += width;
         });
         
-        // Add 3D pie chart representation
-        const pieChartX = 350;
+        // SIMPLE PIE CHART USING CIRCLES
+        const pieChartX = 400;
         const pieChartY = chartY + 50;
-        const pieRadius = 40;
+        const pieRadius = 30;
         
-        let currentAngle = 0;
+        // Draw pie segments as overlapping circles
+        let startAngle = 0;
         costItems.forEach((item, index) => {
-          const angle = (item.percentage / 100) * 360;
+          const segmentAngle = (item.percentage / 100) * 360;
           
-          // Create pie slice (simplified as colored sectors)
-          for (let i = 0; i < angle; i += 5) {
-            const x = pieChartX + Math.cos((currentAngle + i) * Math.PI / 180) * pieRadius;
-            const y = pieChartY + Math.sin((currentAngle + i) * Math.PI / 180) * pieRadius;
-            doc.circle(x, y, 3).fillColor(item.color).fill();
+          // Create pie segment using multiple small circles
+          for (let angle = startAngle; angle < startAngle + segmentAngle; angle += 10) {
+            const radians = (angle * Math.PI) / 180;
+            const x = pieChartX + Math.cos(radians) * pieRadius;
+            const y = pieChartY + Math.sin(radians) * pieRadius;
+            doc.circle(x, y, 4).fillColor(item.color).fill();
           }
           
-          currentAngle += angle;
+          startAngle += segmentAngle;
         });
         
-        // Enhanced legend with visual indicators
-        doc.moveDown(4);
+        // SIMPLE LEGEND
+        doc.moveDown(3);
         const legendStartY = doc.y;
         costItems.forEach((item, index) => {
-          const legendX = 60 + (index % 2) * 260;
-          const legendY = legendStartY + Math.floor(index / 2) * 30;
+          const legendX = 60 + (index % 2) * 250;
+          const legendY = legendStartY + Math.floor(index / 2) * 25;
           
-          // Legend card with shadow
-          doc.rect(legendX + 2, legendY + 2, 240, 25).fillColor('#000000', 0.1).fill();
-          doc.rect(legendX, legendY, 240, 25).fillColor('#ffffff').fill();
-          doc.rect(legendX, legendY, 240, 25).strokeColor('#d1d5db').stroke();
+          // Simple legend box
+          doc.rect(legendX, legendY, 240, 20).fillColor('#ffffff').fill();
+          doc.rect(legendX, legendY, 240, 20).strokeColor('#000000').stroke();
           
-          // Enhanced color indicator with gradient
-          doc.rect(legendX + 8, legendY + 8, 20, 10).fillColor(item.color).fill();
-          doc.rect(legendX + 8, legendY + 8, 20, 3).fillColor('#ffffff', 0.4).fill();
+          // Color indicator
+          doc.rect(legendX + 5, legendY + 5, 15, 10).fillColor(item.color).fill();
+          doc.rect(legendX + 5, legendY + 5, 15, 10).strokeColor('#000000').stroke();
           
-          // Legend text with better contrast
-          doc.fontSize(10).fillColor('#1f2937').text(`${item.label}`, legendX + 35, legendY + 9);
-          doc.fontSize(11).fillColor(item.color).text(`${item.percentage}%`, legendX + 200, legendY + 9);
+          // Text labels
+          doc.fontSize(9).fillColor('#000000').text(item.label, legendX + 25, legendY + 7);
+          doc.fontSize(9).fillColor('#000000').text(`${item.percentage}%`, legendX + 200, legendY + 7);
         });
         
-        // Professional Footer
-        doc.rect(0, 770, 612, 52).fillColor('#1e293b').fill();
-        doc.fontSize(10).fillColor('#94a3b8').text(
+        // SIMPLE FOOTER
+        doc.rect(0, 750, 612, 42).fillColor('#343a40').fill();
+        doc.fontSize(10).fillColor('#ffffff').text(
           `Generated by StackStage Professional Analysis Platform`,
-          0, 785, { align: 'center' }
+          0, 765, { align: 'center' }
         );
-        doc.fontSize(9).fillColor('#64748b').text(
+        doc.fontSize(8).fillColor('#ffffff').text(
           `Report Date: ${new Date().toLocaleDateString()} | Analysis ID: ${analysisId.slice(-8)} | Cost: ${analysis.cost || 'Calculating...'}`,
-          0, 800, { align: 'center' }
+          0, 778, { align: 'center' }
         );
         
         doc.end();
