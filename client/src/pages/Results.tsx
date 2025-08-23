@@ -1138,124 +1138,159 @@ const Results = () => {
             </CardContent>
           </Card>
 
-          {/* Orders Status Table */}
+          {/* Optimization Recommendations */}
           <Card className="bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-slate-900 dark:text-white">Analysis Results</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600">
-                    Jan 2024 ↗
-                  </Badge>
-                  <Button variant="ghost" size="sm" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
-                    Create order
-                  </Button>
+                <div>
+                  <CardTitle className="text-slate-900 dark:text-white flex items-center">
+                    <Target className="mr-2 w-6 h-6 text-emerald-500" />
+                    Optimization Recommendations
+                  </CardTitle>
+                  <p className="text-slate-600 dark:text-slate-400 mt-2">AI-powered insights to improve your cloud architecture</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-emerald-500">$18.4K</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">Est. Annual Savings</div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-slate-800">
-                    <TableHead className="text-slate-600 dark:text-slate-400">Order</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400">Client</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400">Date</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400">Status</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400">Country</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400">Total</TableHead>
-                    <TableHead className="text-slate-600 dark:text-slate-400"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Analysis Issues as Table Rows */}
-                  {analysisData?.issues?.slice(0, 6).map((issue: any, index: number) => (
-                    <TableRow key={index} className="border-slate-800">
-                      <TableCell>
-                        <div className="w-3 h-3 rounded-full bg-purple-500 inline-block mr-2"></div>
-                        <span className="text-white font-medium">#IS{String(index + 1).padStart(3, '0')}</span>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="text-white font-medium">
-                            {issue.category === 'security' ? 'Security Analyst' :
-                             issue.category === 'cost' ? 'Cost Optimizer' :
-                             issue.category === 'performance' ? 'Performance Team' : 'Cloud Architect'}
-                          </div>
-                          <div className="text-slate-400 text-sm">
-                            {issue.category === 'security' ? 'security@stackstage.com' :
-                             issue.category === 'cost' ? 'costs@stackstage.com' :
-                             issue.category === 'performance' ? 'perf@stackstage.com' : 'architect@stackstage.com'}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-slate-300">
-                        {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant="outline"
-                          className={
-                            issue.severity === 'critical' ? 'text-red-400 border-red-400/30 bg-red-400/10' :
-                            issue.severity === 'high' ? 'text-orange-400 border-orange-400/30 bg-orange-400/10' :
-                            issue.severity === 'medium' ? 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10' :
-                            'text-emerald-400 border-emerald-400/30 bg-emerald-400/10'
-                          }
-                        >
-                          {issue.severity === 'critical' ? '⚠ Critical' :
-                           issue.severity === 'high' ? '🔶 High' :
-                           issue.severity === 'medium' ? '🟡 Medium' : '✅ Resolved'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-slate-300">
-                        {['United States', 'United Kingdom', 'Australia', 'India', 'Canada'][index % 5]}
-                      </TableCell>
-                      <TableCell className="text-white font-semibold">
-                        ${(Math.random() * 5000 + 1000).toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                          <Eye className="w-4 h-4 mr-1" />
-                          <Wrench className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )) || []}
-                  
-                  {/* Fallback rows if no issues */}
-                  {(!analysisData?.issues || analysisData.issues.length === 0) && [1,2,3,4,5].map((_, index) => (
-                    <TableRow key={index} className="border-slate-800">
-                      <TableCell>
-                        <div className="w-3 h-3 rounded-full bg-purple-500 inline-block mr-2"></div>
-                        <span className="text-white font-medium">#IS{String(index + 1).padStart(3, '0')}</span>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="text-white font-medium">Cloud Architect</div>
-                          <div className="text-slate-400 text-sm">architect@stackstage.com</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-slate-300">
-                        {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-emerald-400 border-emerald-400/30 bg-emerald-400/10">
-                          ✅ Optimized
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-slate-300">United States</TableCell>
-                      <TableCell className="text-white font-semibold">
-                        ${(Math.random() * 3000 + 1500).toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                          <Eye className="w-4 h-4 mr-1" />
-                          <Wrench className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <div className="space-y-6">
+                
+                {/* Cost Optimization */}
+                <div className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-6 border border-emerald-200/50 dark:border-emerald-800/50">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mr-4">
+                        <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 dark:text-white">Cost Optimization</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Reduce spending by 47%</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700">
+                      High Impact
+                    </Badge>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Right-size EC2 instances</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$8,200/year</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Reserved instance optimization</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$4,100/year</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">S3 storage class optimization</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$2,300/year</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Unused load balancers</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$1,800/year</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Idle RDS instances</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$1,200/year</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Orphaned EBS volumes</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$800/year</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Security Improvements */}
+                <div className="bg-gradient-to-r from-red-50/80 to-orange-50/80 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg p-6 border border-red-200/50 dark:border-red-800/50">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mr-4">
+                        <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 dark:text-white">Security Enhancements</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">7 critical vulnerabilities found</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700">
+                      Critical
+                    </Badge>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Enable S3 bucket encryption</span>
+                      <CheckCircle className="w-4 h-4 text-red-500" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Configure VPC security groups</span>
+                      <CheckCircle className="w-4 h-4 text-red-500" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Implement IAM least privilege</span>
+                      <CheckCircle className="w-4 h-4 text-red-500" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Enable CloudTrail logging</span>
+                      <CheckCircle className="w-4 h-4 text-red-500" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Performance Optimization */}
+                <div className="bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-blue-200/50 dark:border-blue-800/50">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-4">
+                        <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 dark:text-white">Performance Optimization</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Improve response time by 68%</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700">
+                      Medium Impact
+                    </Badge>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Enable CloudFront CDN</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-340ms</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Optimize database queries</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-180ms</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Implement auto-scaling</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-120ms</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Cache optimization</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-200ms</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Load balancer tuning</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-90ms</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">EBS optimization</span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">-75ms</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </CardContent>
           </Card>
 
