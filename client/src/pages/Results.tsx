@@ -1178,9 +1178,11 @@ const Results = () => {
                       </Badge>
                     </div>
                     <div className="space-y-3">
-                      {analysisData.issues.slice(0, 6).map((issue: string, index: number) => (
+                      {analysisData.issues.slice(0, 6).map((issue: any, index: number) => (
                         <div key={index} className="flex items-start justify-between">
-                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">{issue}</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">
+                            {typeof issue === 'string' ? issue : issue.detail || issue.description || JSON.stringify(issue)}
+                          </span>
                           <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
                         </div>
                       ))}
@@ -1206,9 +1208,11 @@ const Results = () => {
                       </Badge>
                     </div>
                     <div className="space-y-3">
-                      {analysisData.recommendations.map((rec: string, index: number) => (
+                      {analysisData.recommendations.map((rec: any, index: number) => (
                         <div key={index} className="flex items-start justify-between">
-                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">{rec}</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">
+                            {typeof rec === 'string' ? rec : rec.title || rec.description || JSON.stringify(rec)}
+                          </span>
                           <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                         </div>
                       ))}
