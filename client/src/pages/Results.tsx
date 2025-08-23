@@ -954,22 +954,67 @@ const Results = () => {
                     </Marker>
                   </ComposableMap>
                 ) : (
-                  /* No location data detected */
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <div className="mb-6">
-                      <Globe className="w-24 h-24 text-slate-400 dark:text-slate-600 mx-auto mb-4" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      No Location Data Detected
-                    </h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-center max-w-md">
-                      The infrastructure analysis did not contain specific location or region information. 
-                      Location detection requires explicit region specifications in your configuration.
-                    </p>
-                    <div className="mt-6 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                      <div className="flex items-center text-blue-600 dark:text-blue-400">
-                        <Info className="w-4 h-4 mr-2" />
-                        <span className="text-sm">Add region specifications to enable location tracking</span>
+                  /* Display world map without location markers when no data */
+                  <ComposableMap
+                    projectionConfig={{
+                      scale: 120,
+                      center: [0, 0]
+                    }}
+                    width={800}
+                    height={400}
+                    className="w-full h-full opacity-60"
+                  >
+                    <defs>
+                      <linearGradient id="geographyGradientNoData" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#e5e7eb" stopOpacity="0.7"/>
+                        <stop offset="50%" stopColor="#d1d5db" stopOpacity="0.6"/>
+                        <stop offset="100%" stopColor="#e5e7eb" stopOpacity="0.5"/>
+                      </linearGradient>
+                      <linearGradient id="geographyGradientNoDataDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#374151" stopOpacity="0.7"/>
+                        <stop offset="50%" stopColor="#4b5563" stopOpacity="0.6"/>
+                        <stop offset="100%" stopColor="#374151" stopOpacity="0.5"/>
+                      </linearGradient>
+                    </defs>
+                    
+                    <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas/countries-110m.json">
+                      {({ geographies }) =>
+                        geographies.map((geo) => (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill="url(#geographyGradientNoData)"
+                            stroke="#9ca3af"
+                            strokeWidth={0.3}
+                            style={{
+                              default: { outline: "none" },
+                              hover: { outline: "none" },
+                              pressed: { outline: "none" },
+                            }}
+                            className="dark:fill-[url(#geographyGradientNoDataDark)] dark:stroke-slate-600"
+                          />
+                        ))
+                      }
+                    </Geographies>
+                  </ComposableMap>
+                )}
+                
+                {/* Location Data Popup - appears at bottom when no data detected */}
+                {!regionInfo && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-lg rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl px-6 py-4 max-w-md">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                          <Info className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
+                            Location Data Not Detected
+                          </h4>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                            Add region specifications to enable location tracking
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
