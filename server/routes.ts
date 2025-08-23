@@ -8,6 +8,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs";
 import path from "path";
+import puppeteer from "puppeteer";
 
 // Mock implementation - no OpenAI API key required
 
@@ -262,7 +263,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 </html>`;
 
         // Convert HTML to PDF using Puppeteer approach
-        const puppeteer = require('puppeteer');
         
         const browser = await puppeteer.launch({
           headless: true,
@@ -450,8 +450,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Backend AI assistant failed, using fallback:', backendError);
         
         // Fallback to enhanced mock
-        const assistantResponse = generateMockChatResponse(messages, userRegion, regionalImpact);
-        assistantResponse = { ...assistantResponse, note: "Generated using fallback due to backend unavailability" };
+        const baseResponse = generateMockChatResponse(messages, userRegion, regionalImpact);
+        const assistantResponse = { ...baseResponse, note: "Generated using fallback due to backend unavailability" };
 
         res.json({ 
           success: true, 
