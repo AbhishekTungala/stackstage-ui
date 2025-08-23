@@ -293,6 +293,35 @@ const Results = () => {
     implementableQuickWins: Math.ceil(numRecommendations * 0.6)
   };
 
+  // Function to map region codes to coordinates and display names
+  const getRegionInfo = (region: string) => {
+    const regionMap: Record<string, { coords: [number, number], name: string, color: string }> = {
+      // AWS Regions
+      'us-east-1': { coords: [-77.4, 39.0], name: 'AWS US East (N. Virginia)', color: '#ff9500' },
+      'us-west-1': { coords: [-121.9, 37.4], name: 'AWS US West (N. California)', color: '#ff9500' },
+      'us-west-2': { coords: [-123.0, 45.5], name: 'AWS US West (Oregon)', color: '#ff9500' },
+      'eu-west-1': { coords: [-6.3, 53.3], name: 'AWS Europe (Ireland)', color: '#ff9500' },
+      'eu-central-1': { coords: [8.7, 50.1], name: 'AWS Europe (Frankfurt)', color: '#ff9500' },
+      'ap-south-1': { coords: [77.2, 28.6], name: 'AWS Asia Pacific (Mumbai)', color: '#ff9500' },
+      'apsouth1': { coords: [77.2, 28.6], name: 'AWS Asia Pacific (Mumbai)', color: '#ff9500' },
+      'ap-southeast-1': { coords: [103.8, 1.3], name: 'AWS Asia Pacific (Singapore)', color: '#ff9500' },
+      'ap-northeast-1': { coords: [139.7, 35.7], name: 'AWS Asia Pacific (Tokyo)', color: '#ff9500' },
+      'ap-southeast-2': { coords: [151.2, -33.9], name: 'AWS Asia Pacific (Sydney)', color: '#ff9500' },
+      // GCP Regions
+      'us-central1': { coords: [-95.7, 41.3], name: 'GCP US Central (Iowa)', color: '#4285f4' },
+      'europe-west1': { coords: [4.9, 52.3], name: 'GCP Europe West (Belgium)', color: '#4285f4' },
+      'asia-south1': { coords: [72.8, 19.1], name: 'GCP Asia South (Mumbai)', color: '#4285f4' },
+      // Azure Regions
+      'eastus': { coords: [-79.0, 37.5], name: 'Azure East US (Virginia)', color: '#0078d4' },
+      'westeurope': { coords: [4.9, 52.3], name: 'Azure West Europe (Netherlands)', color: '#0078d4' },
+      'southindia': { coords: [80.3, 13.1], name: 'Azure South India (Chennai)', color: '#0078d4' },
+    };
+    
+    return regionMap[region.toLowerCase()] || null;
+  };
+
+  const regionInfo = analysisData?.region ? getRegionInfo(analysisData.region) : null;
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
       <Header />
@@ -844,7 +873,7 @@ const Results = () => {
                     {analysisData?.location || 'Location Detection'}
                   </div>
                   <span className="text-sm text-slate-600 dark:text-slate-400">
-                    {analysisData?.region ? `Detected region: ${analysisData.region}` : 'No location data detected in analysis'}
+                    {regionInfo ? `Detected region: ${regionInfo.name} (${analysisData.region})` : 'No location data detected in analysis'}
                   </span>
                 </div>
                 <div className="text-right">
@@ -859,12 +888,11 @@ const Results = () => {
             <CardContent>
               <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-100/80 via-purple-100/20 to-blue-100/30 dark:from-slate-900/80 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border border-slate-300/50 dark:border-slate-700/50">
                 
-                {analysisData?.region || analysisData?.location ? (
-                  /* Show real location data if available */
+                {regionInfo ? (
                   <ComposableMap
                     projectionConfig={{
                       scale: 120,
-                      center: [0, 20]
+                      center: regionInfo.coords
                     }}
                     width={800}
                     height={400}
@@ -904,18 +932,23 @@ const Results = () => {
                       }
                     </Geographies>
                     
-                    {/* Real detected location marker */}
-                    <Marker coordinates={[0, 20]}>
+                    {/* Blinking location marker for detected region */}
+                    <Marker coordinates={regionInfo.coords}>
                       <g>
-                        <circle r={8} fill="#8b5cf6" fillOpacity={0.3}>
-                          <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                        <circle r={10} fill={regionInfo.color} fillOpacity={0.3}>
+                          <animate attributeName="r" values="10;15;10" dur="2s" repeatCount="indefinite"/>
                         </circle>
-                        <circle r={4} fill="#8b5cf6" opacity={0.9}/>
+                        <circle r={5} fill={regionInfo.color} opacity={0.9}/>
                       </g>
                     </Marker>
-                    <Marker coordinates={[15, 25]}>
-                      <text textAnchor="start" fontSize={12} fontWeight="bold" fill="#8b5cf6">
-                        {analysisData?.region || analysisData?.location || 'Detected Region'}
+                    <Marker coordinates={[regionInfo.coords[0] + 20, regionInfo.coords[1] + 5]}>
+                      <text textAnchor="start" fontSize={12} fontWeight="bold" fill={regionInfo.color}>
+                        {regionInfo.name}
+                      </text>
+                    </Marker>
+                    <Marker coordinates={[regionInfo.coords[0] + 20, regionInfo.coords[1] - 2]}>
+                      <text textAnchor="start" fontSize={10} fontWeight="600" fill={regionInfo.color}>
+                        Region: {analysisData.region}
                       </text>
                     </Marker>
                   </ComposableMap>

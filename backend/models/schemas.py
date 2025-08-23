@@ -32,6 +32,8 @@ class AnalyzeResponse(BaseModel):
     diagram_image: Optional[str] = Field(None, description="Base64 or URL of diagram image")
     infrastructure_code: InfrastructureCode = Field(..., description="Infrastructure as code")
     estimated_cost: str = Field(..., description="Estimated monthly cost")
+    region: Optional[str] = Field(None, description="Cloud region from analysis request")
+    cloud_provider: Optional[str] = Field(None, description="Cloud provider from analysis request")
     
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]

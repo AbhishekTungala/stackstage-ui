@@ -40,7 +40,9 @@ async def analyze(data: AnalyzeRequest):
                 terraform=result.get("recommendations", [{}])[0].get("iac_fix", "# Terraform configuration\n# Add your resources here") if result.get("recommendations") else "# Terraform configuration\n# Add your resources here",
                 cloudformation=None
             ),
-            estimated_cost=f"${result.get('estimated_cost', {}).get('monthly', 500)}/month"
+            estimated_cost=f"${result.get('estimated_cost', {}).get('monthly', 500)}/month",
+            region=data.region,  # Include region from the request
+            cloud_provider=data.cloud.value if data.cloud else None  # Include cloud provider
         )
         
     except HTTPException:
