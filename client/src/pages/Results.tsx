@@ -40,6 +40,7 @@ import {
   Network,
   Gauge
 } from "lucide-react";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { useQuery } from "@tanstack/react-query";
 import { 
   ResponsiveContainer, 
@@ -860,182 +861,220 @@ const Results = () => {
             <CardContent>
               <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-900/80 via-purple-900/20 to-blue-900/30 rounded-xl border border-slate-700/50">
                 
-                {/* Premium World Map SVG with Accurate Geography */}
-                <svg className="w-full h-full" viewBox="0 0 1000 500" style={{ filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.4))' }}>
+                {/* Professional World Map using React Simple Maps */}
+                <ComposableMap
+                  projectionConfig={{
+                    scale: 120,
+                    center: [0, 20]
+                  }}
+                  width={800}
+                  height={400}
+                  className="w-full h-full"
+                  style={{ filter: 'drop-shadow(0 0 12px rgba(139, 92, 246, 0.4))' }}
+                >
                   <defs>
-                    {/* Ocean Gradient */}
-                    <radialGradient id="oceanGradient" cx="50%" cy="50%" r="80%">
-                      <stop offset="0%" stopColor="#0f172a" stopOpacity={0.4}/>
-                      <stop offset="50%" stopColor="#1e293b" stopOpacity={0.6}/>
-                      <stop offset="100%" stopColor="#0f172a" stopOpacity={0.8}/>
-                    </radialGradient>
-                    
-                    {/* Continent Gradients */}
-                    <linearGradient id="continentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#374151" stopOpacity={0.9}/>
-                      <stop offset="50%" stopColor="#4b5563" stopOpacity={0.8}/>
-                      <stop offset="100%" stopColor="#374151" stopOpacity={0.7}/>
+                    <linearGradient id="geographyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#374151" stopOpacity="0.9"/>
+                      <stop offset="50%" stopColor="#4b5563" stopOpacity="0.8"/>
+                      <stop offset="100%" stopColor="#374151" stopOpacity="0.7"/>
                     </linearGradient>
-                    
-                    {/* User Marker Glow */}
-                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                    
-                    {/* Pulse Animation */}
-                    <filter id="pulse" x="-100%" y="-100%" width="300%" height="300%">
-                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
                   </defs>
                   
-                  {/* Ocean Background */}
-                  <rect width="100%" height="100%" fill="url(#oceanGradient)"/>
+                  <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas/countries-110m.json">
+                    {({ geographies }) =>
+                      geographies.map((geo) => (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill="url(#geographyGradient)"
+                          stroke="#6b7280"
+                          strokeWidth={0.3}
+                          style={{
+                            default: { outline: "none" },
+                            hover: { outline: "none", fill: "#4b5563" },
+                            pressed: { outline: "none" },
+                          }}
+                        />
+                      ))
+                    }
+                  </Geographies>
+
+                  {/* Cloud Service Location Markers */}
                   
-                  {/* Accurate World Map Continents */}
-                  
-                  {/* North America */}
-                  <path d="M50 100 C80 70, 140 75, 180 85 L220 90 C270 95, 320 105, 360 120 L380 135 C400 150, 410 170, 415 190 L420 220 C425 250, 415 280, 395 300 L370 315 C340 325, 310 320, 280 310 L250 300 C220 290, 190 275, 170 255 L150 235 C130 215, 120 195, 115 170 L110 145 C105 120, 102 100, 105 80 L110 65 C115 55, 120 50, 130 50 C140 52, 145 58, 150 65 L160 75 C170 85, 180 90, 190 88 L200 85 C210 82, 220 80, 230 82 L240 85 C250 88, 260 95, 265 105 L270 115 C275 125, 270 135, 260 140 L250 145 C240 150, 225 148, 215 140 L205 132 C195 125, 190 115, 192 105 L195 95 C198 85, 205 78, 215 75 L225 72 C235 70, 245 72, 250 78 L255 85 C260 92, 258 100, 250 105 L240 110 C230 115, 215 112, 205 105 L195 98 C185 90, 180 80, 182 70 L185 60 C188 50, 195 42, 205 40 L215 38 C225 37, 235 40, 240 48 L245 58 C250 68, 248 78, 240 85 L230 90 C220 95, 205 92, 195 85 L185 78 C175 70, 170 60, 172 50 L175 40 C178 30, 185 22, 195 20 L205 18 C215 17, 225 20, 230 28 L235 38 C240 48, 238 58, 230 65 L220 70 C210 75, 195 72, 185 65 L175 58 C165 50, 160 40, 162 30 L165 20 C168 10, 175 2, 185 0 L195 -2 C205 -3, 215 0, 220 8 L225 18 C230 28, 228 38, 220 45 L210 50 C200 55, 185 52, 175 45 L165 38 C155 30, 150 20, 152 10 L155 0 C158 -10, 165 -18, 175 -20 L185 -22 C195 -23, 205 -20, 210 -12 L215 -2 C220 8, 218 18, 210 25 L200 30 C190 35, 175 32, 165 25 L155 18 C145 10, 140 0, 142 -10 L145 -20 C148 -30, 155 -38, 165 -40 L175 -42 C185 -43, 195 -40, 200 -32 L205 -22 C210 -12, 208 -2, 200 5 L190 10 C180 15, 165 12, 155 5 L145 -2 C135 -10, 130 -20, 132 -30 L135 -40 C138 -50, 145 -58, 155 -60 L165 -62 C175 -63, 185 -60, 190 -52 L195 -42 C200 -32, 198 -22, 190 -15 L180 -10 C170 -5, 155 -8, 145 -15 L135 -22 C125 -30, 120 -40, 122 -50 L125 -60 C128 -70, 135 -78, 145 -80 L155 -82 C165 -83, 175 -80, 180 -72 L185 -62 C190 -52, 188 -42, 180 -35 L170 -30 C160 -25, 145 -28, 135 -35 L125 -42 C115 -50, 110 -60, 112 -70 L115 -80 C118 -90, 125 -98, 135 -100 L145 -102 C155 -103, 165 -100, 170 -92 L175 -82 C180 -72, 178 -62, 170 -55 L160 -50 C150 -45, 135 -48, 125 -55 L115 -62 C105 -70, 100 -80, 102 -90 L105 -100 C108 -110, 115 -118, 125 -120 L135 -122 C145 -123, 155 -120, 160 -112 L165 -102 C170 -92, 168 -82, 160 -75 L150 -70 C140 -65, 125 -68, 115 -75 L105 -82 C95 -90, 90 -100, 92 -110 L95 -120 C98 -130, 105 -138, 115 -140 L125 -142 C135 -143, 145 -140, 150 -132 L155 -122 C160 -112, 158 -102, 150 -95 L140 -90 C130 -85, 115 -88, 105 -95 L95 -102 C85 -110, 80 -120, 82 -130 L85 -140 C88 -150, 95 -158, 105 -160 L115 -162 C125 -163, 135 -160, 140 -152 L145 -142 C150 -132, 148 -122, 140 -115 L130 -110 C120 -105, 105 -108, 95 -115 L85 -122 C75 -130, 70 -140, 72 -150 L75 -160 C78 -170, 85 -178, 95 -180 L105 -182 C115 -183, 125 -180, 130 -172 L135 -162 C140 -152, 138 -142, 130 -135 L120 -130 C110 -125, 95 -128, 85 -135 L75 -142 C65 -150, 60 -160, 62 -170 L65 -180 C68 -190, 75 -198, 85 -200 L95 -202 C105 -203, 115 -200, 120 -192 L125 -182 C130 -172, 128 -162, 120 -155 L110 -150 C100 -145, 85 -148, 75 -155 L65 -162 C55 -170, 50 -180, 52 -190 L55 -200 C58 -210, 65 -218, 75 -220 L85 -222 C95 -223, 105 -220, 110 -212 L115 -202 C120 -192, 118 -182, 110 -175 L100 -170 C90 -165, 75 -168, 65 -175 L55 -182 C45 -190, 40 -200, 42 -210 L45 -220 C48 -230, 55 -238, 65 -240 L75 -242 C85 -243, 95 -240, 100 -232 L105 -222 C110 -212, 108 -202, 100 -195 L90 -190 C80 -185, 65 -188, 55 -195 L45 -202 C35 -210, 30 -220, 32 -230 L35 -240 C38 -250, 45 -258, 55 -260 L65 -262 C75 -263, 85 -260, 90 -252 L95 -242 C100 -232, 98 -222, 90 -215 L80 -210 C70 -205, 55 -208, 45 -215 L35 -222 C25 -230, 20 -240, 22 -250 L25 -260 C28 -270, 35 -278, 45 -280 L55 -282 C65 -283, 75 -280, 80 -272 L85 -262 C90 -252, 88 -242, 80 -235 L70 -230 C60 -225, 45 -228, 35 -235 L25 -242 C15 -250, 10 -260, 12 -270 L15 -280 C18 -290, 25 -298, 35 -300 L45 -302 C55 -303, 65 -300, 70 -292 L75 -282 C80 -272, 78 -262, 70 -255 L60 -250 C50 -245, 35 -248, 25 -255 L15 -262 C5 -270, 0 -280, 2 -290 L5 -300 C8 -310, 15 -318, 25 -320 L35 -322 C45 -323, 55 -320, 60 -312 L65 -302 C70 -292, 68 -282, 60 -275 L50 -270" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                        
-                  {/* South America - More Accurate Shape */}
-                  <path d="M220 320 C235 315, 250 320, 265 330 L280 345 C295 360, 305 380, 310 400 L315 425 C320 450, 315 475, 305 495 L290 510 C275 520, 255 525, 235 520 L215 515 C195 510, 180 500, 170 485 L165 470 C160 455, 162 440, 168 425 L175 410 C182 395, 192 380, 205 370 L215 360 C218 355, 219 350, 220 345 Z" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                  
-                  {/* Europe - Better Detail */}
-                  <path d="M480 120 C500 115, 520 120, 535 130 L550 140 C565 155, 570 175, 568 195 L565 210 C560 225, 550 235, 535 240 L520 245 C505 250, 490 245, 480 235 L475 220 C470 205, 472 190, 478 175 L482 160 C485 145, 486 130, 488 120 Z
-                        M490 95 C505 90, 520 95, 530 105 L540 120 C545 135, 540 150, 530 160 L520 170 C510 175, 500 170, 495 160 L490 145 C485 130, 487 115, 493 105 Z" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                  
-                  {/* Africa - Accurate Proportions */}
-                  <path d="M470 250 C495 245, 520 250, 540 265 L560 280 C580 300, 590 325, 595 350 L600 380 C605 410, 600 440, 590 465 L575 485 C560 500, 540 510, 520 515 L500 520 C480 525, 460 520, 445 510 L430 495 C420 480, 415 460, 413 440 L410 420 C407 400, 410 380, 415 360 L420 340 C425 320, 435 300, 450 285 L462 270 C465 260, 467 255, 470 250 Z" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                  
-                  {/* Asia - More Detailed */}
-                  <path d="M610 80 C660 75, 710 85, 750 100 L790 115 C830 135, 860 160, 875 190 L885 220 C890 250, 885 280, 875 305 L860 325 C845 340, 825 350, 800 355 L775 360 C750 365, 725 360, 705 350 L685 340 C665 330, 650 315, 640 295 L635 275 C630 255, 632 235, 638 215 L645 195 C652 175, 662 160, 675 150 L690 140 C705 130, 720 125, 735 122 L750 120 C765 118, 780 120, 790 125 L800 135 C810 145, 815 160, 812 175 L808 190 C804 205, 795 215, 785 220 L775 225 C765 230, 755 225, 750 215 L745 200 C740 185, 742 170, 748 155 L755 145 C760 135, 765 130, 770 128 Z
-                        
-                        M640 110 C680 115, 720 125, 755 140 L785 155 C815 175, 835 200, 840 225 L845 245 C850 265, 845 280, 835 290 L820 300 C805 305, 790 300, 775 290 L760 280 C745 270, 735 255, 730 235 L728 215 C726 195, 730 175, 738 155 L748 140 C755 125, 765 115, 775 110 Z" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                  
-                  {/* Australia & Oceania */}
-                  <path d="M750 380 C780 375, 810 385, 835 400 L855 415 C870 435, 875 460, 870 480 L860 500 C850 515, 835 525, 815 530 L795 535 C775 540, 755 535, 740 525 L725 510 C715 495, 712 475, 715 455 L720 435 C725 415, 735 400, 745 390 Z" 
-                        fill="url(#continentGradient)" 
-                        stroke="#6b7280" 
-                        strokeWidth="0.5"/>
-                  
-                  {/* Animated User Location Markers with Cloud Service Types */}
-                  
-                  {/* North America - AWS */}
-                  <g>
-                    <circle cx="180" cy="160" r="8" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="180" cy="160" r="4" fill="#ff9500" filter="url(#glow)"/>
-                    <text x="195" y="155" fill="#fff" fontSize="11" fontWeight="bold">AWS - N. Virginia</text>
-                    <text x="195" y="168" fill="#ff9500" fontSize="10" fontWeight="600">8.4K users</text>
-                  </g>
-                  
-                  {/* North America West - GCP */}
-                  <g>
-                    <circle cx="120" cy="170" r="6" fill="#4285f4" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="6;10;6" dur="2.5s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="120" cy="170" r="3" fill="#4285f4" filter="url(#glow)"/>
-                    <text x="135" y="165" fill="#fff" fontSize="11" fontWeight="bold">GCP - Oregon</text>
-                    <text x="135" y="178" fill="#4285f4" fontSize="10" fontWeight="600">5.7K users</text>
-                  </g>
-                  
-                  {/* Europe - Azure */}
-                  <g>
-                    <circle cx="520" cy="140" r="7" fill="#0078d4" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="7;11;7" dur="3s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="520" cy="140" r="3.5" fill="#0078d4" filter="url(#glow)"/>
-                    <text x="535" y="135" fill="#fff" fontSize="11" fontWeight="bold">Azure - West Europe</text>
-                    <text x="535" y="148" fill="#0078d4" fontSize="10" fontWeight="600">6.2K users</text>
-                  </g>
-                  
-                  {/* Asia - AWS */}
-                  <g>
-                    <circle cx="760" cy="180" r="6" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="6;10;6" dur="1.8s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="760" cy="180" r="3" fill="#ff9500" filter="url(#glow)"/>
-                    <text x="775" y="175" fill="#fff" fontSize="11" fontWeight="bold">AWS - Tokyo</text>
-                    <text x="775" y="188" fill="#ff9500" fontSize="10" fontWeight="600">4.1K users</text>
-                  </g>
-                  
-                  {/* Australia - AWS */}
-                  <g>
-                    <circle cx="810" cy="430" r="5" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="5;8;5" dur="2.2s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="810" cy="430" r="2.5" fill="#ff9500" filter="url(#glow)"/>
-                    <text x="825" y="425" fill="#fff" fontSize="11" fontWeight="bold">AWS - Sydney</text>
-                    <text x="825" y="438" fill="#ff9500" fontSize="10" fontWeight="600">2.8K users</text>
-                  </g>
-                  
-                  {/* India - GCP */}
-                  <g>
-                    <circle cx="660" cy="260" r="5" fill="#4285f4" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="5;8;5" dur="2.7s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="660" cy="260" r="2.5" fill="#4285f4" filter="url(#glow)"/>
-                    <text x="675" y="255" fill="#fff" fontSize="11" fontWeight="bold">GCP - Mumbai</text>
-                    <text x="675" y="268" fill="#4285f4" fontSize="10" fontWeight="600">3.6K users</text>
-                  </g>
-                  
-                  {/* South America - AWS */}
-                  <g>
-                    <circle cx="260" cy="420" r="4" fill="#ff9500" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="260" cy="420" r="2" fill="#ff9500" filter="url(#glow)"/>
-                    <text x="275" y="415" fill="#fff" fontSize="11" fontWeight="bold">AWS - São Paulo</text>
-                    <text x="275" y="428" fill="#ff9500" fontSize="10" fontWeight="600">1.9K users</text>
-                  </g>
-                  
-                  {/* Africa - Azure */}
-                  <g>
-                    <circle cx="520" cy="350" r="4" fill="#0078d4" fillOpacity="0.3" filter="url(#pulse)">
-                      <animate attributeName="r" values="4;7;4" dur="2.6s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="520" cy="350" r="2" fill="#0078d4" filter="url(#glow)"/>
-                    <text x="535" y="345" fill="#fff" fontSize="11" fontWeight="bold">Azure - South Africa</text>
-                    <text x="535" y="358" fill="#0078d4" fontSize="10" fontWeight="600">1.2K users</text>
-                  </g>
-                  
+                  {/* North America East - AWS N. Virginia */}
+                  <Marker coordinates={[-77.4, 39.0]}>
+                    <g>
+                      <circle r={8} fill="#ff9500" fillOpacity={0.3}>
+                        <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={4} fill="#ff9500" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[-60, 42]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      AWS - N. Virginia
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[-60, 36]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
+                      8.4K users
+                    </text>
+                  </Marker>
+
+                  {/* North America West - GCP Oregon */}
+                  <Marker coordinates={[-123.0, 45.5]}>
+                    <g>
+                      <circle r={6} fill="#4285f4" fillOpacity={0.3}>
+                        <animate attributeName="r" values="6;10;6" dur="2.5s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={3} fill="#4285f4" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[-105, 48]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      GCP - Oregon
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[-105, 42]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#4285f4">
+                      5.7K users
+                    </text>
+                  </Marker>
+
+                  {/* Europe - Azure West Europe (Netherlands) */}
+                  <Marker coordinates={[4.9, 52.3]}>
+                    <g>
+                      <circle r={7} fill="#0078d4" fillOpacity={0.3}>
+                        <animate attributeName="r" values="7;11;7" dur="3s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={3.5} fill="#0078d4" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[20, 58]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      Azure - West Europe
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[20, 52]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#0078d4">
+                      6.2K users
+                    </text>
+                  </Marker>
+
+                  {/* Asia Pacific - AWS Tokyo */}
+                  <Marker coordinates={[139.7, 35.7]}>
+                    <g>
+                      <circle r={6} fill="#ff9500" fillOpacity={0.3}>
+                        <animate attributeName="r" values="6;10;6" dur="1.8s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={3} fill="#ff9500" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[155, 40]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      AWS - Tokyo
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[155, 34]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
+                      4.1K users
+                    </text>
+                  </Marker>
+
+                  {/* Australia - AWS Sydney */}
+                  <Marker coordinates={[151.2, -33.9]}>
+                    <g>
+                      <circle r={5} fill="#ff9500" fillOpacity={0.3}>
+                        <animate attributeName="r" values="5;8;5" dur="2.2s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={2.5} fill="#ff9500" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[165, -30]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      AWS - Sydney
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[165, -36]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
+                      2.8K users
+                    </text>
+                  </Marker>
+
+                  {/* India - GCP Mumbai */}
+                  <Marker coordinates={[72.8, 19.1]}>
+                    <g>
+                      <circle r={5} fill="#4285f4" fillOpacity={0.3}>
+                        <animate attributeName="r" values="5;8;5" dur="2.7s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={2.5} fill="#4285f4" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[85, 25]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      GCP - Mumbai
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[85, 19]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#4285f4">
+                      3.6K users
+                    </text>
+                  </Marker>
+
+                  {/* South America - AWS São Paulo */}
+                  <Marker coordinates={[-46.6, -23.5]}>
+                    <g>
+                      <circle r={4} fill="#ff9500" fillOpacity={0.3}>
+                        <animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={2} fill="#ff9500" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[-25, -20]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      AWS - São Paulo
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[-25, -26]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#ff9500">
+                      1.9K users
+                    </text>
+                  </Marker>
+
+                  {/* Africa - Azure South Africa */}
+                  <Marker coordinates={[28.0, -26.2]}>
+                    <g>
+                      <circle r={4} fill="#0078d4" fillOpacity={0.3}>
+                        <animate attributeName="r" values="4;7;4" dur="2.6s" repeatCount="indefinite"/>
+                      </circle>
+                      <circle r={2} fill="#0078d4" opacity={0.9}/>
+                    </g>
+                  </Marker>
+                  <Marker coordinates={[45, -22]}>
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                      Azure - South Africa
+                    </text>
+                  </Marker>
+                  <Marker coordinates={[45, -28]}>
+                    <text textAnchor="start" fontSize={10} fontWeight="600" fill="#0078d4">
+                      1.2K users
+                    </text>
+                  </Marker>
+
                   {/* Connection Lines Between Major Regions */}
-                  <g stroke="#8b5cf6" strokeWidth="1" strokeDasharray="5,5" fill="none" opacity="0.6">
-                    <line x1="180" y1="160" x2="520" y2="140">
-                      <animate attributeName="stroke-dashoffset" values="0;10" dur="3s" repeatCount="indefinite"/>
+                  <g stroke="#8b5cf6" strokeWidth="1" strokeDasharray="3,3" fill="none" opacity="0.4">
+                    <line x1={-77.4} y1={39.0} x2={4.9} y2={52.3}>
+                      <animate attributeName="strokeDashoffset" values="0;6" dur="3s" repeatCount="indefinite"/>
                     </line>
-                    <line x1="520" y1="140" x2="760" y2="180">
-                      <animate attributeName="stroke-dashoffset" values="0;10" dur="4s" repeatCount="indefinite"/>
+                    <line x1={4.9} y1={52.3} x2={139.7} y2={35.7}>
+                      <animate attributeName="strokeDashoffset" values="0;6" dur="4s" repeatCount="indefinite"/>
                     </line>
-                    <line x1="180" y1="160" x2="760" y2="180">
-                      <animate attributeName="stroke-dashoffset" values="0;15" dur="5s" repeatCount="indefinite"/>
+                    <line x1={-77.4} y1={39.0} x2={139.7} y2={35.7}>
+                      <animate attributeName="strokeDashoffset" values="0;9" dur="5s" repeatCount="indefinite"/>
                     </line>
                   </g>
-                  
-                </svg>
+
+                </ComposableMap>
                 
                 {/* Floating Data Cards */}
                 <div className="absolute top-4 right-4 space-y-2">
