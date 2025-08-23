@@ -838,28 +838,28 @@ const Results = () => {
           </div>
 
           {/* Global Cloud Infrastructure Map - Premium SaaS Dashboard */}
-          <Card className="bg-slate-900/50 dark:bg-slate-900/50 bg-white/50 border-slate-800 dark:border-slate-800 border-slate-200 backdrop-blur-sm mb-8">
+          <Card className="bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 backdrop-blur-sm mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-white dark:text-white text-slate-900 flex items-center">
+                  <CardTitle className="text-slate-900 dark:text-white flex items-center">
                     <Globe className="mr-2 w-6 h-6 text-purple-400" />
                     Global User Distribution & Cloud Services
                   </CardTitle>
                   <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1">24.8K</div>
-                  <span className="text-sm text-slate-400">Active users across 12 regions with real-time analytics</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-400">Active users across 12 regions with real-time analytics</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-slate-400">Live Status</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">Live Status</div>
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></div>
-                    <div className="text-white font-medium">All Systems Operational</div>
+                    <div className="text-slate-900 dark:text-white font-medium">All Systems Operational</div>
                   </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-900/80 via-purple-900/20 to-blue-900/30 rounded-xl border border-slate-700/50">
+              <div className="h-[500px] relative overflow-hidden bg-gradient-to-br from-slate-100/80 via-purple-100/20 to-blue-100/30 dark:from-slate-900/80 dark:via-purple-900/20 dark:to-blue-900/30 rounded-xl border border-slate-300/50 dark:border-slate-700/50">
                 
                 {/* Professional World Map using React Simple Maps */}
                 <ComposableMap
@@ -874,6 +874,11 @@ const Results = () => {
                 >
                   <defs>
                     <linearGradient id="geographyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#d1d5db" stopOpacity="0.9"/>
+                      <stop offset="50%" stopColor="#9ca3af" stopOpacity="0.8"/>
+                      <stop offset="100%" stopColor="#d1d5db" stopOpacity="0.7"/>
+                    </linearGradient>
+                    <linearGradient id="geographyGradientDark" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#374151" stopOpacity="0.9"/>
                       <stop offset="50%" stopColor="#4b5563" stopOpacity="0.8"/>
                       <stop offset="100%" stopColor="#374151" stopOpacity="0.7"/>
@@ -891,9 +896,10 @@ const Results = () => {
                           strokeWidth={0.3}
                           style={{
                             default: { outline: "none" },
-                            hover: { outline: "none", fill: "#4b5563" },
+                            hover: { outline: "none", fill: "#9ca3af" },
                             pressed: { outline: "none" },
                           }}
+                          className="dark:fill-[url(#geographyGradientDark)] dark:hover:fill-[#4b5563]"
                         />
                       ))
                     }
@@ -911,7 +917,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[-60, 42]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       AWS - N. Virginia
                     </text>
                   </Marker>
@@ -931,7 +937,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[-105, 48]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       GCP - Oregon
                     </text>
                   </Marker>
@@ -951,7 +957,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[20, 58]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       Azure - West Europe
                     </text>
                   </Marker>
@@ -971,7 +977,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[155, 40]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       AWS - Tokyo
                     </text>
                   </Marker>
@@ -991,7 +997,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[165, -30]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       AWS - Sydney
                     </text>
                   </Marker>
@@ -1011,7 +1017,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[85, 25]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       GCP - Mumbai
                     </text>
                   </Marker>
@@ -1031,7 +1037,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[-25, -20]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       AWS - São Paulo
                     </text>
                   </Marker>
@@ -1051,7 +1057,7 @@ const Results = () => {
                     </g>
                   </Marker>
                   <Marker coordinates={[45, -22]}>
-                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#fff">
+                    <text textAnchor="start" fontSize={11} fontWeight="bold" fill="#1f2937" className="dark:fill-white">
                       Azure - South Africa
                     </text>
                   </Marker>
@@ -1081,50 +1087,50 @@ const Results = () => {
               <div className="mt-6 space-y-4">
                 
                 {/* Cloud Providers - Simple */}
-                <div className="bg-slate-800/30 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="text-sm font-medium text-slate-300 mb-3">Cloud Providers</h3>
+                <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-4 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
+                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Cloud Providers</h3>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                        <span className="text-sm text-white">AWS</span>
-                        <span className="text-xs text-slate-400">12.1K users</span>
+                        <span className="text-sm text-slate-900 dark:text-white">AWS</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">12.1K users</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-white">GCP</span>
-                        <span className="text-xs text-slate-400">9.3K users</span>
+                        <span className="text-sm text-slate-900 dark:text-white">GCP</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">9.3K users</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-                        <span className="text-sm text-white">Azure</span>
-                        <span className="text-xs text-slate-400">7.4K users</span>
+                        <span className="text-sm text-slate-900 dark:text-white">Azure</span>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">7.4K users</span>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-emerald-400">99.97%</div>
-                      <div className="text-xs text-slate-400">Global Uptime</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400">Global Uptime</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-4 gap-3">
-                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-white">24.8K</div>
-                    <div className="text-xs text-slate-400">Total Users</div>
+                  <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="text-lg font-bold text-slate-900 dark:text-white">24.8K</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Total Users</div>
                   </div>
-                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-emerald-400">8</div>
-                    <div className="text-xs text-slate-400">Regions</div>
+                  <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="text-lg font-bold text-emerald-500 dark:text-emerald-400">8</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Regions</div>
                   </div>
-                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-purple-400">42ms</div>
-                    <div className="text-xs text-slate-400">Avg Latency</div>
+                  <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="text-lg font-bold text-purple-500 dark:text-purple-400">42ms</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Avg Latency</div>
                   </div>
-                  <div className="bg-slate-800/30 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-cyan-400">1.2K</div>
-                    <div className="text-xs text-slate-400">Requests/min</div>
+                  <div className="bg-white/70 dark:bg-slate-800/30 rounded-lg p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="text-lg font-bold text-cyan-500 dark:text-cyan-400">1.2K</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Requests/min</div>
                   </div>
                 </div>
 
