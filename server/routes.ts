@@ -4,6 +4,10 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { updateUserProfileSchema, type UpdateUserProfile } from "@shared/schema";
 import { callPythonAnalyze, callPythonAssistant } from "./backend_integration.js";
+import { exec } from "child_process";
+import { promisify } from "util";
+import fs from "fs";
+import path from "path";
 
 // Mock implementation - no OpenAI API key required
 
@@ -157,14 +161,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       // Call Python backend for PDF generation
-      const { exec } = require('child_process');
-      const { promisify } = require('util');
       const execAsync = promisify(exec);
 
       // Create temporary file with analysis data
-      const fs = require('fs');
-      const path = require('path');
-      const tempDir = path.join(__dirname, '../temp');
+      const tempDir = path.join(process.cwd(), 'temp');
       
       // Ensure temp directory exists
       if (!fs.existsSync(tempDir)) {
