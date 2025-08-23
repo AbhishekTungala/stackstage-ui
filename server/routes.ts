@@ -276,22 +276,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.on('end', () => resolve(Buffer.concat(chunks)));
         });
         
-        // Helper function to create gradient effects
+        // Helper function to create vibrant gradient effects
         const createGradientBar = (x: number, y: number, width: number, height: number, color: string, value: number) => {
-          // Create gradient effect by layering multiple rectangles
-          const segments = 20;
+          // Create strong, visible gradient effect
+          const segments = 15;
           const segmentWidth = width / segments;
           
           for (let i = 0; i < segments; i++) {
-            const opacity = 1 - (i / segments) * 0.6; // Fade from 100% to 40%
+            const opacity = 1 - (i / segments) * 0.3; // Fade from 100% to 70% (more visible)
             const segmentX = x + (i * segmentWidth);
             doc.fillColor(color, opacity).rect(segmentX, y, segmentWidth, height).fill();
           }
         };
         
-        // Professional Header with gradient background
-        doc.rect(0, 0, 612, 100).fillColor('#1e3a8a').fill();
-        doc.rect(0, 0, 612, 100).fillColor('#3b82f6', 0.7).fill();
+        // Helper function to create circular progress charts
+        const createCircularProgress = (centerX: number, centerY: number, radius: number, percentage: number, color: string) => {
+          // Background circle
+          doc.circle(centerX, centerY, radius + 2).fillColor('#e5e7eb').fill();
+          doc.circle(centerX, centerY, radius).fillColor('#ffffff').fill();
+          
+          // Progress arc (simplified as circles for visibility)
+          const progressRadius = (percentage / 100) * radius;
+          doc.circle(centerX, centerY, progressRadius).fillColor(color).fill();
+          
+          // Center text
+          doc.fontSize(12).fillColor('#ffffff').text(percentage.toString(), centerX - 8, centerY - 6);
+        };
+        
+        // Professional Header with vibrant gradient background
+        doc.rect(0, 0, 612, 100).fillColor('#1e40af').fill();
+        doc.rect(0, 0, 612, 100).fillColor('#3b82f6', 0.8).fill();
         
         doc.fontSize(32).fillColor('#ffffff').text('StackStage', 40, 25, { align: 'left' });
         doc.fontSize(14).fillColor('#dbeafe').text('Premium Cloud Architecture Analysis Report', 40, 60);
@@ -337,18 +351,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.fontSize(28).fillColor(metric.color).text(metric.value.toString(), x + 15, y + 30);
           doc.fontSize(12).fillColor('#94a3b8').text('/100', x + 80, y + 45);
           
-          // Gradient progress bar
+          // Enhanced progress bar with stronger visuals
           const barWidth = 200;
-          const barHeight = 8;
+          const barHeight = 12;
           const barX = x + 15;
-          const barY = y + 55;
+          const barY = y + 52;
           
-          // Background
-          doc.rect(barX, barY, barWidth, barHeight).fillColor('#e2e8f0').fill();
+          // Background with border
+          doc.rect(barX, barY, barWidth, barHeight).fillColor('#e5e7eb').fill();
+          doc.rect(barX, barY, barWidth, barHeight).strokeColor('#d1d5db').stroke();
           
-          // Gradient progress
+          // Strong gradient progress
           const progressWidth = (metric.value / 100) * barWidth;
+          
+          // Solid color base
+          doc.rect(barX, barY, progressWidth, barHeight).fillColor(metric.color).fill();
+          
+          // Gradient overlay for effect
           createGradientBar(barX, barY, progressWidth, barHeight, metric.color, metric.value);
+          
+          // Add circular progress indicator
+          createCircularProgress(x + 200, y + 35, 15, metric.value, metric.color);
         });
         
         doc.y = startY + 180;
@@ -442,40 +465,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { label: 'Security & Monitoring', percentage: 10, color: '#8b5cf6', lightColor: '#f3e8ff' }
         ];
         
-        // Create professional bar chart
+        // Create enhanced 3D-style bar chart
         let currentX = 60;
         costItems.forEach((item, index) => {
           const width = (item.percentage / 100) * 480;
+          const height = 35;
           
-          // Background with gradient
-          doc.rect(currentX, chartY, width, 25).fillColor(item.lightColor).fill();
-          createGradientBar(currentX, chartY, width, 25, item.color, item.percentage);
+          // Shadow effect
+          doc.rect(currentX + 3, chartY + 3, width, height).fillColor('#000000', 0.2).fill();
           
-          // Percentage label on bar if space allows
-          if (width > 40) {
-            doc.fontSize(10).fillColor('#ffffff').text(`${item.percentage}%`, currentX + 10, chartY + 8);
+          // Main bar with solid color
+          doc.rect(currentX, chartY, width, height).fillColor(item.color).fill();
+          
+          // Gradient overlay for 3D effect
+          for (let i = 0; i < height; i += 2) {
+            const opacity = 0.9 - (i / height) * 0.4;
+            doc.rect(currentX, chartY + i, width, 2).fillColor(item.color, opacity).fill();
+          }
+          
+          // Top highlight
+          doc.rect(currentX, chartY, width, 5).fillColor('#ffffff', 0.3).fill();
+          
+          // Percentage label with shadow
+          if (width > 50) {
+            doc.fontSize(11).fillColor('#000000', 0.5).text(`${item.percentage}%`, currentX + 12, chartY + 14);
+            doc.fontSize(11).fillColor('#ffffff').text(`${item.percentage}%`, currentX + 10, chartY + 12);
           }
           
           currentX += width;
         });
         
-        // Professional legend with cards
-        doc.moveDown(2);
+        // Add 3D pie chart representation
+        const pieChartX = 350;
+        const pieChartY = chartY + 50;
+        const pieRadius = 40;
+        
+        let currentAngle = 0;
+        costItems.forEach((item, index) => {
+          const angle = (item.percentage / 100) * 360;
+          
+          // Create pie slice (simplified as colored sectors)
+          for (let i = 0; i < angle; i += 5) {
+            const x = pieChartX + Math.cos((currentAngle + i) * Math.PI / 180) * pieRadius;
+            const y = pieChartY + Math.sin((currentAngle + i) * Math.PI / 180) * pieRadius;
+            doc.circle(x, y, 3).fillColor(item.color).fill();
+          }
+          
+          currentAngle += angle;
+        });
+        
+        // Enhanced legend with visual indicators
+        doc.moveDown(4);
         const legendStartY = doc.y;
         costItems.forEach((item, index) => {
           const legendX = 60 + (index % 2) * 260;
-          const legendY = legendStartY + Math.floor(index / 2) * 25;
+          const legendY = legendStartY + Math.floor(index / 2) * 30;
           
-          // Legend card
-          doc.rect(legendX, legendY, 240, 20).fillColor('#ffffff').fill();
-          doc.rect(legendX, legendY, 240, 20).strokeColor('#e2e8f0').stroke();
+          // Legend card with shadow
+          doc.rect(legendX + 2, legendY + 2, 240, 25).fillColor('#000000', 0.1).fill();
+          doc.rect(legendX, legendY, 240, 25).fillColor('#ffffff').fill();
+          doc.rect(legendX, legendY, 240, 25).strokeColor('#d1d5db').stroke();
           
-          // Color indicator
-          doc.rect(legendX + 8, legendY + 6, 12, 8).fillColor(item.color).fill();
+          // Enhanced color indicator with gradient
+          doc.rect(legendX + 8, legendY + 8, 20, 10).fillColor(item.color).fill();
+          doc.rect(legendX + 8, legendY + 8, 20, 3).fillColor('#ffffff', 0.4).fill();
           
-          // Legend text
-          doc.fontSize(9).fillColor('#374151').text(`${item.label}`, legendX + 25, legendY + 6);
-          doc.fontSize(9).fillColor('#64748b').text(`${item.percentage}%`, legendX + 200, legendY + 6);
+          // Legend text with better contrast
+          doc.fontSize(10).fillColor('#1f2937').text(`${item.label}`, legendX + 35, legendY + 9);
+          doc.fontSize(11).fillColor(item.color).text(`${item.percentage}%`, legendX + 200, legendY + 9);
         });
         
         // Professional Footer
