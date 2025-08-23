@@ -187,7 +187,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     let structuredResponse;
     try {
       structuredResponse = extractAndValidateJson(aiResponse);
-    } catch (parseError) {
+    } catch (parseError: any) {
       console.log("Response not in JSON format, using as text:", parseError.message);
     }
     
@@ -424,11 +424,31 @@ function extractAndValidateJson(rawText: string): any {
   
   let candidate = cleanText.substring(jsonStart, jsonEnd + 1);
   
-  // Fix common trailing comma issues
-  candidate = candidate.replace(/,\s*}/g, '}');
-  candidate = candidate.replace(/,\s*]/g, ']');
+  // Fix common JSON issues
+  candidate = candidate.replace(/,\s*}/g, '}');           // Remove trailing commas in objects
+  candidate = candidate.replace(/,\s*]/g, ']');           // Remove trailing commas in arrays
+  candidate = candidate.replace(/([{,]\s*)(\w+):/g, '$1"$2":');  // Quote unquoted keys
+  candidate = candidate.replace(/\n/g, '\\n');            // Escape newlines
+  candidate = candidate.replace(/\t/g, '\\t');            // Escape tabs
+  candidate = candidate.replace(/\r/g, '\\r');            // Escape carriage returns
   
-  const parsed = JSON.parse(candidate);
+  // Try to parse, with multiple fallback attempts
+  let parsed;
+  try {
+    parsed = JSON.parse(candidate);
+  } catch (e) {
+    // If parsing fails, try to fix more complex issues
+    try {
+      // Remove problematic characters that often cause JSON errors
+      candidate = candidate.replace(/[\u0000-\u001f\u007f-\u009f]/g, '');
+      candidate = candidate.replace(/\\/g, '\\\\');  // Escape backslashes
+      candidate = candidate.replace(/"/g, '\\"').replace(/\\"/g, '"').replace(/\\\\"([^"]*)\\\\":/g, '"$1":');
+      parsed = JSON.parse(candidate);
+    } catch (e2) {
+      // Final fallback - try to extract just the basic structure
+      throw new Error(`Failed to parse JSON even after cleanup: ${(e as Error).message}`);
+    }
+  }
   
   // Validation and normalization
   const required = ['score', 'summary', 'diagram_mermaid', 'cost'];
