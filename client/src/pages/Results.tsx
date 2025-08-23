@@ -305,7 +305,7 @@ const Results = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Analytics</h1>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Analytics</h1>
                 <p className="text-slate-400">Cloud Architecture Analysis Dashboard</p>
               </div>
               <div className="flex gap-3">
