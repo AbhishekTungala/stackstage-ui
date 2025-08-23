@@ -1180,9 +1180,18 @@ const Results = () => {
                     <div className="space-y-3">
                       {analysisData.issues.slice(0, 6).map((issue: any, index: number) => (
                         <div key={index} className="flex items-start justify-between">
-                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">
-                            {typeof issue === 'string' ? issue : issue.detail || issue.description || JSON.stringify(issue)}
-                          </span>
+                          <div className="flex-1 pr-4">
+                            {typeof issue === 'string' ? (
+                              <span className="text-sm text-slate-700 dark:text-slate-300">{issue}</span>
+                            ) : (
+                              <>
+                                {issue.type && (
+                                  <div className="text-xs font-medium text-red-600 dark:text-red-400 mb-1">{issue.type}</div>
+                                )}
+                                <span className="text-sm text-slate-700 dark:text-slate-300">{issue.description || issue.detail || 'Security issue identified'}</span>
+                              </>
+                            )}
+                          </div>
                           <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
                         </div>
                       ))}
@@ -1207,12 +1216,27 @@ const Results = () => {
                         AI-Powered
                       </Badge>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {analysisData.recommendations.map((rec: any, index: number) => (
                         <div key={index} className="flex items-start justify-between">
-                          <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 pr-4">
-                            {typeof rec === 'string' ? rec : rec.title || rec.description || JSON.stringify(rec)}
-                          </span>
+                          <div className="flex-1 pr-4">
+                            {typeof rec === 'string' ? (
+                              <span className="text-sm text-slate-700 dark:text-slate-300">{rec}</span>
+                            ) : (
+                              <div>
+                                <div className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                  {rec.description || rec.title || 'Optimization recommendation'}
+                                </div>
+                                {rec.implementation_steps && Array.isArray(rec.implementation_steps) && rec.implementation_steps.length > 0 && (
+                                  <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1 ml-4">
+                                    {rec.implementation_steps.slice(0, 2).map((step: string, stepIndex: number) => (
+                                      <li key={stepIndex} className="list-disc">{step}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
+                          </div>
                           <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                         </div>
                       ))}
