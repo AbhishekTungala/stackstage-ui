@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import Aurora from "@/components/ui/aurora";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -324,10 +325,21 @@ const Results = () => {
   const regionInfo = analysisData?.region ? getRegionInfo(analysisData.region) : null;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen relative flex flex-col">
       <Header />
       
-      <main className="pt-24 pb-16">
+      {/* Aurora Background with smooth fade */}
+      <div className="absolute inset-0">
+        <Aurora 
+          intensity={0.4} 
+          speed={1.2} 
+          className="aurora-background"
+          fadeHeight={300}
+          fadeDirection="bottom"
+        />
+      </div>
+      
+      <main className="pt-24 pb-16 relative z-10">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Header Section */}
