@@ -279,17 +279,34 @@ const Results = () => {
     { subject: 'Compliance', current: complianceScore, industry: 68, fullMark: 100 }
   ];
 
-  // Dynamic trend data based on real analysis characteristics
+  // Create seeded random based on analysis ID for consistent but unique patterns
+  const createSeededRandom = (seed: string) => {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return () => {
+      hash = ((hash * 9301) + 49297) % 233280;
+      return hash / 233280;
+    };
+  };
+  
+  const seededRandom = createSeededRandom(analysisData?.id || 'default');
+  
+  // Dynamic trend data based on real analysis characteristics - unique per analysis
   const generateTrendData = () => {
     const trend = [];
-    // Use analysis content to create unique patterns
-    const securityVariation = securityScore < 60 ? [-8, -12, -15, -18, -10, 0] : [-3, -5, -8, -6, -2, 0];
-    const performanceVariation = performanceScore > 80 ? [-2, -4, -7, -5, -1, 0] : [-10, -15, -20, -12, -5, 0];
-    const costVariation = costScore < 60 ? [-12, -18, -25, -20, -8, 0] : [-4, -6, -10, -7, -3, 0];
+    // Use analysis-specific patterns
+    const securityBase = securityScore < 50 ? [-15, -12, -8, -5, -2, 0] : [-8, -6, -4, -2, -1, 0];
+    const performanceBase = performanceScore > 80 ? [-5, -4, -3, -2, -1, 0] : [-20, -15, -10, -6, -3, 0];
+    const costBase = costScore < 60 ? [-25, -20, -15, -10, -5, 0] : [-12, -9, -6, -4, -2, 0];
     
     for (let i = 5; i >= 0; i--) {
-      const monthScore = Math.max(20, Math.min(95, overallScore + securityVariation[5-i] + (Math.random() * 8 - 4)));
-      const monthIssues = Math.max(0, i === 0 ? numIssues : numIssues + Math.floor(Math.random() * 3) + i);
+      const variation = (seededRandom() * 10 - 5);
+      const monthScore = Math.max(15, Math.min(95, overallScore + securityBase[5-i] + variation));
+      const monthIssues = Math.max(0, i === 0 ? numIssues : numIssues + Math.floor(seededRandom() * 3) + i);
       trend.push({
         period: i === 0 ? 'Current' : `${i}m ago`,
         score: Math.round(monthScore),
@@ -420,16 +437,20 @@ const Results = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                       data={trendData.map((d, index) => {
-                        // Create unique patterns based on actual analysis scores
-                        const securityTrend = securityScore + (securityScore < 50 ? [15, 8, 3, -2, -5, 0] : [5, 2, -1, -3, -1, 0])[index] + (Math.random() * 6 - 3);
-                        const performanceTrend = performanceScore + (performanceScore > 80 ? [2, -1, -3, -2, 0, 0] : [12, 6, 0, -4, -2, 0])[index] + (Math.random() * 5 - 2.5);
-                        const costTrend = costScore + (costScore < 60 ? [18, 12, 5, -1, -3, 0] : [8, 4, 1, -2, -1, 0])[index] + (Math.random() * 4 - 2);
+                        // Create consistent unique patterns per analysis ID
+                        const securityPattern = securityScore < 50 ? [20, 12, 6, 0, -3, 0] : [8, 5, 2, 0, -1, 0];
+                        const performancePattern = performanceScore > 80 ? [5, 3, 1, 0, -1, 0] : [25, 18, 10, 4, 0, 0];
+                        const costPattern = costScore < 60 ? [30, 22, 12, 6, 2, 0] : [15, 10, 6, 3, 1, 0];
+                        
+                        const securityVariation = (seededRandom() * 8 - 4);
+                        const performanceVariation = (seededRandom() * 6 - 3);
+                        const costVariation = (seededRandom() * 5 - 2.5);
                         
                         return {
                           name: d.period,
-                          security: Math.max(25, Math.min(95, Math.round(securityTrend))),
-                          performance: Math.max(30, Math.min(98, Math.round(performanceTrend))),
-                          cost: Math.max(25, Math.min(90, Math.round(costTrend)))
+                          security: Math.max(20, Math.min(95, Math.round(securityScore + securityPattern[index] + securityVariation))),
+                          performance: Math.max(25, Math.min(98, Math.round(performanceScore + performancePattern[index] + performanceVariation))),
+                          cost: Math.max(20, Math.min(90, Math.round(costScore + costPattern[index] + costVariation)))
                         };
                       })}
                       margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -745,17 +766,26 @@ const Results = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                       data={(() => {
-                        // Generate dynamic cost data based on real analysis
+                        // Generate consistent cost data per analysis
                         const baseCost = costScore < 50 ? 9500 : costScore < 70 ? 7800 : 6200;
                         const optimizationRate = numRecommendations > 3 ? 0.25 : numRecommendations > 1 ? 0.15 : 0.08;
                         
+                        const costVariations = [
+                          seededRandom() * 1000 - 500,
+                          seededRandom() * 1200 - 600, 
+                          seededRandom() * 800 - 400,
+                          seededRandom() * 1500 - 750,
+                          seededRandom() * 900 - 450,
+                          seededRandom() * 1100 - 550
+                        ];
+                        
                         return [
-                          { month: 'Jan', current: baseCost + (Math.random() * 1000 - 500), optimized: Math.round(baseCost * (1 - optimizationRate)) },
-                          { month: 'Feb', current: baseCost + (Math.random() * 1200 - 600), optimized: Math.round(baseCost * (1 - optimizationRate * 1.1)) },
-                          { month: 'Mar', current: baseCost + (Math.random() * 800 - 400), optimized: Math.round(baseCost * (1 - optimizationRate * 1.2)) },
-                          { month: 'Apr', current: baseCost + (Math.random() * 1500 - 750), optimized: Math.round(baseCost * (1 - optimizationRate * 1.3)) },
-                          { month: 'May', current: baseCost + (Math.random() * 900 - 450), optimized: Math.round(baseCost * (1 - optimizationRate * 1.4)) },
-                          { month: 'Jun', current: baseCost + (Math.random() * 1100 - 550), optimized: Math.round(baseCost * (1 - optimizationRate * 1.5)) }
+                          { month: 'Jan', current: Math.round(baseCost + costVariations[0]), optimized: Math.round(baseCost * (1 - optimizationRate)) },
+                          { month: 'Feb', current: Math.round(baseCost + costVariations[1]), optimized: Math.round(baseCost * (1 - optimizationRate * 1.1)) },
+                          { month: 'Mar', current: Math.round(baseCost + costVariations[2]), optimized: Math.round(baseCost * (1 - optimizationRate * 1.2)) },
+                          { month: 'Apr', current: Math.round(baseCost + costVariations[3]), optimized: Math.round(baseCost * (1 - optimizationRate * 1.3)) },
+                          { month: 'May', current: Math.round(baseCost + costVariations[4]), optimized: Math.round(baseCost * (1 - optimizationRate * 1.4)) },
+                          { month: 'Jun', current: Math.round(baseCost + costVariations[5]), optimized: Math.round(baseCost * (1 - optimizationRate * 1.5)) }
                         ];
                       })()} 
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
