@@ -175,25 +175,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fs.writeFileSync(tempFile, JSON.stringify(pdfData, null, 2));
 
       try {
-        // Execute Python PDF generation
-        const { stdout } = await execAsync(`cd backend && python -c "
+        // Execute Python PDF generation with file output
+        const pdfOutputFile = path.join(tempDir, `pdf_${analysisId}.pdf`);
+        
+        await execAsync(`cd backend && python -c "
 import sys, json
 sys.path.append('.')
 from utils.pdf_export import generate_analysis_pdf
-import base64
 
 with open('${tempFile}', 'r') as f:
     data = json.load(f)
 
 pdf_bytes = generate_analysis_pdf(data)
-pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
-print(pdf_base64)
-"`);
 
-        // Clean up temp file
+with open('${pdfOutputFile}', 'wb') as f:
+    f.write(pdf_bytes)
+    
+print('PDF generated successfully')
+"`, { maxBuffer: 1024 * 1024 * 50 }); // 50MB buffer
+
+        // Read the generated PDF file
+        if (!fs.existsSync(pdfOutputFile)) {
+          throw new Error('PDF file was not generated');
+        }
+
+        const pdfBuffer = fs.readFileSync(pdfOutputFile);
+        const pdfBase64 = pdfBuffer.toString('base64');
+
+        // Clean up temp files
         fs.unlinkSync(tempFile);
-
-        const pdfBase64 = stdout.trim();
+        fs.unlinkSync(pdfOutputFile);
         
         res.json({
           success: true,
@@ -203,9 +214,13 @@ print(pdf_base64)
 
       } catch (pythonError) {
         console.error('Python PDF generation error:', pythonError);
-        // Clean up temp file
+        // Clean up temp files
         if (fs.existsSync(tempFile)) {
           fs.unlinkSync(tempFile);
+        }
+        const pdfOutputFile = path.join(tempDir, `pdf_${analysisId}.pdf`);
+        if (fs.existsSync(pdfOutputFile)) {
+          fs.unlinkSync(pdfOutputFile);
         }
         res.status(500).json({ error: 'PDF generation failed' });
       }
