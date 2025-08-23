@@ -376,15 +376,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         doc.fontSize(12).fillColor('#000000').text('AI-POWERED RECOMMENDATIONS', 50, doc.y + 5);
         doc.moveDown(1.5);
         
-        // Display recommendations with simple formatting
+        // Display recommendations with proper parsing
         if (analysis.recommendations && analysis.recommendations.length > 0) {
           analysis.recommendations.slice(0, 4).forEach((recItem: any, index: number) => {
             let recText = '';
             
-            if (typeof recItem === 'object' && recItem !== null) {
-              recText = recItem.title || recItem.detail || recItem.description || String(recItem);
+            // Better object parsing
+            if (typeof recItem === 'string') {
+              recText = recItem;
+            } else if (recItem && typeof recItem === 'object') {
+              // Try different properties that might contain the text
+              recText = recItem.recommendation || recItem.title || recItem.description || 
+                       recItem.detail || recItem.text || recItem.content || 
+                       JSON.stringify(recItem).replace(/[{}\"]/g, '').substring(0, 200);
             } else {
-              recText = String(recItem);
+              recText = `Improve cloud architecture security and performance (Item ${index + 1})`;
             }
             
             const itemY = doc.y;
@@ -419,64 +425,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { label: 'Security & Monitoring', percentage: 10, color: '#6f42c1' }
         ];
         
-        // HORIZONTAL BAR CHART - SIMPLE AND VISIBLE
-        let currentX = 60;
+        // VERTICAL BAR CHART - MORE VISIBLE
+        const barChartX = 80;
+        const barChartY = chartY;
+        const maxBarHeight = 80;
+        const barWidth = 80;
+        
         costItems.forEach((item, index) => {
-          const width = (item.percentage / 100) * 480;
-          const height = 30;
+          const x = barChartX + (index * 100);
+          const barHeight = (item.percentage / 45) * maxBarHeight; // Scale to largest percentage
+          const y = barChartY + maxBarHeight - barHeight;
           
           // SOLID COLOR BAR
-          doc.rect(currentX, chartY, width, height).fillColor(item.color).fill();
-          doc.rect(currentX, chartY, width, height).strokeColor('#000000').stroke();
+          doc.rect(x, y, barWidth, barHeight).fillColor(item.color).fill();
+          doc.rect(x, y, barWidth, barHeight).strokeColor('#000000').stroke();
           
-          // PERCENTAGE LABEL - BLACK ON WHITE BACKGROUND
-          if (width > 40) {
-            doc.rect(currentX + 5, chartY + 5, 35, 20).fillColor('#ffffff').fill();
-            doc.fontSize(10).fillColor('#000000').text(`${item.percentage}%`, currentX + 8, chartY + 10);
-          }
+          // PERCENTAGE LABEL ON TOP
+          doc.fontSize(12).fillColor('#000000').text(`${item.percentage}%`, x + 20, y - 15);
           
-          currentX += width;
+          // LABEL BELOW
+          doc.fontSize(8).fillColor('#000000').text(item.label.split(' ')[0], x + 10, barChartY + maxBarHeight + 5);
+          doc.fontSize(8).fillColor('#000000').text(item.label.split(' ')[1] || '', x + 10, barChartY + maxBarHeight + 15);
         });
         
-        // SIMPLE PIE CHART USING CIRCLES
-        const pieChartX = 400;
-        const pieChartY = chartY + 50;
-        const pieRadius = 30;
+        // SIMPLIFIED PIE CHART AS COLORED RECTANGLES
+        const pieChartX = 450;
+        const pieChartY = chartY + 10;
         
-        // Draw pie segments as overlapping circles
-        let startAngle = 0;
+        // Create pie chart as stacked rectangles
         costItems.forEach((item, index) => {
-          const segmentAngle = (item.percentage / 100) * 360;
+          const segmentHeight = (item.percentage / 100) * 60;
+          const y = pieChartY + (index * 15);
           
-          // Create pie segment using multiple small circles
-          for (let angle = startAngle; angle < startAngle + segmentAngle; angle += 10) {
-            const radians = (angle * Math.PI) / 180;
-            const x = pieChartX + Math.cos(radians) * pieRadius;
-            const y = pieChartY + Math.sin(radians) * pieRadius;
-            doc.circle(x, y, 4).fillColor(item.color).fill();
-          }
+          // Pie segment as rectangle
+          doc.rect(pieChartX, y, 60, segmentHeight).fillColor(item.color).fill();
+          doc.rect(pieChartX, y, 60, segmentHeight).strokeColor('#000000').stroke();
           
-          startAngle += segmentAngle;
+          // Label next to segment
+          doc.fontSize(8).fillColor('#000000').text(`${item.percentage}%`, pieChartX + 70, y + 3);
         });
         
-        // SIMPLE LEGEND
-        doc.moveDown(3);
+        // ENHANCED LEGEND WITH BIGGER COLOR BOXES
+        doc.y = chartY + 110;
         const legendStartY = doc.y;
         costItems.forEach((item, index) => {
           const legendX = 60 + (index % 2) * 250;
-          const legendY = legendStartY + Math.floor(index / 2) * 25;
+          const legendY = legendStartY + Math.floor(index / 2) * 30;
           
-          // Simple legend box
-          doc.rect(legendX, legendY, 240, 20).fillColor('#ffffff').fill();
-          doc.rect(legendX, legendY, 240, 20).strokeColor('#000000').stroke();
+          // Bigger legend box
+          doc.rect(legendX, legendY, 240, 25).fillColor('#ffffff').fill();
+          doc.rect(legendX, legendY, 240, 25).strokeColor('#000000').stroke();
           
-          // Color indicator
-          doc.rect(legendX + 5, legendY + 5, 15, 10).fillColor(item.color).fill();
-          doc.rect(legendX + 5, legendY + 5, 15, 10).strokeColor('#000000').stroke();
+          // BIGGER color indicator
+          doc.rect(legendX + 8, legendY + 5, 25, 15).fillColor(item.color).fill();
+          doc.rect(legendX + 8, legendY + 5, 25, 15).strokeColor('#000000').stroke();
           
-          // Text labels
-          doc.fontSize(9).fillColor('#000000').text(item.label, legendX + 25, legendY + 7);
-          doc.fontSize(9).fillColor('#000000').text(`${item.percentage}%`, legendX + 200, legendY + 7);
+          // Bigger text labels
+          doc.fontSize(10).fillColor('#000000').text(item.label, legendX + 40, legendY + 10);
+          doc.fontSize(11).fillColor(item.color).text(`${item.percentage}%`, legendX + 200, legendY + 10);
         });
         
         // SIMPLE FOOTER
