@@ -160,126 +160,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
-      // Generate PDF directly with Node.js - reliable and fast
-      console.log('Generating PDF with direct Node.js approach...');
+      // Simple HTML to PDF approach - bulletproof
+      console.log('Generating PDF with simple HTML approach...');
       
       try {
-        const PDFDocument = require('pdfkit');
-        const fs = require('fs');
-        
-        // Create new PDF document
-        const doc = new PDFDocument();
-        const chunks: Buffer[] = [];
-        
-        // Collect PDF data
-        doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-        
-        const pdfPromise = new Promise<Buffer>((resolve) => {
-          doc.on('end', () => resolve(Buffer.concat(chunks)));
-        });
-
-        // Add premium header
-        doc.fontSize(24)
-           .font('Helvetica-Bold')
-           .fillColor('#2563eb')
-           .text('StackStage', 50, 50);
-           
-        doc.fontSize(16)
-           .fillColor('#374151')
-           .text('Premium Cloud Architecture Analysis Report', 50, 85);
-           
-        doc.fontSize(12)
-           .fillColor('#6b7280')
-           .text('Build with Confidence - Enterprise AI-Powered Insights', 50, 110);
-           
-        // Add analysis summary
-        doc.fontSize(18)
-           .fillColor('#1f2937')
-           .font('Helvetica-Bold')
-           .text('Executive Summary', 50, 160);
-           
         const score = analysis.score || 73;
         const scoreColor = score >= 80 ? '#10b981' : score >= 60 ? '#f59e0b' : '#ef4444';
         
-        doc.fontSize(14)
-           .fillColor(scoreColor)
-           .font('Helvetica-Bold')
-           .text(`Overall Architecture Score: ${score}/100`, 50, 190);
-           
-        // Add key metrics
-        let yPos = 220;
-        const metrics = [
-          ['Security Assessment', `${analysis.security_score || Math.max(40, score - 5)}/100`],
-          ['Performance Rating', `${analysis.performance_score || Math.max(45, score + 2)}/100`],
-          ['Cost Optimization', `${analysis.cost_score || Math.max(35, score - 10)}/100`],
-          ['Reliability Score', `${analysis.reliability_score || Math.max(40, score - 8)}/100`],
-          ['Analysis Date', new Date(analysis.timestamp || Date.now()).toLocaleDateString()],
-          ['Estimated Cost Impact', analysis.cost || 'Optimizing...']
-        ];
+        // Create HTML content
+        const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>StackStage Analysis Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; color: #374151; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .title { color: #2563eb; font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .subtitle { color: #6b7280; font-size: 16px; margin-bottom: 5px; }
+        .tagline { color: #6b7280; font-size: 12px; }
+        .section { margin: 30px 0; }
+        .section-title { color: #1f2937; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        .score { color: ${scoreColor}; font-size: 18px; font-weight: bold; margin: 20px 0; }
+        .metrics { margin: 20px 0; }
+        .metric { display: flex; margin: 10px 0; }
+        .metric-label { font-weight: bold; width: 200px; }
+        .metric-value { color: #6b7280; }
+        .issues, .recommendations { margin: 20px 0; }
+        .item { margin: 10px 0; padding-left: 20px; }
+        .issue { color: #ef4444; }
+        .recommendation { color: #10b981; }
+        .footer { text-align: center; margin-top: 60px; color: #6b7280; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">StackStage</div>
+        <div class="subtitle">Premium Cloud Architecture Analysis Report</div>
+        <div class="tagline">Build with Confidence - Enterprise AI-Powered Insights</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">Executive Summary</div>
+        <div class="score">Overall Architecture Score: ${score}/100</div>
         
-        metrics.forEach(([label, value]) => {
-          doc.fontSize(12)
-             .fillColor('#374151')
-             .font('Helvetica-Bold')
-             .text(`${label}:`, 50, yPos)
-             .font('Helvetica')
-             .fillColor('#6b7280')
-             .text(value, 200, yPos);
-          yPos += 25;
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-label">Security Assessment:</div>
+                <div class="metric-value">${analysis.security_score || Math.max(40, score - 5)}/100</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Performance Rating:</div>
+                <div class="metric-value">${analysis.performance_score || Math.max(45, score + 2)}/100</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Cost Optimization:</div>
+                <div class="metric-value">${analysis.cost_score || Math.max(35, score - 10)}/100</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Reliability Score:</div>
+                <div class="metric-value">${analysis.reliability_score || Math.max(40, score - 8)}/100</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Analysis Date:</div>
+                <div class="metric-value">${new Date(analysis.timestamp || Date.now()).toLocaleDateString()}</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Estimated Cost Impact:</div>
+                <div class="metric-value">${analysis.cost || 'Optimizing...'}</div>
+            </div>
+        </div>
+    </div>
+    
+    ${(analysis.issues && analysis.issues.length > 0) ? `
+    <div class="section">
+        <div class="section-title">Critical Issues Identified</div>
+        <div class="issues">
+            ${analysis.issues.slice(0, 8).map((issue: string, index: number) => 
+                `<div class="item issue">${index + 1}. ${issue}</div>`
+            ).join('')}
+        </div>
+    </div>
+    ` : ''}
+    
+    ${(analysis.recommendations && analysis.recommendations.length > 0) ? `
+    <div class="section">
+        <div class="section-title">AI-Powered Recommendations</div>
+        <div class="recommendations">
+            ${analysis.recommendations.slice(0, 8).map((rec: string, index: number) => 
+                `<div class="item recommendation">${index + 1}. ${rec}</div>`
+            ).join('')}
+        </div>
+    </div>
+    ` : ''}
+    
+    <div class="footer">
+        Generated by StackStage - Premium Cloud Architecture Analysis Platform
+    </div>
+</body>
+</html>`;
+
+        // Convert HTML to PDF using Puppeteer approach
+        const puppeteer = require('puppeteer');
+        
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         
-        // Add issues section
-        const issues = analysis.issues || [];
-        if (issues.length > 0) {
-          yPos += 20;
-          doc.fontSize(16)
-             .fillColor('#1f2937')
-             .font('Helvetica-Bold')
-             .text('Critical Issues Identified', 50, yPos);
-          yPos += 30;
-          
-          issues.slice(0, 8).forEach((issue: string, index: number) => {
-            doc.fontSize(11)
-               .fillColor('#ef4444')
-               .font('Helvetica-Bold')
-               .text(`${index + 1}.`, 50, yPos)
-               .font('Helvetica')
-               .fillColor('#374151')
-               .text(issue, 70, yPos, { width: 450 });
-            yPos += 25;
-          });
-        }
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
         
-        // Add recommendations section
-        const recommendations = analysis.recommendations || [];
-        if (recommendations.length > 0) {
-          yPos += 20;
-          doc.fontSize(16)
-             .fillColor('#1f2937')
-             .font('Helvetica-Bold')
-             .text('AI-Powered Recommendations', 50, yPos);
-          yPos += 30;
-          
-          recommendations.slice(0, 8).forEach((rec: string, index: number) => {
-            doc.fontSize(11)
-               .fillColor('#10b981')
-               .font('Helvetica-Bold')
-               .text(`${index + 1}.`, 50, yPos)
-               .font('Helvetica')
-               .fillColor('#374151')
-               .text(rec, 70, yPos, { width: 450 });
-            yPos += 25;
-          });
-        }
+        const pdfBuffer = await page.pdf({
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20px',
+            bottom: '20px',
+            left: '20px',
+            right: '20px'
+          }
+        });
         
-        // Add footer
-        doc.fontSize(10)
-           .fillColor('#6b7280')
-           .text('Generated by StackStage - Premium Cloud Architecture Analysis Platform', 50, 750);
+        await browser.close();
         
-        doc.end();
-        
-        const pdfBuffer = await pdfPromise;
         const pdfBase64 = pdfBuffer.toString('base64');
         
         res.json({
@@ -288,8 +293,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           filename: `StackStage_Analysis_Report_${analysisId}.pdf`
         });
 
-      } catch (directError) {
-        console.error('Direct PDF generation error:', directError);
+      } catch (simpleError) {
+        console.error('Simple PDF generation error:', simpleError);
         res.status(500).json({ error: 'PDF generation failed' });
       }
 
