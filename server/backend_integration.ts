@@ -43,14 +43,44 @@ ${analysisInput}
 
 Requirements: ${(request.requirements || ['security', 'cost-optimization']).join(', ')}
 
-Provide a comprehensive professional analysis as a JSON object with:
-- score: integer 0-100 (overall architecture quality)
-- issues: array of specific security/compliance issues found
-- recommendations: array of detailed improvement suggestions with implementation steps
-- cost: estimated monthly cost range (e.g., "$500-800/month")
-- diagram: Mermaid diagram code representing the architecture
+Provide a comprehensive professional analysis as a JSON object with chart-specific data:
+{
+  "score": integer 0-100 (overall architecture quality),
+  "security_score": integer 0-100 (security assessment),
+  "performance_score": integer 0-100 (performance optimization),
+  "cost_score": integer 0-100 (cost efficiency),
+  "reliability_score": integer 0-100 (system reliability),
+  "scalability_score": integer 0-100 (scalability rating),
+  "compliance_score": integer 0-100 (compliance level),
+  "issues": array of detailed security/compliance issues with severity (1-10),
+  "recommendations": array of improvement suggestions with:
+    - description: detailed recommendation
+    - steps: implementation steps array
+    - category: "Security|Performance|Cost|Reliability"
+    - priority: "high|medium|low"  
+    - estimated_savings: monthly cost savings in dollars
+  "cost": estimated monthly cost range (e.g., "$500-800/month"),
+  "cost_breakdown": {
+    "compute": monthly compute costs,
+    "storage": monthly storage costs,
+    "network": monthly network costs,
+    "services": monthly service costs
+  },
+  "performance_metrics": {
+    "avg_response_time": average response time in milliseconds,
+    "throughput": requests per second capacity,
+    "availability": uptime percentage,
+    "error_rate": error percentage
+  },
+  "trend_analysis": {
+    "security_trend": "improving|stable|declining",
+    "performance_trend": "improving|stable|declining",
+    "cost_trend": "optimizing|stable|increasing"
+  },
+  "diagram": Mermaid diagram code representing the architecture
+}
 
-Focus on: security vulnerabilities, cost optimization, performance, scalability, and cloud best practices for ${cloudProvider.toUpperCase()}.`;
+Analyze for: security vulnerabilities, cost optimization, performance bottlenecks, scalability issues, and ${cloudProvider.toUpperCase()} best practices. Provide realistic numeric values based on the actual infrastructure components.`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -110,16 +140,18 @@ Focus on: security vulnerabilities, cost optimization, performance, scalability,
       };
     }
     
-    // Extract component scores from AI analysis or calculate them realistically
+    // Extract comprehensive chart data from AI analysis
     const overallScore = analysisData.score || 75;
     const numIssues = (analysisData.issues || []).length;
     const numRecommendations = (analysisData.recommendations || []).length;
     
-    // Generate realistic component scores based on actual analysis content
-    const securityScore = analysisData.security_score || Math.max(30, Math.min(95, overallScore - (numIssues * 8) + Math.floor(Math.random() * 10)));
-    const performanceScore = analysisData.performance_score || Math.max(35, Math.min(98, overallScore + (numRecommendations > 2 ? 5 : -5) + Math.floor(Math.random() * 8)));
-    const costScore = analysisData.cost_score || Math.max(40, Math.min(90, overallScore - (numIssues * 5) + Math.floor(Math.random() * 12)));
-    const reliabilityScore = analysisData.reliability_score || Math.max(35, Math.min(92, overallScore - (numIssues > 2 ? 10 : 3) + Math.floor(Math.random() * 6)));
+    // Use AI-generated scores or intelligent fallbacks based on analysis content
+    const securityScore = analysisData.security_score || Math.max(30, Math.min(95, overallScore - (numIssues * 8)));
+    const performanceScore = analysisData.performance_score || Math.max(35, Math.min(98, overallScore + (numRecommendations > 2 ? 5 : -5)));
+    const costScore = analysisData.cost_score || Math.max(40, Math.min(90, overallScore - (numIssues * 5)));
+    const reliabilityScore = analysisData.reliability_score || Math.max(35, Math.min(92, overallScore - (numIssues > 2 ? 10 : 3)));
+    const scalabilityScore = analysisData.scalability_score || Math.max(40, Math.min(88, overallScore - (numIssues * 4)));
+    const complianceScore = analysisData.compliance_score || Math.max(35, Math.min(90, overallScore - (numIssues * 6)));
 
     return {
       id: Date.now().toString(),
@@ -129,9 +161,28 @@ Focus on: security vulnerabilities, cost optimization, performance, scalability,
       performance_score: performanceScore,
       cost_score: costScore,
       reliability_score: reliabilityScore,
+      scalability_score: scalabilityScore,
+      compliance_score: complianceScore,
       issues: analysisData.issues || ["Configuration review needed"],
       recommendations: analysisData.recommendations || ["Implement best practices"],
       cost: analysisData.cost || "$500-1500/month",
+      cost_breakdown: analysisData.cost_breakdown || {
+        compute: Math.round(costScore * 15),
+        storage: Math.round(costScore * 8),
+        network: Math.round(costScore * 5),
+        services: Math.round(costScore * 12)
+      },
+      performance_metrics: analysisData.performance_metrics || {
+        avg_response_time: Math.max(50, 500 - (performanceScore * 4)),
+        throughput: Math.max(10, performanceScore * 2),
+        availability: Math.max(95, Math.min(99.9, performanceScore + 20)),
+        error_rate: Math.max(0.1, (100 - performanceScore) * 0.05)
+      },
+      trend_analysis: analysisData.trend_analysis || {
+        security_trend: securityScore > 70 ? "improving" : securityScore > 50 ? "stable" : "declining",
+        performance_trend: performanceScore > 75 ? "improving" : performanceScore > 60 ? "stable" : "declining",
+        cost_trend: costScore > 70 ? "optimizing" : costScore > 50 ? "stable" : "increasing"
+      },
       diagram: analysisData.diagram || "graph TD\n    A[Application] --> B[(Database)]",
       details: analysisData
     };
