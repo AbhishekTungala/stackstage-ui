@@ -38,7 +38,8 @@ import {
   Cpu,
   HardDrive,
   Network,
-  Gauge
+  Gauge,
+  Info
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { useQuery } from "@tanstack/react-query";
