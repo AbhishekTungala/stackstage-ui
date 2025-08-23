@@ -132,30 +132,39 @@ const Results = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          analysisId: analysisId,
-          format: 'pdf',
-          includeCharts: true,
-          includeDiagrams: true
+          analysisId: analysisId
         }),
       });
 
-      if (response.ok) {
-        const blob = await response.blob();
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Convert base64 to blob and download
+        const byteCharacters = atob(result.pdf);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = `StackStage-Analysis-Report-${new Date().toISOString().split('T')[0]}.pdf`;
+        a.download = result.filename || `StackStage_Analysis_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        
+        console.log('Professional PDF report exported successfully');
       } else {
-        throw new Error('Failed to generate report');
+        throw new Error(result.error || 'Failed to generate report');
       }
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Failed to export report. Please try again.');
+      alert('Failed to export professional report. Please try again.');
     } finally {
       setIsExporting(false);
     }
