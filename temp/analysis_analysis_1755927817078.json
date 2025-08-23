@@ -1,0 +1,64 @@
+{
+  "id": "1755927817078",
+  "timestamp": "2025-08-23T05:43:37.078Z",
+  "score": 65,
+  "issues": [
+    "The S3 bucket is configured with 'force_destroy = true', which allows for the deletion of the bucket even if it contains objects, posing a risk of accidental data loss.",
+    "The bucket lacks versioning, which is essential for data recovery and protection against accidental deletions.",
+    "There are no bucket policies or access control lists (ACLs) defined, which could lead to unauthorized access if the bucket is publicly accessible.",
+    "No logging is enabled for the S3 bucket, which is crucial for auditing and monitoring access to the bucket."
+  ],
+  "recommendations": [
+    {
+      "suggestion": "Remove 'force_destroy = true' from the bucket configuration.",
+      "implementation_steps": [
+        "Edit the Terraform configuration to remove the 'force_destroy' line.",
+        "Apply the changes using 'terraform apply' to update the infrastructure."
+      ]
+    },
+    {
+      "suggestion": "Enable versioning on the S3 bucket.",
+      "implementation_steps": [
+        "Add the following block to the Terraform configuration: 'versioning { enabled = true }'.",
+        "Run 'terraform apply' to enable versioning."
+      ]
+    },
+    {
+      "suggestion": "Define bucket policies or ACLs to restrict access.",
+      "implementation_steps": [
+        "Determine the required access levels for users and services.",
+        "Add a 'bucket_policy' block to the Terraform configuration to specify access permissions.",
+        "Apply the changes using 'terraform apply'."
+      ]
+    },
+    {
+      "suggestion": "Enable server access logging for the S3 bucket.",
+      "implementation_steps": [
+        "Create a separate S3 bucket for logs.",
+        "Add the logging configuration to the main bucket: 'logging { target_bucket = <log_bucket_name> }'.",
+        "Run 'terraform apply' to enable logging."
+      ]
+    }
+  ],
+  "cost": "$10-50/month",
+  "diagram": "graph TD;\n    A[S3 Bucket] -->|stores| B[Data];\n    A -->|access| C[Users];\n    A -->|logs| D[Logging Bucket];",
+  "details": {
+    "security_grade": "N/A",
+    "scalability_score": 55,
+    "reliability_score": 50,
+    "cost_efficiency": "N/A",
+    "performance_rating": "N/A",
+    "compliance_status": "Partially Compliant"
+  },
+  "mode": "comprehensive",
+  "provider": "",
+  "analysis_id": "analysis_1755927817078",
+  "estimated_cost": "$10-50/month",
+  "chart_data": {
+    "overall_score": 65,
+    "security_score": 60,
+    "performance_score": 67,
+    "cost_score": 55,
+    "reliability_score": 57
+  }
+}
