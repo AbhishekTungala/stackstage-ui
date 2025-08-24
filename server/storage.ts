@@ -4,6 +4,8 @@ import {
   type UpsertUser, 
   type UpdateUserProfile 
 } from "@shared/schema";
+import fs from 'fs';
+import path from 'path';
 
 // Storage interface for Replit Auth and Profile Management
 export interface IStorage {
@@ -25,11 +27,44 @@ export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private analyses: Map<string, any>;
   private chatSessions: Map<string, any[]>;
+  private storageDir: string;
 
   constructor() {
     this.users = new Map();
     this.analyses = new Map();
     this.chatSessions = new Map();
+    this.storageDir = path.join(process.cwd(), '.storage');
+    this.ensureStorageDir();
+    this.loadPersistedData();
+  }
+
+  private ensureStorageDir() {
+    if (!fs.existsSync(this.storageDir)) {
+      fs.mkdirSync(this.storageDir, { recursive: true });
+    }
+  }
+
+  private loadPersistedData() {
+    try {
+      const analysesFile = path.join(this.storageDir, 'analyses.json');
+      if (fs.existsSync(analysesFile)) {
+        const data = JSON.parse(fs.readFileSync(analysesFile, 'utf8'));
+        this.analyses = new Map(Object.entries(data));
+        console.log(`Loaded ${this.analyses.size} persisted analyses`);
+      }
+    } catch (error) {
+      console.warn('Failed to load persisted analyses:', error);
+    }
+  }
+
+  private persistAnalyses() {
+    try {
+      const analysesFile = path.join(this.storageDir, 'analyses.json');
+      const data = Object.fromEntries(this.analyses);
+      fs.writeFileSync(analysesFile, JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.warn('Failed to persist analyses:', error);
+    }
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -82,10 +117,19 @@ export class MemStorage implements IStorage {
 
   async storeAnalysis(id: string, analysis: any): Promise<void> {
     this.analyses.set(id, analysis);
+    this.persistAnalyses();
+    console.log(`Stored analysis: ${id}`);
   }
 
   async getAnalysis(id: string): Promise<any | null> {
-    return this.analyses.get(id) || null;
+    const result = this.analyses.get(id) || null;
+    if (result) {
+      console.log(`Retrieved analysis: ${id}`);
+    } else {
+      console.log(`Analysis not found: ${id}`);
+      console.log(`Available analyses: ${Array.from(this.analyses.keys()).join(', ')}`);
+    }
+    return result;
   }
 
   async storeChatSession(sessionId: string, messages: any[]): Promise<void> {

@@ -1,0 +1,179 @@
+{
+  "analysis_1756038001090": {
+    "id": "1756038001090",
+    "timestamp": "2025-08-24T12:20:01.090Z",
+    "score": 65,
+    "security_score": 60,
+    "performance_score": 70,
+    "cost_score": 80,
+    "reliability_score": 75,
+    "scalability_score": 65,
+    "compliance_score": 70,
+    "issues": [
+      {
+        "issue": "No security group defined",
+        "severity": 8
+      },
+      {
+        "issue": "Using a public AMI without verification",
+        "severity": 7
+      },
+      {
+        "issue": "No monitoring or logging enabled",
+        "severity": 6
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Define a security group with restrictive inbound rules.",
+        "steps": [
+          "Create a new security group.",
+          "Add rules to allow only necessary traffic (e.g., HTTP, HTTPS).",
+          "Attach the security group to the EC2 instance."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Use a verified AMI from a trusted source.",
+        "steps": [
+          "Research and select a verified AMI.",
+          "Update the instance configuration with the new AMI ID."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Enable CloudWatch monitoring and logging.",
+        "steps": [
+          "Create a CloudWatch log group.",
+          "Install and configure the CloudWatch agent on the instance.",
+          "Set up alarms for critical metrics."
+        ],
+        "category": "Reliability",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Consider using an Auto Scaling group for better scalability.",
+        "steps": [
+          "Create an Auto Scaling group with desired capacity.",
+          "Define scaling policies based on CPU utilization.",
+          "Test the scaling functionality."
+        ],
+        "category": "Scalability",
+        "priority": "medium",
+        "estimated_savings": 0
+      }
+    ],
+    "cost": "$10-15/month",
+    "cost_breakdown": {
+      "compute": "$10",
+      "storage": "$2",
+      "network": "$1",
+      "services": "$2"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 50,
+      "availability": 99.5,
+      "error_rate": 1.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[aws_instance:web] --> B[Security Group];\n    A --> C[CloudWatch];\n    A --> D[Auto Scaling];",
+    "details": {
+      "score": 65,
+      "security_score": 60,
+      "performance_score": 70,
+      "cost_score": 80,
+      "reliability_score": 75,
+      "scalability_score": 65,
+      "compliance_score": 70,
+      "issues": [
+        {
+          "issue": "No security group defined",
+          "severity": 8
+        },
+        {
+          "issue": "Using a public AMI without verification",
+          "severity": 7
+        },
+        {
+          "issue": "No monitoring or logging enabled",
+          "severity": 6
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Define a security group with restrictive inbound rules.",
+          "steps": [
+            "Create a new security group.",
+            "Add rules to allow only necessary traffic (e.g., HTTP, HTTPS).",
+            "Attach the security group to the EC2 instance."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Use a verified AMI from a trusted source.",
+          "steps": [
+            "Research and select a verified AMI.",
+            "Update the instance configuration with the new AMI ID."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Enable CloudWatch monitoring and logging.",
+          "steps": [
+            "Create a CloudWatch log group.",
+            "Install and configure the CloudWatch agent on the instance.",
+            "Set up alarms for critical metrics."
+          ],
+          "category": "Reliability",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Consider using an Auto Scaling group for better scalability.",
+          "steps": [
+            "Create an Auto Scaling group with desired capacity.",
+            "Define scaling policies based on CPU utilization.",
+            "Test the scaling functionality."
+          ],
+          "category": "Scalability",
+          "priority": "medium",
+          "estimated_savings": 0
+        }
+      ],
+      "cost": "$10-15/month",
+      "cost_breakdown": {
+        "compute": "$10",
+        "storage": "$2",
+        "network": "$1",
+        "services": "$2"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 50,
+        "availability": 99.5,
+        "error_rate": 1.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[aws_instance:web] --> B[Security Group];\n    A --> C[CloudWatch];\n    A --> D[Auto Scaling];"
+    },
+    "mode": "comprehensive"
+  }
+}
