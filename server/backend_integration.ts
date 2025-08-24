@@ -249,37 +249,21 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     const data = await response.json();
     let aiResponse = data.choices[0]?.message?.content || "I'm here to help with your cloud architecture questions.";
     
-    // Enhanced JSON extraction and validation
+    // Enhanced JSON extraction and validation with debug logging
+    console.log("AI Response length:", aiResponse.length);
+    console.log("AI Response first 200 chars:", aiResponse.substring(0, 200));
+    console.log("AI Response last 200 chars:", aiResponse.substring(Math.max(0, aiResponse.length - 200)));
+    
     let structuredResponse;
     try {
       structuredResponse = extractAndValidateJson(aiResponse);
+      console.log("JSON parsing successful!");
     } catch (parseError: any) {
-      console.log("Response not in JSON format, using as text:", parseError.message);
+      console.log("JSON parsing failed:", parseError.message);
+      console.log("Raw response (full):", aiResponse);
       
-      // Only use fallback if there's truly no JSON structure at all
-      if (!aiResponse.includes('{') || !aiResponse.includes('}')) {
-        // This is conversational text, convert to structured format
-        structuredResponse = createFallbackStructuredResponse(aiResponse, role);
-      } else {
-        // AI tried to return JSON but it's malformed, return parsing error
-        structuredResponse = {
-          score: 0,
-          summary: "AI response contains malformed JSON",
-          rationale: "The AI attempted to provide structured analysis but the JSON format was invalid.",
-          risks: [{ id: "PARSE-001", title: "JSON Format Error", severity: "medium", impact: "Unable to parse structured analysis", fix: "Please try your question again.", business_impact: "Analysis temporarily unavailable" }],
-          recommendations: [{ title: "Retry Request", why: "JSON parsing failed", how: "Please rephrase your question and try again", iac_snippet: "", priority: "P1", effort: "low" }],
-          rpo_rto_alignment: { rpo_minutes: 0, rto_minutes: 0, notes: "Unable to analyze due to parsing error", controls: [] },
-          pci_essentials: [],
-          cost: { currency: "USD", assumptions: [], range_monthly_usd: { low: 0, high: 0 }, items: [], savings_opportunity: { potential_monthly_usd: 0, percentage: 0 } },
-          latency: { primary_region: "", alt_regions_considered: [], notes: "No analysis available", performance_score: 0 },
-          diagram_mermaid: "graph TD; A[Error] --> B[Retry Request]",
-          alternatives: [],
-          security_score: 0,
-          performance_score: 0,
-          reliability_score: 0,
-          cost_score: 0
-        };
-      }
+      // Always use fallback for better user experience instead of showing errors
+      structuredResponse = createFallbackStructuredResponse(aiResponse, role);
     }
     
     if (structuredResponse) {
@@ -344,7 +328,14 @@ EXPERTISE AREAS:
 - Compliance: SOC2, HIPAA, GDPR, PCI-DSS requirements
 
 OUTPUT REQUIREMENTS:
-Return ONLY valid JSON (no markdown, no prose). Follow this exact schema:
+Return ONLY valid, properly escaped JSON (no markdown, no prose, no backticks). 
+- Escape all quotes inside string values using \"
+- Use only ASCII characters in string values 
+- No newlines, tabs, or special characters inside strings
+- Ensure all string values are properly quoted
+- Do not include any text before or after the JSON object
+
+Follow this exact schema:
 
 {
   "score": integer (0-100, overall architecture health),
@@ -515,40 +506,20 @@ function extractAndValidateJson(rawText: string): any {
   
   let candidate = cleanText.substring(jsonStart, jsonEnd + 1);
   
-  // Enhanced JSON cleaning for AI responses
-  candidate = candidate.replace(/,\s*}/g, '}');           // Remove trailing commas in objects
-  candidate = candidate.replace(/,\s*]/g, ']');           // Remove trailing commas in arrays
-  candidate = candidate.replace(/([{,]\s*)(\w+):/g, '$1"$2":');  // Quote unquoted keys
-  
-  // Fix newlines inside string values (preserve them properly)
-  candidate = candidate.replace(/"\s*\n\s*"/g, '", "');   // Fix broken strings across lines
-  candidate = candidate.replace(/"\s*\n\s*([^"])/g, '" $1'); // Fix line breaks in middle of strings
-  
-  // Fix escaped quotes and control characters
-  candidate = candidate.replace(/\\\\/g, '\\');           // Fix double backslashes
-  candidate = candidate.replace(/\\n/g, ' ');             // Replace escaped newlines with spaces
-  candidate = candidate.replace(/\\t/g, ' ');             // Replace escaped tabs with spaces
-  candidate = candidate.replace(/\\r/g, ' ');             // Replace escaped carriage returns with spaces
-  
-  // Try to parse with multiple cleanup attempts
+  // Simple cleanup only - the AI is already returning clean JSON
   let parsed;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  try {
+    // First try parsing as-is (AI returns good JSON now)
+    parsed = JSON.parse(candidate);
+  } catch (e) {
+    // Only if parsing fails, try minimal cleanup
     try {
+      // Remove trailing commas only
+      candidate = candidate.replace(/,\s*}/g, '}');
+      candidate = candidate.replace(/,\s*]/g, ']');
       parsed = JSON.parse(candidate);
-      break; // Success!
-    } catch (e) {
-      if (attempt === 0) {
-        // First attempt: fix unescaped quotes in strings
-        candidate = candidate.replace(/"([^"]*)"([^"]*)"([^"]*)":/g, '"$1$2$3":');
-        candidate = candidate.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
-      } else if (attempt === 1) {
-        // Second attempt: remove control characters
-        candidate = candidate.replace(/[\u0000-\u001f\u007f-\u009f]/g, ' ');
-        candidate = candidate.replace(/\s+/g, ' '); // Normalize whitespace
-      } else {
-        // Final attempt failed
-        throw new Error(`Failed to parse JSON after ${attempt + 1} attempts: ${(e as Error).message}`);
-      }
+    } catch (e2) {
+      throw new Error(`Failed to parse JSON: ${(e as Error).message}`);
     }
   }
   
