@@ -255,8 +255,31 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
       structuredResponse = extractAndValidateJson(aiResponse);
     } catch (parseError: any) {
       console.log("Response not in JSON format, using as text:", parseError.message);
-      // If JSON parsing fails, treat as conversational text but still return structured format
-      structuredResponse = createFallbackStructuredResponse(aiResponse, role);
+      
+      // Only use fallback if there's truly no JSON structure at all
+      if (!aiResponse.includes('{') || !aiResponse.includes('}')) {
+        // This is conversational text, convert to structured format
+        structuredResponse = createFallbackStructuredResponse(aiResponse, role);
+      } else {
+        // AI tried to return JSON but it's malformed, return parsing error
+        structuredResponse = {
+          score: 0,
+          summary: "AI response contains malformed JSON",
+          rationale: "The AI attempted to provide structured analysis but the JSON format was invalid.",
+          risks: [{ id: "PARSE-001", title: "JSON Format Error", severity: "medium", impact: "Unable to parse structured analysis", fix: "Please try your question again.", business_impact: "Analysis temporarily unavailable" }],
+          recommendations: [{ title: "Retry Request", why: "JSON parsing failed", how: "Please rephrase your question and try again", iac_snippet: "", priority: "P1", effort: "low" }],
+          rpo_rto_alignment: { rpo_minutes: 0, rto_minutes: 0, notes: "Unable to analyze due to parsing error", controls: [] },
+          pci_essentials: [],
+          cost: { currency: "USD", assumptions: [], range_monthly_usd: { low: 0, high: 0 }, items: [], savings_opportunity: { potential_monthly_usd: 0, percentage: 0 } },
+          latency: { primary_region: "", alt_regions_considered: [], notes: "No analysis available", performance_score: 0 },
+          diagram_mermaid: "graph TD; A[Error] --> B[Retry Request]",
+          alternatives: [],
+          security_score: 0,
+          performance_score: 0,
+          reliability_score: 0,
+          cost_score: 0
+        };
+      }
     }
     
     if (structuredResponse) {
@@ -482,7 +505,7 @@ function extractAndValidateJson(rawText: string): any {
   let cleanText = rawText.trim();
   cleanText = cleanText.replace(/^```json?\s*/, '').replace(/\s*```$/, '');
   
-  // Find JSON boundaries
+  // Find JSON boundaries - look for the outermost braces
   const jsonStart = cleanText.indexOf('{');
   const jsonEnd = cleanText.lastIndexOf('}');
   
@@ -492,29 +515,40 @@ function extractAndValidateJson(rawText: string): any {
   
   let candidate = cleanText.substring(jsonStart, jsonEnd + 1);
   
-  // Fix common JSON issues
+  // Enhanced JSON cleaning for AI responses
   candidate = candidate.replace(/,\s*}/g, '}');           // Remove trailing commas in objects
   candidate = candidate.replace(/,\s*]/g, ']');           // Remove trailing commas in arrays
   candidate = candidate.replace(/([{,]\s*)(\w+):/g, '$1"$2":');  // Quote unquoted keys
-  candidate = candidate.replace(/\n/g, '\\n');            // Escape newlines
-  candidate = candidate.replace(/\t/g, '\\t');            // Escape tabs
-  candidate = candidate.replace(/\r/g, '\\r');            // Escape carriage returns
   
-  // Try to parse, with multiple fallback attempts
+  // Fix newlines inside string values (preserve them properly)
+  candidate = candidate.replace(/"\s*\n\s*"/g, '", "');   // Fix broken strings across lines
+  candidate = candidate.replace(/"\s*\n\s*([^"])/g, '" $1'); // Fix line breaks in middle of strings
+  
+  // Fix escaped quotes and control characters
+  candidate = candidate.replace(/\\\\/g, '\\');           // Fix double backslashes
+  candidate = candidate.replace(/\\n/g, ' ');             // Replace escaped newlines with spaces
+  candidate = candidate.replace(/\\t/g, ' ');             // Replace escaped tabs with spaces
+  candidate = candidate.replace(/\\r/g, ' ');             // Replace escaped carriage returns with spaces
+  
+  // Try to parse with multiple cleanup attempts
   let parsed;
-  try {
-    parsed = JSON.parse(candidate);
-  } catch (e) {
-    // If parsing fails, try to fix more complex issues
+  for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      // Remove problematic characters that often cause JSON errors
-      candidate = candidate.replace(/[\u0000-\u001f\u007f-\u009f]/g, '');
-      candidate = candidate.replace(/\\/g, '\\\\');  // Escape backslashes
-      candidate = candidate.replace(/"/g, '\\"').replace(/\\"/g, '"').replace(/\\\\"([^"]*)\\\\":/g, '"$1":');
       parsed = JSON.parse(candidate);
-    } catch (e2) {
-      // Final fallback - try to extract just the basic structure
-      throw new Error(`Failed to parse JSON even after cleanup: ${(e as Error).message}`);
+      break; // Success!
+    } catch (e) {
+      if (attempt === 0) {
+        // First attempt: fix unescaped quotes in strings
+        candidate = candidate.replace(/"([^"]*)"([^"]*)"([^"]*)":/g, '"$1$2$3":');
+        candidate = candidate.replace(/"([^"]*)"([^"]*)"([^"]*)"/g, '"$1$2$3"');
+      } else if (attempt === 1) {
+        // Second attempt: remove control characters
+        candidate = candidate.replace(/[\u0000-\u001f\u007f-\u009f]/g, ' ');
+        candidate = candidate.replace(/\s+/g, ' '); // Normalize whitespace
+      } else {
+        // Final attempt failed
+        throw new Error(`Failed to parse JSON after ${attempt + 1} attempts: ${(e as Error).message}`);
+      }
     }
   }
   
