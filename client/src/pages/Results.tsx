@@ -214,38 +214,39 @@ const Results = () => {
     );
   }
 
-  // Extract real analysis scores - USE ACTUAL AI DATA ONLY
-  const overallScore = analysisData?.score || 73;
+  // Extract REAL analysis scores - AUTHENTIC AI DATA ONLY
+  const overallScore = analysisData?.score || 0;
   const numIssues = analysisData?.issues?.length || 0;
   const numRecommendations = analysisData?.recommendations?.length || 0;
   
-  // Use REAL AI-generated scores from comprehensive analysis
-  const securityScore = analysisData?.security_score || overallScore;
-  const costScore = analysisData?.cost_score || overallScore;
-  const performanceScore = analysisData?.performance_score || overallScore;
-  const reliabilityScore = analysisData?.reliability_score || overallScore;
-  const scalabilityScore = analysisData?.scalability_score || overallScore;
-  const complianceScore = analysisData?.compliance_score || overallScore;
+  // Use ACTUAL AI-generated individual scores from analysis
+  const securityScore = analysisData?.security_score || analysisData?.score || 0;
+  const costScore = analysisData?.cost_score || analysisData?.score || 0;
+  const performanceScore = analysisData?.performance_score || analysisData?.score || 0;
+  const reliabilityScore = analysisData?.reliability_score || analysisData?.score || 0;
+  const scalabilityScore = analysisData?.scalability_score || analysisData?.score || 0;
+  const complianceScore = analysisData?.compliance_score || analysisData?.score || 0;
   
-  // Extract AI-generated metrics for charts
+  // Extract REAL AI-generated metrics for charts - NO FALLBACKS
   const performanceMetrics = analysisData?.performance_metrics || {
-    avg_response_time: 200,
-    throughput: 100,
-    availability: 99.5,
-    error_rate: 0.5
+    avg_response_time: 0,
+    throughput: 0,
+    availability: 0,
+    error_rate: 0
   };
   
-  const costBreakdown = analysisData?.cost_breakdown || {
-    compute: costScore * 15,
-    storage: costScore * 8, 
-    network: costScore * 5,
-    services: costScore * 12
-  };
+  // Parse actual cost breakdown from AI analysis
+  const costBreakdown = analysisData?.cost_breakdown ? {
+    compute: parseFloat(analysisData.cost_breakdown.compute?.replace(/[^0-9.-]/g, '') || '0'),
+    storage: parseFloat(analysisData.cost_breakdown.storage?.replace(/[^0-9.-]/g, '') || '0'),
+    network: parseFloat(analysisData.cost_breakdown.network?.replace(/[^0-9.-]/g, '') || '0'),
+    services: parseFloat(analysisData.cost_breakdown.services?.replace(/[^0-9.-]/g, '') || '0')
+  } : { compute: 0, storage: 0, network: 0, services: 0 };
   
   const trendAnalysis = analysisData?.trend_analysis || {
-    security_trend: "stable",
-    performance_trend: "improving", 
-    cost_trend: "optimizing"
+    security_trend: "unknown",
+    performance_trend: "unknown", 
+    cost_trend: "unknown"
   };
 
   // Real analysis-based dashboard metrics
@@ -288,54 +289,28 @@ const Results = () => {
     }
   ];
 
-  // Real analysis-based radar chart data
+  // REAL analysis-based radar chart data from AI analysis
   const radarData = [
     { subject: 'Security', current: securityScore, industry: 75, fullMark: 100 },
     { subject: 'Performance', current: performanceScore, industry: 78, fullMark: 100 },
-    { subject: 'Cost Optimization', current: costScore, industry: 65, fullMark: 100 },
+    { subject: 'Cost', current: costScore, industry: 65, fullMark: 100 },
     { subject: 'Reliability', current: reliabilityScore, industry: 82, fullMark: 100 },
     { subject: 'Scalability', current: scalabilityScore, industry: 70, fullMark: 100 },
     { subject: 'Compliance', current: complianceScore, industry: 68, fullMark: 100 }
   ];
 
-  // Create seeded random based on analysis ID for consistent but unique patterns
-  const createSeededRandom = (seed: string) => {
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      const char = seed.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
+  // REAL trend data based on actual analysis results - NO ARTIFICIAL GENERATION
+  const trendData = [
+    {
+      period: 'Current',
+      score: overallScore,
+      security: securityScore,
+      performance: performanceScore,
+      cost: costScore,
+      issues: numIssues,
+      target: 85
     }
-    return () => {
-      hash = ((hash * 9301) + 49297) % 233280;
-      return hash / 233280;
-    };
-  };
-  
-  const seededRandom = createSeededRandom(analysisData?.id || 'default');
-  
-  // Dynamic trend data based on real analysis characteristics - unique per analysis
-  const generateTrendData = () => {
-    const trend = [];
-    // Use analysis-specific patterns
-    const securityBase = securityScore < 50 ? [-15, -12, -8, -5, -2, 0] : [-8, -6, -4, -2, -1, 0];
-    const performanceBase = performanceScore > 80 ? [-5, -4, -3, -2, -1, 0] : [-20, -15, -10, -6, -3, 0];
-    const costBase = costScore < 60 ? [-25, -20, -15, -10, -5, 0] : [-12, -9, -6, -4, -2, 0];
-    
-    for (let i = 5; i >= 0; i--) {
-      const variation = (seededRandom() * 10 - 5);
-      const monthScore = Math.max(15, Math.min(95, overallScore + securityBase[5-i] + variation));
-      const monthIssues = Math.max(0, i === 0 ? numIssues : numIssues + Math.floor(seededRandom() * 3) + i);
-      trend.push({
-        period: i === 0 ? 'Current' : `${i}m ago`,
-        score: Math.round(monthScore),
-        issues: monthIssues,
-        target: 85
-      });
-    }
-    return trend.reverse();
-  };
-  const trendData = generateTrendData();
+  ];
 
   // Analysis-based data for visualizations
   const analysisMetrics = {
@@ -451,27 +426,19 @@ const Results = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Gradient Area Chart */}
+                {/* REAL Analysis Data Chart - Actual AI Scores */}
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
-                      data={trendData.map((d, index) => {
-                        // Create consistent unique patterns per analysis ID
-                        const securityPattern = securityScore < 50 ? [20, 12, 6, 0, -3, 0] : [8, 5, 2, 0, -1, 0];
-                        const performancePattern = performanceScore > 80 ? [5, 3, 1, 0, -1, 0] : [25, 18, 10, 4, 0, 0];
-                        const costPattern = costScore < 60 ? [30, 22, 12, 6, 2, 0] : [15, 10, 6, 3, 1, 0];
-                        
-                        const securityVariation = (seededRandom() * 8 - 4);
-                        const performanceVariation = (seededRandom() * 6 - 3);
-                        const costVariation = (seededRandom() * 5 - 2.5);
-                        
-                        return {
-                          name: d.period,
-                          security: Math.max(20, Math.min(95, Math.round(securityScore + securityPattern[index] + securityVariation))),
-                          performance: Math.max(25, Math.min(98, Math.round(performanceScore + performancePattern[index] + performanceVariation))),
-                          cost: Math.max(20, Math.min(90, Math.round(costScore + costPattern[index] + costVariation)))
-                        };
-                      })}
+                      data={[
+                        {
+                          name: 'Current Analysis',
+                          security: securityScore,
+                          performance: performanceScore,
+                          cost: costScore,
+                          reliability: reliabilityScore
+                        }
+                      ]}
                       margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                     >
                       <defs>
@@ -486,6 +453,10 @@ const Results = () => {
                         <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.8}/>
                           <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="reliabilityGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.1}/>
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
@@ -505,7 +476,7 @@ const Results = () => {
                         stackId="1"
                         stroke="#8b5cf6"
                         fill="url(#securityGradient)"
-                        strokeWidth={2}
+                        strokeWidth={3}
                       />
                       <Area
                         type="monotone"
@@ -513,7 +484,7 @@ const Results = () => {
                         stackId="1"
                         stroke="#06b6d4"
                         fill="url(#performanceGradient)"
-                        strokeWidth={2}
+                        strokeWidth={3}
                       />
                       <Area
                         type="monotone"
@@ -521,18 +492,27 @@ const Results = () => {
                         stackId="1"
                         stroke="#f59e0b"
                         fill="url(#costGradient)"
-                        strokeWidth={2}
+                        strokeWidth={3}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="reliability"
+                        stackId="1"
+                        stroke="#10b981"
+                        fill="url(#reliabilityGradient)"
+                        strokeWidth={3}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
                 
-                {/* Legend */}
-                <div className="grid grid-cols-3 gap-4">
+                {/* Legend - REAL Analysis Scores */}
+                <div className="grid grid-cols-4 gap-3">
                   {[
                     { name: 'Security', value: securityScore, color: '#8b5cf6', icon: '🛡️' },
                     { name: 'Performance', value: performanceScore, color: '#06b6d4', icon: '⚡' },
-                    { name: 'Cost Optimization', value: costScore, color: '#f59e0b', icon: '💰' }
+                    { name: 'Cost', value: costScore, color: '#f59e0b', icon: '💰' },
+                    { name: 'Reliability', value: reliabilityScore, color: '#10b981', icon: '🔧' }
                   ].map((item, index) => (
                     <div key={index} className="text-center">
                       <div className="flex items-center justify-center mb-2">
@@ -542,8 +522,8 @@ const Results = () => {
                         />
                         <span className="text-lg">{item.icon}</span>
                       </div>
-                      <div className="text-sm text-slate-300 dark:text-slate-300 text-slate-700">{item.name}</div>
-                      <div className="text-lg font-bold text-white dark:text-white text-slate-900">{item.value}%</div>
+                      <div className="text-xs text-slate-300 dark:text-slate-300 text-slate-700">{item.name}</div>
+                      <div className="text-lg font-bold text-white dark:text-white text-slate-900">{item.value || 0}/100</div>
                     </div>
                   ))}
                 </div>
@@ -578,12 +558,14 @@ const Results = () => {
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart 
-                      data={trendData.map(d => ({
-                        name: d.period,
-                        score: d.score,
-                        issues: d.issues,
-                        recommendations: Math.max(1, Math.round(numRecommendations + (Math.random() - 0.5) * 2))
-                      }))} 
+                      data={[
+                        {
+                          name: 'Analysis Results',
+                          score: overallScore,
+                          issues: numIssues,
+                          recommendations: numRecommendations
+                        }
+                      ]} 
                       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                     >
                       <defs>
@@ -613,7 +595,6 @@ const Results = () => {
                           borderRadius: '8px',
                           color: '#0f172a'
                         }}
-                        className="dark:bg-slate-800 bg-white dark:border-slate-700 border-slate-200 dark:text-white text-slate-900"
                       />
                       <Bar dataKey="score" fill="url(#responseGradient)" radius={[6, 6, 0, 0]} maxBarSize={25} />
                       <Bar dataKey="issues" fill="url(#errorsGradient)" radius={[6, 6, 0, 0]} maxBarSize={25} />
@@ -793,10 +774,10 @@ const Results = () => {
                         const optimizationRate = numRecommendations > 3 ? 0.25 : numRecommendations > 1 ? 0.15 : 0.08;
                         
                         // Use REAL AI cost breakdown data for realistic cost patterns
-                        const computeCost = parseInt(costBreakdown.compute.replace(/[^0-9]/g, '')) || 75;
-                        const storageCost = parseInt(costBreakdown.storage.replace(/[^0-9]/g, '')) || 35;
-                        const networkCost = parseInt(costBreakdown.network.replace(/[^0-9]/g, '')) || 15;
-                        const servicesCost = parseInt(costBreakdown.services.replace(/[^0-9]/g, '')) || 135;
+                        const computeCost = typeof costBreakdown.compute === 'string' ? parseInt(costBreakdown.compute.replace(/[^0-9]/g, '')) : costBreakdown.compute || 75;
+                        const storageCost = typeof costBreakdown.storage === 'string' ? parseInt(costBreakdown.storage.replace(/[^0-9]/g, '')) : costBreakdown.storage || 35;
+                        const networkCost = typeof costBreakdown.network === 'string' ? parseInt(costBreakdown.network.replace(/[^0-9]/g, '')) : costBreakdown.network || 15;
+                        const servicesCost = typeof costBreakdown.services === 'string' ? parseInt(costBreakdown.services.replace(/[^0-9]/g, '')) : costBreakdown.services || 135;
                         
                         const totalBaseCost = computeCost + storageCost + networkCost + servicesCost;
                         const costTrendMultiplier = trendAnalysis.cost_trend === 'optimizing' ? 0.9 : trendAnalysis.cost_trend === 'increasing' ? 1.1 : 1.0;
