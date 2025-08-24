@@ -666,14 +666,14 @@ Select your role below to get personalized recommendations, or ask me anything a
                   </CardHeader>
 
                   {/* Messages Area */}
-                  <ScrollArea className="flex-1 p-4 h-[calc(100vh-28rem)] overflow-y-auto scroll-smooth">
+                  <ScrollArea className="flex-1 p-4 h-[calc(100vh-28rem)] overflow-y-auto scroll-smooth overflow-x-hidden">
                     <div className="space-y-6 pb-4">
                       {messages.map((message) => (
                         <div
                           key={message.id}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
+                          <div className={`w-full ${message.type === 'user' ? 'order-2 max-w-[75%]' : 'order-1'}`}>
                             <div className="flex items-start space-x-2">
                               {message.type === 'assistant' && (
                                 <Avatar className="w-6 h-6 mt-1">

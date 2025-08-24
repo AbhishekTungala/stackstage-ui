@@ -129,7 +129,7 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <h4 className="font-medium mb-2">Monthly Cost Range</h4>
               <div className="text-2xl font-bold text-green-600">
@@ -149,7 +149,7 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
           <Separator className="my-4" />
           <div>
             <h4 className="font-medium mb-3">Service Breakdown</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
               {data.cost.items.map((item, index) => (
                 <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
                   <span className="text-sm">{item.service}</span>
@@ -235,7 +235,7 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
                   <p className="text-sm text-muted-foreground mb-2">{rec.why}</p>
                   <p className="text-sm mb-3">{rec.how}</p>
                   {rec.iac_snippet && (
-                    <div className="bg-muted p-3 rounded text-sm font-mono overflow-x-auto">
+                    <div className="bg-muted p-3 rounded text-sm font-mono overflow-x-auto max-w-none">
                       <pre>{rec.iac_snippet}</pre>
                     </div>
                   )}
@@ -256,7 +256,7 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-muted p-4 rounded text-sm font-mono overflow-x-auto">
+            <div className="bg-muted p-4 rounded text-sm font-mono overflow-x-auto max-w-none">
               <pre>{data.diagram_mermaid}</pre>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
@@ -280,7 +280,7 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
               {data.alternatives.map((alt, index) => (
                 <div key={index} className="p-4 border rounded-lg">
                   <h4 className="font-medium mb-2">{alt.name}</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
                     <div>
                       <strong className="text-green-600">Pros:</strong>
                       <ul className="mt-1 space-y-1">
