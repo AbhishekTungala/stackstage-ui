@@ -768,38 +768,28 @@ const Results = () => {
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                      data={(() => {
-                        // Generate consistent cost data per analysis
-                        const baseCost = costScore < 50 ? 9500 : costScore < 70 ? 7800 : 6200;
-                        const optimizationRate = numRecommendations > 3 ? 0.25 : numRecommendations > 1 ? 0.15 : 0.08;
-                        
-                        // Use REAL AI cost breakdown data for realistic cost patterns
-                        const computeCost = typeof costBreakdown.compute === 'string' ? parseInt(costBreakdown.compute.replace(/[^0-9]/g, '')) : costBreakdown.compute || 75;
-                        const storageCost = typeof costBreakdown.storage === 'string' ? parseInt(costBreakdown.storage.replace(/[^0-9]/g, '')) : costBreakdown.storage || 35;
-                        const networkCost = typeof costBreakdown.network === 'string' ? parseInt(costBreakdown.network.replace(/[^0-9]/g, '')) : costBreakdown.network || 15;
-                        const servicesCost = typeof costBreakdown.services === 'string' ? parseInt(costBreakdown.services.replace(/[^0-9]/g, '')) : costBreakdown.services || 135;
-                        
-                        const totalBaseCost = computeCost + storageCost + networkCost + servicesCost;
-                        const costTrendMultiplier = trendAnalysis.cost_trend === 'optimizing' ? 0.9 : trendAnalysis.cost_trend === 'increasing' ? 1.1 : 1.0;
-                        
-                        const costVariations = [
-                          totalBaseCost * (1.0 + (computeCost / totalBaseCost) * 0.2),
-                          totalBaseCost * (1.0 + (servicesCost / totalBaseCost) * 0.15),
-                          totalBaseCost * (1.0 - (storageCost / totalBaseCost) * 0.1),
-                          totalBaseCost * (1.0 + (networkCost / totalBaseCost) * 0.3),
-                          totalBaseCost * (1.0 - (computeCost / totalBaseCost) * 0.05),
-                          totalBaseCost * costTrendMultiplier
-                        ];
-                        
-                        return [
-                          { month: 'Jan', current: Math.round(costVariations[0]), optimized: Math.round(costVariations[0] * (1 - optimizationRate)) },
-                          { month: 'Feb', current: Math.round(costVariations[1]), optimized: Math.round(costVariations[1] * (1 - optimizationRate * 1.1)) },
-                          { month: 'Mar', current: Math.round(costVariations[2]), optimized: Math.round(costVariations[2] * (1 - optimizationRate * 1.2)) },
-                          { month: 'Apr', current: Math.round(costVariations[3]), optimized: Math.round(costVariations[3] * (1 - optimizationRate * 1.3)) },
-                          { month: 'May', current: Math.round(costVariations[4]), optimized: Math.round(costVariations[4] * (1 - optimizationRate * 1.4)) },
-                          { month: 'Jun', current: Math.round(costVariations[5]), optimized: Math.round(costVariations[5] * (1 - optimizationRate * 1.5)) }
-                        ];
-                      })()} 
+                      data={[
+                        {
+                          category: 'Compute',
+                          current: typeof costBreakdown.compute === 'string' ? parseInt(costBreakdown.compute.replace(/[^0-9]/g, '')) : costBreakdown.compute || 0,
+                          optimized: (typeof costBreakdown.compute === 'string' ? parseInt(costBreakdown.compute.replace(/[^0-9]/g, '')) : costBreakdown.compute || 0) * 0.8
+                        },
+                        {
+                          category: 'Storage',
+                          current: typeof costBreakdown.storage === 'string' ? parseInt(costBreakdown.storage.replace(/[^0-9]/g, '')) : costBreakdown.storage || 0,
+                          optimized: (typeof costBreakdown.storage === 'string' ? parseInt(costBreakdown.storage.replace(/[^0-9]/g, '')) : costBreakdown.storage || 0) * 0.9
+                        },
+                        {
+                          category: 'Network',
+                          current: typeof costBreakdown.network === 'string' ? parseInt(costBreakdown.network.replace(/[^0-9]/g, '')) : costBreakdown.network || 0,
+                          optimized: (typeof costBreakdown.network === 'string' ? parseInt(costBreakdown.network.replace(/[^0-9]/g, '')) : costBreakdown.network || 0) * 0.95
+                        },
+                        {
+                          category: 'Services',
+                          current: typeof costBreakdown.services === 'string' ? parseInt(costBreakdown.services.replace(/[^0-9]/g, '')) : costBreakdown.services || 0,
+                          optimized: (typeof costBreakdown.services === 'string' ? parseInt(costBreakdown.services.replace(/[^0-9]/g, '')) : costBreakdown.services || 0) * 0.85
+                        }
+                      ]}
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                       <defs>
@@ -813,7 +803,7 @@ const Results = () => {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" className="dark:stroke-slate-700 stroke-slate-300" />
-                      <XAxis dataKey="month" stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
+                      <XAxis dataKey="category" stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" />
                       <YAxis stroke="#94a3b8" className="dark:stroke-slate-400 stroke-slate-600" tickFormatter={(value) => `$${value/1000}K`} />
                       <Tooltip 
                         contentStyle={{
@@ -869,22 +859,16 @@ const Results = () => {
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
-                      data={(() => {
-                        // Use REAL AI performance metrics for response time patterns
-                        const baseResponse = performanceMetrics.avg_response_time;
-                        const errorRate = performanceMetrics.error_rate;
-                        const variability = errorRate > 2 ? 0.6 : errorRate > 1 ? 0.4 : 0.2;
-                        
-                        return [
-                          { time: '00:00', response: Math.round(baseResponse * (1 + variability * 0.2)), target: 100 },
-                          { time: '04:00', response: Math.round(baseResponse * (1 - variability * 0.3)), target: 100 },
-                          { time: '08:00', response: Math.round(baseResponse * (1 + variability * 0.5)), target: 100 },
-                          { time: '12:00', response: Math.round(baseResponse * (1 - variability * 0.1)), target: 100 },
-                          { time: '16:00', response: Math.round(baseResponse * (1 + variability * 0.1)), target: 100 },
-                          { time: '20:00', response: Math.round(baseResponse * (1 - variability * 0.4)), target: 100 },
-                          { time: '24:00', response: Math.round(baseResponse * (1 + variability * 0.0)), target: 100 }
-                        ];
-                      })()} 
+                      data={[
+                        {
+                          time: 'Current Analysis',
+                          response: performanceMetrics.avg_response_time || 0,
+                          target: 100,
+                          throughput: performanceMetrics.throughput || 0,
+                          availability: performanceMetrics.availability || 0,
+                          error_rate: performanceMetrics.error_rate || 0
+                        }
+                      ]}
                       margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                     >
                       <defs>
@@ -923,13 +907,33 @@ const Results = () => {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                {/* Status Indicators */}
+                {/* REAL Performance Status Indicators */}
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   {[
-                    { label: 'Current', value: '125ms', color: 'bg-blue-500', trend: '↓ 15ms' },
-                    { label: 'Target', value: '100ms', color: 'bg-green-500', trend: 'Goal' },
-                    { label: 'Peak', value: '180ms', color: 'bg-orange-500', trend: '↑ 12%' },
-                    { label: 'Best', value: '85ms', color: 'bg-emerald-500', trend: '✓ Low' }
+                    { 
+                      label: 'Response Time', 
+                      value: performanceMetrics.avg_response_time ? `${performanceMetrics.avg_response_time}ms` : 'N/A', 
+                      color: performanceMetrics.avg_response_time && performanceMetrics.avg_response_time < 200 ? 'bg-green-500' : 'bg-orange-500', 
+                      trend: performanceMetrics.avg_response_time && performanceMetrics.avg_response_time < 200 ? '✓ Good' : '⚠ Needs improvement' 
+                    },
+                    { 
+                      label: 'Throughput', 
+                      value: performanceMetrics.throughput ? `${performanceMetrics.throughput}/sec` : 'N/A', 
+                      color: performanceMetrics.throughput && performanceMetrics.throughput > 50 ? 'bg-green-500' : 'bg-orange-500', 
+                      trend: performanceMetrics.throughput && performanceMetrics.throughput > 50 ? '✓ Good' : '⚠ Low' 
+                    },
+                    { 
+                      label: 'Availability', 
+                      value: performanceMetrics.availability ? `${performanceMetrics.availability}%` : 'N/A', 
+                      color: performanceMetrics.availability && performanceMetrics.availability > 99 ? 'bg-green-500' : 'bg-orange-500', 
+                      trend: performanceMetrics.availability && performanceMetrics.availability > 99 ? '✓ Excellent' : '⚠ Below target' 
+                    },
+                    { 
+                      label: 'Error Rate', 
+                      value: performanceMetrics.error_rate ? `${performanceMetrics.error_rate}%` : 'N/A', 
+                      color: performanceMetrics.error_rate && performanceMetrics.error_rate < 2 ? 'bg-green-500' : 'bg-red-500', 
+                      trend: performanceMetrics.error_rate && performanceMetrics.error_rate < 2 ? '✓ Low' : '❌ High' 
+                    }
                   ].map((item, index) => (
                     <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex items-center space-x-2">
