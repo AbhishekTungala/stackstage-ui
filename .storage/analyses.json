@@ -175,5 +175,207 @@
       "diagram": "graph TD;\n    A[aws_instance:web] --> B[Security Group];\n    A --> C[CloudWatch];\n    A --> D[Auto Scaling];"
     },
     "mode": "comprehensive"
+  },
+  "analysis_1756115242115": {
+    "id": "1756115242115",
+    "timestamp": "2025-08-25T09:47:22.115Z",
+    "score": 65,
+    "security_score": 50,
+    "performance_score": 70,
+    "cost_score": 80,
+    "reliability_score": 60,
+    "scalability_score": 65,
+    "compliance_score": 55,
+    "issues": [
+      {
+        "description": "Security group allows SSH access from all IPs (0.0.0.0/0)",
+        "severity": 8
+      },
+      {
+        "description": "No IAM role attached to the EC2 instance, which can lead to over-permissioning",
+        "severity": 7
+      },
+      {
+        "description": "Public IP assigned to the instance without a proper firewall configuration",
+        "severity": 6
+      },
+      {
+        "description": "Egress rules allow all outbound traffic, which can lead to data exfiltration",
+        "severity": 5
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Restrict SSH access to specific IP addresses",
+        "steps": [
+          "Identify the IP addresses that need SSH access.",
+          "Update the security group ingress rules to allow only those IPs."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Attach an IAM role to the EC2 instance with least privilege permissions",
+        "steps": [
+          "Create an IAM role with necessary permissions.",
+          "Attach the IAM role to the EC2 instance."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Consider using a private subnet for the EC2 instance",
+        "steps": [
+          "Create a private subnet in the VPC.",
+          "Move the EC2 instance to the private subnet.",
+          "Set up a NAT Gateway for outbound internet access if needed."
+        ],
+        "category": "Security",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Optimize instance type based on workload requirements",
+        "steps": [
+          "Analyze the workload to determine CPU and memory usage.",
+          "Select a more appropriate instance type if necessary."
+        ],
+        "category": "Performance",
+        "priority": "medium",
+        "estimated_savings": 20
+      },
+      {
+        "description": "Implement CloudWatch monitoring for performance metrics",
+        "steps": [
+          "Set up CloudWatch alarms for CPU, memory, and disk usage.",
+          "Review metrics regularly to identify performance bottlenecks."
+        ],
+        "category": "Performance",
+        "priority": "low",
+        "estimated_savings": 0
+      }
+    ],
+    "cost": "$50-100/month",
+    "cost_breakdown": {
+      "compute": "$30-60",
+      "storage": "$5-10",
+      "network": "$5-15",
+      "services": "$10-15"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 50,
+      "availability": 99.5,
+      "error_rate": 1.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[EC2 Instance] -->|uses| B[Security Group];\n    A -->|attached to| C[VPC];\n    C -->|contains| D[Subnet];\n    A -->|uses| E[IAM Role];\n    A -->|has| F[Public IP];\n    A -->|monitored by| G[CloudWatch];",
+    "details": {
+      "score": 65,
+      "security_score": 50,
+      "performance_score": 70,
+      "cost_score": 80,
+      "reliability_score": 60,
+      "scalability_score": 65,
+      "compliance_score": 55,
+      "issues": [
+        {
+          "description": "Security group allows SSH access from all IPs (0.0.0.0/0)",
+          "severity": 8
+        },
+        {
+          "description": "No IAM role attached to the EC2 instance, which can lead to over-permissioning",
+          "severity": 7
+        },
+        {
+          "description": "Public IP assigned to the instance without a proper firewall configuration",
+          "severity": 6
+        },
+        {
+          "description": "Egress rules allow all outbound traffic, which can lead to data exfiltration",
+          "severity": 5
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Restrict SSH access to specific IP addresses",
+          "steps": [
+            "Identify the IP addresses that need SSH access.",
+            "Update the security group ingress rules to allow only those IPs."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Attach an IAM role to the EC2 instance with least privilege permissions",
+          "steps": [
+            "Create an IAM role with necessary permissions.",
+            "Attach the IAM role to the EC2 instance."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Consider using a private subnet for the EC2 instance",
+          "steps": [
+            "Create a private subnet in the VPC.",
+            "Move the EC2 instance to the private subnet.",
+            "Set up a NAT Gateway for outbound internet access if needed."
+          ],
+          "category": "Security",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Optimize instance type based on workload requirements",
+          "steps": [
+            "Analyze the workload to determine CPU and memory usage.",
+            "Select a more appropriate instance type if necessary."
+          ],
+          "category": "Performance",
+          "priority": "medium",
+          "estimated_savings": 20
+        },
+        {
+          "description": "Implement CloudWatch monitoring for performance metrics",
+          "steps": [
+            "Set up CloudWatch alarms for CPU, memory, and disk usage.",
+            "Review metrics regularly to identify performance bottlenecks."
+          ],
+          "category": "Performance",
+          "priority": "low",
+          "estimated_savings": 0
+        }
+      ],
+      "cost": "$50-100/month",
+      "cost_breakdown": {
+        "compute": "$30-60",
+        "storage": "$5-10",
+        "network": "$5-15",
+        "services": "$10-15"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 50,
+        "availability": 99.5,
+        "error_rate": 1.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[EC2 Instance] -->|uses| B[Security Group];\n    A -->|attached to| C[VPC];\n    C -->|contains| D[Subnet];\n    A -->|uses| E[IAM Role];\n    A -->|has| F[Public IP];\n    A -->|monitored by| G[CloudWatch];"
+    },
+    "mode": "comprehensive",
+    "provider": ""
   }
 }

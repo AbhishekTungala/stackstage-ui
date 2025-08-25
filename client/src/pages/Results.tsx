@@ -40,7 +40,8 @@ import {
   HardDrive,
   Network,
   Gauge,
-  Info
+  Info,
+  Brain
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { useQuery } from "@tanstack/react-query";
@@ -214,18 +215,22 @@ const Results = () => {
     );
   }
 
-  // Extract REAL analysis scores - AUTHENTIC AI DATA ONLY
-  const overallScore = analysisData?.score || 0;
+  // Extract ENHANCED StackStage AI analysis scores from complete tech stack
+  const overallScore = analysisData?.score?.overall || analysisData?.score || 0;
   const numIssues = analysisData?.issues?.length || 0;
   const numRecommendations = analysisData?.recommendations?.length || 0;
   
-  // Use ACTUAL AI-generated individual scores from analysis
-  const securityScore = analysisData?.security_score || analysisData?.score || 0;
-  const costScore = analysisData?.cost_score || analysisData?.score || 0;
-  const performanceScore = analysisData?.performance_score || analysisData?.score || 0;
-  const reliabilityScore = analysisData?.reliability_score || analysisData?.score || 0;
-  const scalabilityScore = analysisData?.scalability_score || analysisData?.score || 0;
-  const complianceScore = analysisData?.compliance_score || analysisData?.score || 0;
+  // Use ENHANCED AI scores from complete analysis pipeline (Tree-sitter + Checkov + Local + AI)
+  const securityScore = analysisData?.score?.security || analysisData?.security_score || 0;
+  const costScore = analysisData?.score?.cost || analysisData?.cost_score || 0;
+  const performanceScore = analysisData?.score?.performance || analysisData?.performance_score || 0;
+  const reliabilityScore = analysisData?.score?.reliability || analysisData?.reliability_score || 0;
+  const scalabilityScore = analysisData?.scalability_score || Math.round((reliabilityScore + performanceScore) / 2) || 0;
+  const complianceScore = analysisData?.compliance_assessment?.overall_compliance_score || analysisData?.compliance_score || 0;
+  
+  // Enhanced analysis method display
+  const analysisMethod = analysisData?.analysis_method || 'standard';
+  const isEnhancedAnalysis = ['hybrid_ai_enhanced', 'enhanced_local_fallback', 'enhanced_fallback_after_ai_failure'].includes(analysisMethod);
   
   // Extract REAL AI-generated metrics for charts - NO FALLBACKS
   const performanceMetrics = analysisData?.performance_metrics || {
@@ -372,7 +377,15 @@ const Results = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Analytics</h1>
-                <p className="text-slate-400">Cloud Architecture Analysis Dashboard</p>
+                <div className="flex items-center space-x-4">
+                  <p className="text-slate-400">Cloud Architecture Analysis Dashboard</p>
+                  {isEnhancedAnalysis && (
+                    <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-500/10 to-blue-500/10 px-3 py-1 rounded-full border border-purple-500/20">
+                      <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-purple-400 font-medium">Enhanced AI Analysis</span>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -670,13 +683,37 @@ const Results = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Analysis Metrics */}
+                {/* Enhanced Analysis Metrics */}
                 <div className="space-y-4">
                   {[
-                    { name: 'Security Assessment', score: securityScore, icon: '🛡️', color: 'from-blue-500 to-cyan-500' },
-                    { name: 'Performance Analysis', score: performanceScore, icon: '⚡', color: 'from-yellow-500 to-orange-500' },
-                    { name: 'Cost Optimization', score: costScore, icon: '💰', color: 'from-green-500 to-emerald-500' },
-                    { name: 'Compliance Check', score: complianceScore, icon: '📋', color: 'from-purple-500 to-blue-500' }
+                    { 
+                      name: 'Security Assessment', 
+                      score: securityScore, 
+                      icon: '🛡️', 
+                      color: 'from-blue-500 to-cyan-500',
+                      details: analysisData?.security_vulnerabilities || []
+                    },
+                    { 
+                      name: 'Performance Analysis', 
+                      score: performanceScore, 
+                      icon: '⚡', 
+                      color: 'from-yellow-500 to-orange-500',
+                      details: analysisData?.performance_issues || []
+                    },
+                    { 
+                      name: 'Cost Optimization', 
+                      score: costScore, 
+                      icon: '💰', 
+                      color: 'from-green-500 to-emerald-500',
+                      details: analysisData?.cost_recommendations || []
+                    },
+                    { 
+                      name: 'Compliance Check', 
+                      score: complianceScore, 
+                      icon: '📋', 
+                      color: 'from-purple-500 to-blue-500',
+                      details: analysisData?.compliance_assessment?.violations || []
+                    }
                   ].map((metric, index) => (
                     <div key={index} className="flex items-center space-x-4">
                       <div className={`w-10 h-10 bg-gradient-to-r ${metric.color} rounded-full flex items-center justify-center text-white text-lg`}>
@@ -685,7 +722,15 @@ const Results = () => {
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <h4 className="text-sm font-medium text-slate-900 dark:text-white">{metric.name}</h4>
-                          <span className="text-sm text-slate-600 dark:text-slate-400">{metric.score}/100</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-slate-600 dark:text-slate-400">{metric.score}/100</span>
+                            {metric.details.length > 0 && (
+                              <div className="flex items-center space-x-1 text-xs bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded">
+                                <AlertTriangle className="w-3 h-3" />
+                                <span>{metric.details.length}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -699,6 +744,36 @@ const Results = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Enhanced Analysis Details */}
+                {isEnhancedAnalysis && (
+                  <div className="mt-6 p-4 bg-gradient-to-r from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20 rounded-lg border border-purple-200/50 dark:border-purple-800/50">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                      <h4 className="text-sm font-medium text-slate-900 dark:text-white">Enhanced Analysis Summary</h4>
+                    </div>
+                    <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+                      {analysisData?.code_analysis_summary && (
+                        <div className="flex items-start space-x-2">
+                          <Code className="w-3 h-3 mt-0.5 text-blue-500" />
+                          <span>Analyzed {analysisData.code_analysis_summary.total_lines || 0} lines of code</span>
+                        </div>
+                      )}
+                      {analysisData?.static_analysis_summary && (
+                        <div className="flex items-start space-x-2">
+                          <Shield className="w-3 h-3 mt-0.5 text-green-500" />
+                          <span>Checked {analysisData.static_analysis_summary.rules_checked || 0} security rules</span>
+                        </div>
+                      )}
+                      {analysisData?.analysis_method && (
+                        <div className="flex items-start space-x-2">
+                          <Zap className="w-3 h-3 mt-0.5 text-yellow-500" />
+                          <span>Method: {analysisData.analysis_method.replace(/_/g, ' ').toUpperCase()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Website Visitors Gauge */}
                 <div className="mt-8">
