@@ -26,7 +26,7 @@ sns.set_palette("husl")
 
 
 def generate_analysis_pdf(analysis_data: Dict[str, Any]) -> bytes:
-    """Generate comprehensive PDF report from StackStage analysis data"""
+    """Generate comprehensive PDF report from StackStage analysis data with enhanced visualizations"""
     
     # Create a file-like buffer to receive PDF data
     buffer = io.BytesIO()
@@ -42,14 +42,25 @@ def generate_analysis_pdf(analysis_data: Dict[str, Any]) -> bytes:
     # Get styles
     styles = getSampleStyleSheet()
     
-    # Custom styles
+    # Custom styles for enhanced StackStage branding
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=24,
-        spaceAfter=30,
+        fontSize=28,
+        spaceAfter=20,
         alignment=TA_CENTER,
-        textColor=HexColor('#1a1a1a')
+        textColor=HexColor('#1a1a1a'),
+        fontName='Helvetica-Bold'
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=25,
+        alignment=TA_CENTER,
+        textColor=HexColor('#74b9ff'),
+        fontName='Helvetica'
     )
     
     section_style = ParagraphStyle(
@@ -58,7 +69,8 @@ def generate_analysis_pdf(analysis_data: Dict[str, Any]) -> bytes:
         fontSize=16,
         spaceAfter=12,
         spaceBefore=20,
-        textColor=HexColor('#2563eb')
+        textColor=HexColor('#2563eb'),
+        fontName='Helvetica-Bold'
     )
     
     body_style = ParagraphStyle(
@@ -66,13 +78,35 @@ def generate_analysis_pdf(analysis_data: Dict[str, Any]) -> bytes:
         parent=styles['Normal'],
         fontSize=11,
         spaceAfter=6,
-        alignment=TA_JUSTIFY
+        alignment=TA_JUSTIFY,
+        fontName='Helvetica'
     )
     
-    # Premium Professional Header with modern styling
+    score_style = ParagraphStyle(
+        'ScoreText',
+        parent=styles['Normal'],
+        fontSize=14,
+        spaceAfter=8,
+        alignment=TA_CENTER,
+        textColor=HexColor('#00b894'),
+        fontName='Helvetica-Bold'
+    )
+    
+    # Enhanced Professional Header
     story.append(Paragraph("StackStage", title_style))
-    story.append(Paragraph("Premium Cloud Architecture Analysis Report", section_style))
-    story.append(Paragraph("Build with Confidence - Enterprise AI-Powered Insights", body_style))
+    story.append(Paragraph("AI-Powered Cloud Architecture Analysis", subtitle_style))
+    story.append(Paragraph("Build with Confidence - Enterprise Infrastructure Report", body_style))
+    story.append(Spacer(1, 20))
+    
+    # Analysis Method Badge
+    analysis_method = analysis_data.get('analysis_method', 'hybrid_ai_enhanced')
+    method_display = {
+        'hybrid_ai_enhanced': 'AI + Static Analysis + Local Intelligence',
+        'enhanced_local_fallback': 'Enhanced Local Analysis Engine',
+        'enhanced_fallback_after_ai_failure': 'Comprehensive Fallback Analysis'
+    }.get(analysis_method, 'Advanced Analysis Engine')
+    
+    story.append(Paragraph(f"Analysis Method: <b>{method_display}</b>", body_style))
     story.append(Spacer(1, 30))
     
     # Add premium branding bar
