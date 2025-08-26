@@ -377,5 +377,158 @@
     },
     "mode": "comprehensive",
     "provider": ""
+  },
+  "analysis_1756185751827": {
+    "id": "1756185751826",
+    "timestamp": "2025-08-26T05:22:31.827Z",
+    "score": 65,
+    "security_score": 50,
+    "performance_score": 70,
+    "cost_score": 80,
+    "reliability_score": 60,
+    "scalability_score": 50,
+    "compliance_score": 70,
+    "issues": [
+      {
+        "description": "Open security group allowing traffic from all IPs (0.0.0.0/0) on port 80.",
+        "severity": 8
+      },
+      {
+        "description": "Using a t2.micro instance may lead to performance issues under load.",
+        "severity": 5
+      },
+      {
+        "description": "No monitoring or alerting configured for the instance.",
+        "severity": 6
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Restrict security group ingress to specific IP ranges.",
+        "steps": [
+          "Identify trusted IP addresses.",
+          "Update the security group to allow only those IPs."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Consider upgrading to a larger instance type for better performance.",
+        "steps": [
+          "Evaluate application load requirements.",
+          "Select an appropriate instance type (e.g., t3.small).",
+          "Update the infrastructure code and apply changes."
+        ],
+        "category": "Performance",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Implement monitoring and alerting using CloudWatch.",
+        "steps": [
+          "Create CloudWatch alarms for CPU and memory usage.",
+          "Set up notifications for alarms."
+        ],
+        "category": "Reliability",
+        "priority": "medium",
+        "estimated_savings": 0
+      }
+    ],
+    "cost": "$10-15/month",
+    "cost_breakdown": {
+      "compute": "$10-12",
+      "storage": "$0-1",
+      "network": "$0-2",
+      "services": "$0"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 50,
+      "availability": 99.5,
+      "error_rate": 1.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[User] -->|HTTP Request| B[Load Balancer];\n    B --> C[Web Server];\n    C --> D[Database];\n    C -->|Monitoring| E[CloudWatch];",
+    "details": {
+      "score": 65,
+      "security_score": 50,
+      "performance_score": 70,
+      "cost_score": 80,
+      "reliability_score": 60,
+      "scalability_score": 50,
+      "compliance_score": 70,
+      "issues": [
+        {
+          "description": "Open security group allowing traffic from all IPs (0.0.0.0/0) on port 80.",
+          "severity": 8
+        },
+        {
+          "description": "Using a t2.micro instance may lead to performance issues under load.",
+          "severity": 5
+        },
+        {
+          "description": "No monitoring or alerting configured for the instance.",
+          "severity": 6
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Restrict security group ingress to specific IP ranges.",
+          "steps": [
+            "Identify trusted IP addresses.",
+            "Update the security group to allow only those IPs."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Consider upgrading to a larger instance type for better performance.",
+          "steps": [
+            "Evaluate application load requirements.",
+            "Select an appropriate instance type (e.g., t3.small).",
+            "Update the infrastructure code and apply changes."
+          ],
+          "category": "Performance",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Implement monitoring and alerting using CloudWatch.",
+          "steps": [
+            "Create CloudWatch alarms for CPU and memory usage.",
+            "Set up notifications for alarms."
+          ],
+          "category": "Reliability",
+          "priority": "medium",
+          "estimated_savings": 0
+        }
+      ],
+      "cost": "$10-15/month",
+      "cost_breakdown": {
+        "compute": "$10-12",
+        "storage": "$0-1",
+        "network": "$0-2",
+        "services": "$0"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 50,
+        "availability": 99.5,
+        "error_rate": 1.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[User] -->|HTTP Request| B[Load Balancer];\n    B --> C[Web Server];\n    C --> D[Database];\n    C -->|Monitoring| E[CloudWatch];"
+    },
+    "mode": "comprehensive"
   }
 }
