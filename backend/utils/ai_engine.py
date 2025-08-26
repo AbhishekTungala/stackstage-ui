@@ -383,6 +383,10 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
         content = result['choices'][0]['message']['content'].strip()
         
         # Always return the actual AI response, never fallbacks
+        # Ensure content is not empty or generic
+        if not content or len(content.strip()) < 10:
+            raise Exception("AI returned empty or invalid response")
+            
         return {
             "response": content,
             "suggestions": generate_contextual_suggestions(content, role_hint),
@@ -392,14 +396,8 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
         
     except Exception as e:
         print(f"🚨 OpenRouter API Error: {e}")
-        # Return error details, not generic response
-        return {
-            "response": f"Technical error: {str(e)}. Please verify your OpenRouter API key configuration.",
-            "suggestions": ["Check OPENROUTER_API_KEY environment variable", "Verify internet connection", "Try again"],
-            "timestamp": datetime.now().isoformat(),
-            "error": True,
-            "error_type": type(e).__name__
-        }
+        # Raise error instead of returning generic response
+        raise Exception(f"AI analysis unavailable: {str(e)}. OpenRouter API key or connectivity issue.")
 
 def generate_contextual_suggestions(content: str, role_hint: Optional[str] = None) -> List[str]:
     """Generate professional StackStage contextual suggestions based on AI response and role"""

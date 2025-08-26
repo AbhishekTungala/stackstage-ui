@@ -146,13 +146,13 @@ Analyze for: security vulnerabilities, cost optimization, performance bottleneck
     const numIssues = (analysisData.issues || []).length;
     const numRecommendations = (analysisData.recommendations || []).length;
     
-    // Use AI-generated scores or intelligent fallbacks based on analysis content
-    const securityScore = analysisData.security_score || Math.max(30, Math.min(95, overallScore - (numIssues * 8)));
-    const performanceScore = analysisData.performance_score || Math.max(35, Math.min(98, overallScore + (numRecommendations > 2 ? 5 : -5)));
-    const costScore = analysisData.cost_score || Math.max(40, Math.min(90, overallScore - (numIssues * 5)));
-    const reliabilityScore = analysisData.reliability_score || Math.max(35, Math.min(92, overallScore - (numIssues > 2 ? 10 : 3)));
-    const scalabilityScore = analysisData.scalability_score || Math.max(40, Math.min(88, overallScore - (numIssues * 4)));
-    const complianceScore = analysisData.compliance_score || Math.max(35, Math.min(90, overallScore - (numIssues * 6)));
+    // Use only AI-generated scores - no fallbacks
+    const securityScore = analysisData.security_score;
+    const performanceScore = analysisData.performance_score;
+    const costScore = analysisData.cost_score;
+    const reliabilityScore = analysisData.reliability_score;
+    const scalabilityScore = analysisData.scalability_score;
+    const complianceScore = analysisData.compliance_score;
 
     return {
       id: Date.now().toString(),
@@ -164,27 +164,13 @@ Analyze for: security vulnerabilities, cost optimization, performance bottleneck
       reliability_score: reliabilityScore,
       scalability_score: scalabilityScore,
       compliance_score: complianceScore,
-      issues: analysisData.issues || ["Configuration review needed"],
-      recommendations: analysisData.recommendations || ["Implement best practices"],
-      cost: analysisData.cost || "$500-1500/month",
-      cost_breakdown: analysisData.cost_breakdown || {
-        compute: Math.round(costScore * 15),
-        storage: Math.round(costScore * 8),
-        network: Math.round(costScore * 5),
-        services: Math.round(costScore * 12)
-      },
-      performance_metrics: analysisData.performance_metrics || {
-        avg_response_time: Math.max(50, 500 - (performanceScore * 4)),
-        throughput: Math.max(10, performanceScore * 2),
-        availability: Math.max(95, Math.min(99.9, performanceScore + 20)),
-        error_rate: Math.max(0.1, (100 - performanceScore) * 0.05)
-      },
-      trend_analysis: analysisData.trend_analysis || {
-        security_trend: securityScore > 70 ? "improving" : securityScore > 50 ? "stable" : "declining",
-        performance_trend: performanceScore > 75 ? "improving" : performanceScore > 60 ? "stable" : "declining",
-        cost_trend: costScore > 70 ? "optimizing" : costScore > 50 ? "stable" : "increasing"
-      },
-      diagram: analysisData.diagram || "graph TD\n    A[Application] --> B[(Database)]",
+      issues: analysisData.issues,
+      recommendations: analysisData.recommendations,
+      cost: analysisData.cost,
+      cost_breakdown: analysisData.cost_breakdown,
+      performance_metrics: analysisData.performance_metrics,
+      trend_analysis: analysisData.trend_analysis,
+      diagram: analysisData.diagram,
       details: analysisData
     };
     
@@ -244,15 +230,8 @@ function extractDataFromTextResponse(aiResponse: string, inputCode: string): any
   // Include partial AI response content in summary
   const summaryText = aiResponse.substring(0, 300).replace(/[{}[\]"]/g, '');
   
-  return {
-    score: Math.max(50, baseScore),
-    summary: `Analysis completed. ${summaryText}...`,
-    issues: issues.length > 0 ? issues : ["Configuration review recommended"],
-    recommendations: recommendations.length > 0 ? recommendations : ["Follow cloud best practices"],
-    cost: "$750-1500/month estimated",
-    diagram: "graph TD\n    A[Load Balancer] --> B[Web Servers]\n    B --> C[Application Layer]\n    C --> D[(Database)]",
-    ai_response_excerpt: aiResponse.substring(0, 500)
-  };
+  // Throw error instead of returning hardcoded fallback data
+  throw new Error(`Unable to extract valid analysis data from AI response. AI returned unstructured text: ${aiResponse.substring(0, 200)}...`);
 }
 
 export async function callPythonAssistant(messages: any[] | string, role?: string): Promise<any> {
@@ -331,15 +310,9 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         structuredResponse = extractAndValidateJson(aiResponse);
         console.log("Extraction parsing successful!");
       } catch (extractError: any) {
-        console.log("Failed to parse AI response, returning raw content");
-        // Return the actual AI response content instead of fallback
-        return {
-          response: aiResponse,
-          suggestions: ["Ask a more specific question", "Try rephrasing your request", "Check your infrastructure requirements"],
-          timestamp: new Date().toISOString(),
-          raw_ai_response: true,
-          parsing_error: "Could not parse as structured JSON"
-        };
+        console.log("🚨 Failed to parse AI response - returning error");
+        // Return error instead of generic fallback
+        throw new Error(`AI response parsing failed: ${extractError.message}. Raw response: ${aiResponse.substring(0, 200)}...`);
       }
     }
     

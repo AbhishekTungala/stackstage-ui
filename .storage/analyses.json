@@ -679,5 +679,158 @@
       "diagram": "graph TD;\n    A[S3 Bucket: my-bucket] --> B[Public Access: Enabled];\n    A --> C[Object: data.csv];\n    B --> D[Security Issue: Public Access];\n    C --> E[Performance: Avg Response Time 200ms];"
     },
     "mode": "comprehensive"
+  },
+  "analysis_1756186399304": {
+    "id": "1756186399304",
+    "timestamp": "2025-08-26T05:33:19.304Z",
+    "score": 65,
+    "security_score": 50,
+    "performance_score": 70,
+    "cost_score": 80,
+    "reliability_score": 75,
+    "scalability_score": 60,
+    "compliance_score": 70,
+    "issues": [
+      {
+        "description": "SSH access is open to the world (0.0.0.0/0)",
+        "severity": 8
+      },
+      {
+        "description": "No monitoring or logging configured for the EC2 instance",
+        "severity": 6
+      },
+      {
+        "description": "Public IP address assigned to the instance without a NAT Gateway",
+        "severity": 5
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Restrict SSH access to specific IP addresses",
+        "steps": [
+          "Identify trusted IP addresses that require SSH access.",
+          "Update the security group to restrict ingress on port 22 to those IPs."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Implement CloudWatch for monitoring and logging",
+        "steps": [
+          "Create a CloudWatch log group.",
+          "Install and configure the CloudWatch agent on the EC2 instance."
+        ],
+        "category": "Reliability",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Consider using an Elastic Load Balancer (ELB) for scalability",
+        "steps": [
+          "Create an ELB in front of the EC2 instance.",
+          "Update DNS settings to point to the ELB.",
+          "Add more EC2 instances behind the ELB as needed."
+        ],
+        "category": "Scalability",
+        "priority": "medium",
+        "estimated_savings": 0
+      }
+    ],
+    "cost": "$10-20/month",
+    "cost_breakdown": {
+      "compute": "$10-15",
+      "storage": "$1-2",
+      "network": "$1-3",
+      "services": "$0-1"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 50,
+      "availability": 99.9,
+      "error_rate": 1.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[WebServer] -->|HTTP| B[Load Balancer];\n    A -->|SSH| C[Admin];\n    B -->|HTTP| D[User Browser];",
+    "details": {
+      "score": 65,
+      "security_score": 50,
+      "performance_score": 70,
+      "cost_score": 80,
+      "reliability_score": 75,
+      "scalability_score": 60,
+      "compliance_score": 70,
+      "issues": [
+        {
+          "description": "SSH access is open to the world (0.0.0.0/0)",
+          "severity": 8
+        },
+        {
+          "description": "No monitoring or logging configured for the EC2 instance",
+          "severity": 6
+        },
+        {
+          "description": "Public IP address assigned to the instance without a NAT Gateway",
+          "severity": 5
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Restrict SSH access to specific IP addresses",
+          "steps": [
+            "Identify trusted IP addresses that require SSH access.",
+            "Update the security group to restrict ingress on port 22 to those IPs."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Implement CloudWatch for monitoring and logging",
+          "steps": [
+            "Create a CloudWatch log group.",
+            "Install and configure the CloudWatch agent on the EC2 instance."
+          ],
+          "category": "Reliability",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Consider using an Elastic Load Balancer (ELB) for scalability",
+          "steps": [
+            "Create an ELB in front of the EC2 instance.",
+            "Update DNS settings to point to the ELB.",
+            "Add more EC2 instances behind the ELB as needed."
+          ],
+          "category": "Scalability",
+          "priority": "medium",
+          "estimated_savings": 0
+        }
+      ],
+      "cost": "$10-20/month",
+      "cost_breakdown": {
+        "compute": "$10-15",
+        "storage": "$1-2",
+        "network": "$1-3",
+        "services": "$0-1"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 50,
+        "availability": 99.9,
+        "error_rate": 1.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[WebServer] -->|HTTP| B[Load Balancer];\n    A -->|SSH| C[Admin];\n    B -->|HTTP| D[User Browser];"
+    },
+    "mode": "comprehensive"
   }
 }

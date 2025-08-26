@@ -591,21 +591,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         res.json({ success: true, analysisId, result: formattedResult });
       } catch (backendError) {
-        console.error('Backend AI analysis failed, using fallback:', backendError);
+        console.error('🚨 AI analysis failed - OpenRouter API unavailable:', backendError);
         
-        // Fallback to enhanced mock but with real structure
-        const fallbackResult = generateMockAnalysis(analysisMode, cloudProvider, content, userRegion, regionalImpact);
-        const analysisId = `analysis_${Date.now()}`;
-        
-        await storage.storeAnalysis(analysisId, {
-          ...fallbackResult,
-          timestamp: new Date(),
-          mode: analysisMode,
-          provider: cloudProvider,
-          note: "Generated using fallback due to backend unavailability"
+        // NO FALLBACKS - Return explicit error message
+        res.status(503).json({ 
+          error: "AI analysis unavailable", 
+          message: `OpenRouter API is currently unavailable: ${backendError.message}. Please verify your API key and try again.`,
+          details: "Real AI analysis requires a working OpenRouter API connection",
+          suggestions: [
+            "Check OPENROUTER_API_KEY environment variable",
+            "Verify internet connectivity", 
+            "Try again in a few moments",
+            "Contact support if issue persists"
+          ],
+          timestamp: new Date().toISOString()
         });
-
-        res.json({ success: true, analysisId, result: fallbackResult });
       }
     } catch (error) {
       console.error('Analysis error:', error);
@@ -654,16 +654,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date()
         });
       } catch (backendError) {
-        console.error('Backend AI assistant failed, using fallback:', backendError);
+        console.error('🚨 AI assistant failed - OpenRouter API unavailable:', backendError);
         
-        // Fallback to enhanced mock
-        const baseResponse = generateMockChatResponse(messages, userRegion, regionalImpact);
-        const assistantResponse = { ...baseResponse, note: "Generated using fallback due to backend unavailability" };
-
-        res.json({ 
-          success: true, 
-          message: assistantResponse,
-          timestamp: new Date()
+        // NO FALLBACKS - Return explicit error message
+        res.status(503).json({ 
+          error: "AI assistant unavailable",
+          message: `OpenRouter API is currently unavailable: ${backendError.message}. Please verify your API key and try again.`,
+          details: "Real AI assistant requires a working OpenRouter API connection",
+          suggestions: [
+            "Check OPENROUTER_API_KEY environment variable",
+            "Verify internet connectivity",
+            "Try again in a few moments"
+          ],
+          timestamp: new Date().toISOString()
         });
       }
     } catch (error) {
