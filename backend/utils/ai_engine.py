@@ -365,7 +365,8 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
             "model": "openai/gpt-4o-mini",
             "messages": chat_messages,
             "temperature": 0.3,
-            "max_tokens": 2000
+            "max_tokens": 2000,
+            "response_format": {"type": "json_object"} if any("JSON" in msg.get("content", "") for msg in chat_messages) else None
         }
 
         response = requests.post(
@@ -381,18 +382,23 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
         result = response.json()
         content = result['choices'][0]['message']['content'].strip()
         
+        # Always return the actual AI response, never fallbacks
         return {
             "response": content,
             "suggestions": generate_contextual_suggestions(content, role_hint),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
+            "source": "openrouter_api"
         }
         
     except Exception as e:
+        print(f"🚨 OpenRouter API Error: {e}")
+        # Return error details, not generic response
         return {
-            "response": f"I apologize, but I'm experiencing technical difficulties. Please check your API configuration and try again. Error: {str(e)}",
-            "suggestions": ["Check API key configuration", "Verify internet connection", "Try again in a few moments"],
+            "response": f"Technical error: {str(e)}. Please verify your OpenRouter API key configuration.",
+            "suggestions": ["Check OPENROUTER_API_KEY environment variable", "Verify internet connection", "Try again"],
             "timestamp": datetime.now().isoformat(),
-            "error": True
+            "error": True,
+            "error_type": type(e).__name__
         }
 
 def generate_contextual_suggestions(content: str, role_hint: Optional[str] = None) -> List[str]:

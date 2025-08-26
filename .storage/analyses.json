@@ -530,5 +530,154 @@
       "diagram": "graph TD;\n    A[User] -->|HTTP Request| B[Load Balancer];\n    B --> C[Web Server];\n    C --> D[Database];\n    C -->|Monitoring| E[CloudWatch];"
     },
     "mode": "comprehensive"
+  },
+  "analysis_1756186222839": {
+    "id": "1756186222839",
+    "timestamp": "2025-08-26T05:30:22.839Z",
+    "score": 45,
+    "security_score": 30,
+    "performance_score": 60,
+    "cost_score": 70,
+    "reliability_score": 50,
+    "scalability_score": 40,
+    "compliance_score": 35,
+    "issues": [
+      {
+        "issue": "Public access to S3 bucket",
+        "severity": 9
+      },
+      {
+        "issue": "Lack of versioning on S3 bucket",
+        "severity": 6
+      },
+      {
+        "issue": "No lifecycle policies defined for S3 bucket",
+        "severity": 5
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Restrict S3 bucket access to private",
+        "steps": [
+          "Change ACL from 'public-read' to 'private'.",
+          "Implement bucket policies to allow access only to specific IAM roles or users."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Enable versioning on S3 bucket",
+        "steps": [
+          "Add versioning configuration to the S3 bucket resource."
+        ],
+        "category": "Reliability",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Implement lifecycle policies for S3 bucket",
+        "steps": [
+          "Define lifecycle rules to transition objects to cheaper storage classes after a certain period.",
+          "Set up expiration rules for obsolete data."
+        ],
+        "category": "Cost",
+        "priority": "medium",
+        "estimated_savings": 20
+      }
+    ],
+    "cost": "$10-30/month",
+    "cost_breakdown": {
+      "compute": "$0",
+      "storage": "$10-20",
+      "network": "$0-5",
+      "services": "$0"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 100,
+      "availability": 99.9,
+      "error_rate": 0.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[S3 Bucket: my-bucket] --> B[Public Access: Enabled];\n    A --> C[Object: data.csv];\n    B --> D[Security Issue: Public Access];\n    C --> E[Performance: Avg Response Time 200ms];",
+    "details": {
+      "score": 45,
+      "security_score": 30,
+      "performance_score": 60,
+      "cost_score": 70,
+      "reliability_score": 50,
+      "scalability_score": 40,
+      "compliance_score": 35,
+      "issues": [
+        {
+          "issue": "Public access to S3 bucket",
+          "severity": 9
+        },
+        {
+          "issue": "Lack of versioning on S3 bucket",
+          "severity": 6
+        },
+        {
+          "issue": "No lifecycle policies defined for S3 bucket",
+          "severity": 5
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Restrict S3 bucket access to private",
+          "steps": [
+            "Change ACL from 'public-read' to 'private'.",
+            "Implement bucket policies to allow access only to specific IAM roles or users."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Enable versioning on S3 bucket",
+          "steps": [
+            "Add versioning configuration to the S3 bucket resource."
+          ],
+          "category": "Reliability",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Implement lifecycle policies for S3 bucket",
+          "steps": [
+            "Define lifecycle rules to transition objects to cheaper storage classes after a certain period.",
+            "Set up expiration rules for obsolete data."
+          ],
+          "category": "Cost",
+          "priority": "medium",
+          "estimated_savings": 20
+        }
+      ],
+      "cost": "$10-30/month",
+      "cost_breakdown": {
+        "compute": "$0",
+        "storage": "$10-20",
+        "network": "$0-5",
+        "services": "$0"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 100,
+        "availability": 99.9,
+        "error_rate": 0.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[S3 Bucket: my-bucket] --> B[Public Access: Enabled];\n    A --> C[Object: data.csv];\n    B --> D[Security Issue: Public Access];\n    C --> E[Performance: Avg Response Time 200ms];"
+    },
+    "mode": "comprehensive"
   }
 }

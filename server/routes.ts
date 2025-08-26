@@ -675,10 +675,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Enhanced AI Assistant Chat with Role Context
+  // Enhanced AI Assistant Chat with Role Context and File Analysis
   app.post("/api/assistant/chat", async (req, res) => {
     try {
-      const { messages, role } = req.body;
+      const { messages, role, fileContent, fileName } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ error: "Messages array is required" });
@@ -686,33 +686,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log("Getting enhanced AI assistant response with role context...");
       
-      try {
-        // Call Python backend with role context
-        const backendResult = await callPythonAssistant(messages, role);
-
-        res.json({ 
-          response: backendResult.response || backendResult.message || "I'm here to help with your cloud architecture questions.",
-          suggestions: backendResult.suggestions || [
-            "How can I improve my cloud security?",
-            "What are the cost optimization best practices?", 
-            "How do I implement proper monitoring?",
-            "What's the recommended disaster recovery approach?"
-          ],
-          timestamp: new Date().toISOString()
-        });
-      } catch (backendError) {
-        console.error('Enhanced assistant backend failed, using intelligent fallback:', backendError);
-        
-        // Generate intelligent response based on role
-        const lastMessage = messages[messages.length - 1];
-        const roleSpecificResponse = generateRoleSpecificResponse(lastMessage?.content || "", role);
-        
-        res.json(roleSpecificResponse);
+      // Prepare messages with file content if provided
+      let enhancedMessages = [...messages];
+      
+      // If file content is provided, inject it into the user message
+      if (fileContent && fileContent.trim()) {
+        const lastMessage = enhancedMessages[enhancedMessages.length - 1];
+        if (lastMessage.role === 'user') {
+          lastMessage.content = `${lastMessage.content}\n\nAnalyze this ${fileName ? `${fileName} ` : ''}file content:\n\`\`\`\n${fileContent}\n\`\`\``;
+        } else {
+          enhancedMessages.push({
+            role: 'user',
+            content: `Please analyze this ${fileName ? `${fileName} ` : ''}file content:\n\`\`\`\n${fileContent}\n\`\`\``
+          });
+        }
       }
+      
+      // Call Python backend with role context - NO FALLBACKS
+      const backendResult = await callPythonAssistant(enhancedMessages, role);
+
+      res.json({ 
+        response: backendResult.response,
+        suggestions: backendResult.suggestions || [],
+        timestamp: backendResult.timestamp || new Date().toISOString(),
+        source: backendResult.source || "api"
+      });
     } catch (error) {
       console.error('Enhanced assistant error:', error);
       res.status(500).json({ 
-        response: "I apologize, but I'm experiencing technical difficulties. Please check your connection and try again.",
+        response: `Technical error: ${error.message}. Please verify your OpenRouter API key is configured.`,
         suggestions: ["Try again", "Check API configuration", "Contact support"],
         timestamp: new Date().toISOString(),
         error: true

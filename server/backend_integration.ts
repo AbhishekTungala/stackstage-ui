@@ -331,60 +331,14 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         structuredResponse = extractAndValidateJson(aiResponse);
         console.log("Extraction parsing successful!");
       } catch (extractError: any) {
-        console.log("All parsing failed, using authentic fallback");
-        // Create a professional response without broken fragments
-        structuredResponse = {
-          score: 75,
-          summary: "I've analyzed your request and provided comprehensive insights based on cloud architecture best practices.",
-          rationale: "This analysis covers security, performance, cost optimization, and compliance considerations for your infrastructure.",
-          risks: [
-            {
-              id: "INFO-1",
-              title: "Architecture Review Completed",
-              severity: "medium",
-              impact: "Recommendations provided for optimization",
-              fix: "Review the detailed analysis and implement suggested improvements",
-              business_impact: "Enhanced security and performance potential"
-            }
-          ],
-          recommendations: [
-            {
-              title: "Follow Best Practices",
-              why: "To ensure optimal security and performance",
-              how: "Implement industry-standard cloud architecture patterns",
-              iac_snippet: "# Review your specific infrastructure configuration",
-              priority: "P1",
-              effort: "medium"
-            }
-          ],
-          rpo_rto_alignment: {
-            rpo_minutes: 15,
-            rto_minutes: 60,
-            notes: "Standard enterprise recovery objectives",
-            controls: ["Backup automation", "Disaster recovery planning"]
-          },
-          pci_essentials: [],
-          cost: {
-            currency: "USD",
-            assumptions: ["Enterprise workload assumptions"],
-            range_monthly_usd: { low: 1000, high: 3000 },
-            items: [
-              { service: "Cloud Infrastructure", est_usd: 1500, optimization: "Right-size resources" }
-            ],
-            savings_opportunity: { potential_monthly_usd: 300, percentage: 15 }
-          },
-          latency: {
-            primary_region: "us-east-1",
-            alt_regions_considered: ["us-west-2", "eu-west-1"],
-            notes: "Optimized for global performance",
-            performance_score: 80
-          },
-          diagram_mermaid: "graph TD; A[Client] --> B[Load Balancer]; B --> C[Application]; C --> D[Database];",
-          alternatives: [],
-          security_score: 75,
-          performance_score: 80,
-          reliability_score: 75,
-          cost_score: 80
+        console.log("Failed to parse AI response, returning raw content");
+        // Return the actual AI response content instead of fallback
+        return {
+          response: aiResponse,
+          suggestions: ["Ask a more specific question", "Try rephrasing your request", "Check your infrastructure requirements"],
+          timestamp: new Date().toISOString(),
+          raw_ai_response: true,
+          parsing_error: "Could not parse as structured JSON"
         };
       }
     }
@@ -399,39 +353,17 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         timestamp: new Date().toISOString(),
         structured: true
       };
-    } else {
-      // Fallback: return error-like structured response for failed JSON parsing
-      const suggestions = ['Retry with a more specific question', 'Try asking about a specific cloud architecture pattern'];
-      
-      return {
-        response: {
-          score: 0,
-          summary: "AI response parsing failed",
-          rationale: "The AI provided an unstructured response that couldn't be parsed into the expected JSON format.",
-          risks: [{ id: "PARSE-001", title: "Response Format Error", severity: "med", impact: "Unable to provide structured analysis", fix: "Please retry your question with more specific requirements." }],
-          recommendations: [],
-          rpo_rto_alignment: { rpo_minutes: 0, rto_minutes: 0, notes: "Unable to parse requirements from response" },
-          pci_essentials: [],
-          cost: { currency: "USD", assumptions: [], range_monthly_usd: { low: 0, high: 0 }, items: [] },
-          latency: { primary_region: "", alt_regions_considered: [], notes: "No latency analysis available" },
-          diagram_mermaid: "",
-          alternatives: []
-        },
-        suggestions: suggestions,
-        timestamp: new Date().toISOString(),
-        structured: true,
-        parsing_error: true
-      };
     }
     
   } catch (error) {
     console.error("OpenAI Assistant integration error:", error);
     
-    // Return fallback response
+    // Return error details instead of generic fallback
     return {
-      response: "I'm experiencing technical difficulties. Please try again.",
-      suggestions: ["Try again", "Check your question", "Contact support"],
-      timestamp: new Date().toISOString()
+      response: `Technical error occurred: ${error.message}. Please check your API configuration and try again.`,
+      suggestions: ["Verify OpenRouter API key", "Check internet connection", "Try with a simpler question"],
+      timestamp: new Date().toISOString(),
+      error: true
     };
   }
 }
