@@ -108,58 +108,72 @@ const StructuredResponse: React.FC<StructuredResponseProps> = ({ data, className
             <CardTitle className="text-xl">Architecture Analysis</CardTitle>
             <div className="flex items-center space-x-2">
               <span className="text-sm text-muted-foreground">Score:</span>
-              <span className={`text-2xl font-bold ${getScoreColor(data.score)}`}>
-                {data.score}/100
+              <span className={`text-2xl font-bold ${getScoreColor(data.score || 0)}`}>
+                {data.score || 0}/100
               </span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-lg font-medium mb-2">{data.summary}</p>
-          <p className="text-muted-foreground">{data.rationale}</p>
+          <p className="text-lg font-medium mb-2">{data.summary || 'Analysis summary not available'}</p>
+          {data.rationale && <p className="text-muted-foreground">{data.rationale}</p>}
         </CardContent>
       </Card>
 
       {/* Cost Analysis */}
-      <Card className="glass-card border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2" />
-            Cost Analysis
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2">Monthly Cost Range</h4>
-              <div className="text-2xl font-bold text-green-600">
-                ${data.cost.range_monthly_usd.low} - ${data.cost.range_monthly_usd.high}
+      {data.cost && (
+        <Card className="glass-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <TrendingUp className="w-5 h-5 mr-2" />
+              Cost Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-medium mb-2">Monthly Cost Range</h4>
+                {data.cost.range_monthly_usd ? (
+                  <div className="text-2xl font-bold text-green-600">
+                    ${data.cost.range_monthly_usd.low} - ${data.cost.range_monthly_usd.high}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">Cost range not available</div>
+                )}
+                <p className="text-sm text-muted-foreground">{data.cost.currency || 'USD'}</p>
               </div>
-              <p className="text-sm text-muted-foreground">{data.cost.currency}</p>
+              <div>
+                <h4 className="font-medium mb-2">Key Assumptions</h4>
+                {data.cost.assumptions && Array.isArray(data.cost.assumptions) && data.cost.assumptions.length > 0 ? (
+                  <ul className="text-sm space-y-1">
+                    {data.cost.assumptions.map((assumption, index) => (
+                      <li key={index} className="text-muted-foreground">• {assumption}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No assumptions provided</p>
+                )}
+              </div>
             </div>
-            <div>
-              <h4 className="font-medium mb-2">Key Assumptions</h4>
-              <ul className="text-sm space-y-1">
-                {data.cost.assumptions.map((assumption, index) => (
-                  <li key={index} className="text-muted-foreground">• {assumption}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <Separator className="my-4" />
-          <div>
-            <h4 className="font-medium mb-3">Service Breakdown</h4>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
-              {data.cost.items.map((item, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
-                  <span className="text-sm">{item.service}</span>
-                  <span className="font-medium">${item.est_usd}</span>
+            {data.cost.items && Array.isArray(data.cost.items) && data.cost.items.length > 0 && (
+              <>
+                <Separator className="my-4" />
+                <div>
+                  <h4 className="font-medium mb-3">Service Breakdown</h4>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
+                    {data.cost.items.map((item, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
+                        <span className="text-sm">{item.service}</span>
+                        <span className="font-medium">${item.est_usd}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Risks */}
       {data.risks && data.risks.length > 0 && (
