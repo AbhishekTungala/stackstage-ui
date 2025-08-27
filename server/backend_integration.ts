@@ -336,7 +336,11 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
           iac_present: false,
           score: 0,
           analysis: null,
+          cost: null,
+          rto_rpo: null,
           recommendations: [],
+          diagrams: [],
+          alternative_architectures: [],
           error: {
             code: "PARSING_FAILED",
             message: `Unable to parse AI response. The AI may have returned malformed data.`,
@@ -406,31 +410,37 @@ Return ONLY valid, properly escaped JSON (no markdown, no prose, no backticks).
 - Ensure all string values are properly quoted
 - Do not include any text before or after the JSON object
 
-CRITICAL IaC DETECTION: First detect if Infrastructure as Code is present by looking for:
-- Terraform: "resource", "provider", "module", "variable", "output", "data"  
-- CloudFormation: "AWSTemplateFormatVersion", "Resources", "Parameters"
-- Kubernetes: "apiVersion", "kind", "metadata", "spec"
-- Docker: "FROM", "RUN", "COPY", "EXPOSE"
+🚨 CRITICAL: Return pure JSON using this EXACT schema:
 
-If NO IaC detected, return:
+For VALID IaC:
+{
+  "iac_present": true,
+  "score": 75,
+  "analysis": "Brief infrastructure summary and key findings",
+  "cost": {
+    "range_monthly_usd": { "low": 50, "high": 200 },
+    "currency": "USD",
+    "assumptions": ["t3.micro instances"],
+    "items": [{ "service": "EC2", "cost": 100 }]
+  },
+  "rto_rpo": { "rto": "30 minutes", "rpo": "1 hour" },
+  "recommendations": [{ "title": "Add Security Groups", "reason": "Improve security", "example": "code..." }],
+  "diagrams": [{ "type": "mermaid", "code": "graph TD; A --> B;" }],
+  "alternative_architectures": [{ "name": "Serverless", "pros": [...], "cons": [...], "cost_impact": "20% reduction", "latency_impact": "10ms" }],
+  "error": null
+}
+
+For NO IaC:
 {
   "iac_present": false,
   "score": 0,
   "analysis": null,
+  "cost": null,
+  "rto_rpo": null,
   "recommendations": [],
-  "error": {
-    "code": "NO_IAC_PROVIDED",
-    "message": "No Infrastructure as Code detected in the input. Please provide valid IaC for analysis."
-  }
-}
-
-If IaC IS detected, return:
-{
-  "iac_present": true,
-  "score": <0-100 integer>,
-  "analysis": "<analysis>", 
-  "recommendations": [...],
-  "error": null
+  "diagrams": [],
+  "alternative_architectures": [],
+  "error": { "code": "NO_IAC_PROVIDED", "message": "No Infrastructure as Code detected..." }
 }
 
 For valid IaC analysis, follow this exact schema:
@@ -637,10 +647,17 @@ function extractAndValidateJson(rawText: string): any {
   
   // Validation for successful IaC analysis
   if (parsed.iac_present === true) {
-    const required = ['score', 'analysis', 'recommendations'];
+    const required = ['score', 'analysis', 'cost', 'rto_rpo', 'recommendations', 'diagrams', 'alternative_architectures'];
     for (const key of required) {
       if (!(key in parsed)) {
         throw new Error(`AI response missing required field: ${key}`);
+      }
+    }
+    
+    // Validate nested cost structure
+    if (parsed.cost && typeof parsed.cost === 'object') {
+      if (!parsed.cost.range_monthly_usd || !parsed.cost.currency || !parsed.cost.assumptions || !parsed.cost.items) {
+        throw new Error('AI response has incomplete cost structure');
       }
     }
     
