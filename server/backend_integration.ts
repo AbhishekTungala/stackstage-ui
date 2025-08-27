@@ -290,29 +290,58 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     const data = await response.json();
     let aiResponse = data.choices[0]?.message?.content || "I'm here to help with your cloud architecture questions.";
     
-    // Simple and reliable JSON extraction
+    // Enhanced JSON extraction with better error handling
     let structuredResponse;
     try {
-      // Try parsing the AI response directly as JSON (it's already clean)
+      // First attempt: Direct JSON parsing
       const cleanText = aiResponse.trim();
-      structuredResponse = JSON.parse(cleanText);
       
-      // Validate required fields exist
-      if (typeof structuredResponse === 'object' && structuredResponse.score !== undefined) {
-        console.log("Direct JSON parsing successful!");
+      // Remove common markdown artifacts that might break parsing
+      const sanitizedText = cleanText
+        .replace(/^```json\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .replace(/^```\s*/i, '')
+        .trim();
+
+      structuredResponse = JSON.parse(sanitizedText);
+      
+      // Validate response structure
+      if (typeof structuredResponse === 'object' && structuredResponse !== null) {
+        console.log("✅ Direct JSON parsing successful!");
+        
+        // Check if it's an error response
+        if (structuredResponse.iac_present === false && structuredResponse.error) {
+          console.log("📋 Received structured error response for no IaC");
+        } else if (structuredResponse.score !== undefined) {
+          console.log("📊 Received structured analysis response");
+        } else {
+          console.log("📝 Received valid JSON response");
+        }
       } else {
-        throw new Error("Invalid response structure");
+        throw new Error("Invalid response structure: not a valid object");
       }
     } catch (parseError: any) {
-      console.log("Direct parsing failed, trying extraction:", parseError.message);
+      console.log(`⚠️ Direct parsing failed: ${parseError.message}`);
       
       try {
+        // Second attempt: Extract JSON from mixed content
+        console.log("🔍 Attempting JSON extraction from mixed content...");
         structuredResponse = extractAndValidateJson(aiResponse);
-        console.log("Extraction parsing successful!");
+        console.log("✅ Extraction parsing successful!");
       } catch (extractError: any) {
-        console.log("🚨 Failed to parse AI response - returning error");
-        // Return error instead of generic fallback
-        throw new Error(`AI response parsing failed: ${extractError.message}. Raw response: ${aiResponse.substring(0, 200)}...`);
+        console.log("🚨 All parsing attempts failed - returning structured error");
+        
+        // Return a properly structured error response instead of throwing
+        structuredResponse = {
+          iac_present: false,
+          analysis: null,
+          recommendations: [],
+          error: {
+            code: "PARSING_FAILED",
+            message: `Unable to parse AI response. The AI may have returned malformed data.`,
+            raw_response: aiResponse.substring(0, 300)
+          }
+        };
       }
     }
     

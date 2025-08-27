@@ -653,17 +653,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: assistantResponse,
           timestamp: new Date()
         });
-      } catch (backendError) {
-        console.error('🚨 AI assistant failed - OpenRouter API unavailable:', backendError);
+      } catch (backendError: unknown) {
+        const errorMessage = backendError instanceof Error ? backendError.message : 'Unknown error';
+        console.error('🚨 AI assistant failed - OpenRouter API unavailable:', errorMessage);
         
         // NO FALLBACKS - Return explicit error message
         res.status(503).json({ 
           error: "AI assistant unavailable",
-          message: `OpenRouter API is currently unavailable: ${backendError.message}. Please verify your API key and try again.`,
+          message: `OpenRouter API is currently unavailable: ${errorMessage}. Please verify your API key and try again.`,
           details: "Real AI assistant requires a working OpenRouter API connection",
           suggestions: [
             "Check OPENROUTER_API_KEY environment variable",
-            "Verify internet connectivity",
+            "Verify internet connectivity", 
             "Try again in a few moments"
           ],
           timestamp: new Date().toISOString()
@@ -692,15 +693,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Prepare messages with file content if provided
       let enhancedMessages = [...messages];
       
-      // If file content is provided, inject it into the user message
+      // Enhanced file content processing with intelligent file type detection
       if (fileContent && fileContent.trim()) {
+        const fileType = detectFileType(fileName);
+        const analysisPrompt = generateFileAnalysisPrompt(fileContent, fileName, fileType);
+        
         const lastMessage = enhancedMessages[enhancedMessages.length - 1];
         if (lastMessage.role === 'user') {
-          lastMessage.content = `${lastMessage.content}\n\nAnalyze this ${fileName ? `${fileName} ` : ''}file content:\n\`\`\`\n${fileContent}\n\`\`\``;
+          lastMessage.content = `${lastMessage.content}\n\n${analysisPrompt}`;
         } else {
           enhancedMessages.push({
             role: 'user',
-            content: `Please analyze this ${fileName ? `${fileName} ` : ''}file content:\n\`\`\`\n${fileContent}\n\`\`\``
+            content: analysisPrompt
           });
         }
       }
@@ -714,10 +718,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: backendResult.timestamp || new Date().toISOString(),
         source: backendResult.source || "api"
       });
-    } catch (error) {
-      console.error('Enhanced assistant error:', error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Enhanced assistant error:', errorMessage);
       res.status(500).json({ 
-        response: `Technical error: ${error.message}. Please verify your OpenRouter API key is configured.`,
+        response: `Technical error: ${errorMessage}. Please verify your OpenRouter API key is configured.`,
         suggestions: ["Try again", "Check API configuration", "Contact support"],
         timestamp: new Date().toISOString(),
         error: true
@@ -1563,4 +1568,129 @@ This approach typically reduces operational overhead by 40-60% while improving r
 
   const baseResponse = responses[Math.floor(Math.random() * responses.length)];
   return baseResponse + regionContext;
+}
+
+// Enhanced file analysis utilities
+function detectFileType(fileName?: string): string {
+  if (!fileName) return 'unknown';
+  
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  const typeMap: Record<string, string> = {
+    'tf': 'terraform',
+    'py': 'python',
+    'js': 'javascript',
+    'ts': 'typescript',
+    'json': 'json',
+    'yaml': 'yaml',
+    'yml': 'yaml',
+    'dockerfile': 'docker',
+    'sh': 'bash',
+    'sql': 'sql',
+    'go': 'golang',
+    'java': 'java',
+    'cs': 'csharp',
+    'cpp': 'cpp',
+    'c': 'c',
+    'rb': 'ruby',
+    'php': 'php'
+  };
+  
+  return typeMap[extension || ''] || 'code';
+}
+
+function generateFileAnalysisPrompt(content: string, fileName?: string, fileType?: string): string {
+  const analysisTemplates: Record<string, string> = {
+    'terraform': `🏗️ **TERRAFORM INFRASTRUCTURE ANALYSIS**
+
+File: ${fileName || 'terraform file'}
+
+Please provide a comprehensive analysis of this Terraform configuration:
+
+\`\`\`hcl
+${content}
+\`\`\`
+
+**Analysis Requirements:**
+- Security vulnerabilities and compliance gaps
+- Cost optimization opportunities
+- High availability and disaster recovery readiness
+- Performance bottlenecks
+- Best practices violations
+- Resource dependencies and potential conflicts`,
+    
+    'python': `🐍 **PYTHON CODE ANALYSIS**
+
+File: ${fileName || 'python file'}
+
+Analyze this Python code for:
+
+\`\`\`python
+${content}
+\`\`\`
+
+**Focus Areas:**
+- Code quality and maintainability
+- Performance optimizations
+- Security vulnerabilities
+- Best practices adherence
+- Potential bugs or issues
+- Cloud deployment considerations`,
+    
+    'json': `📋 **JSON CONFIGURATION ANALYSIS**
+
+File: ${fileName || 'json file'}
+
+Review this JSON configuration:
+
+\`\`\`json
+${content}
+\`\`\`
+
+**Analysis Focus:**
+- Configuration best practices
+- Security settings
+- Optimization opportunities
+- Potential misconfigurations
+- Compliance considerations`,
+    
+    'yaml': `📝 **YAML CONFIGURATION ANALYSIS**
+
+File: ${fileName || 'yaml file'}
+
+Analyze this YAML configuration:
+
+\`\`\`yaml
+${content}
+\`\`\`
+
+**Key Areas:**
+- Kubernetes/container orchestration best practices
+- Security configurations
+- Resource allocation optimization
+- High availability setup
+- Deployment strategy review`
+  };
+  
+  const template = analysisTemplates[fileType || 'code'];
+  if (template) {
+    return template;
+  }
+  
+  // Default template for unknown file types
+  return `📄 **FILE ANALYSIS REQUEST**
+
+File: ${fileName || 'uploaded file'} (${fileType || 'unknown type'})
+
+Please analyze this file content:
+
+\`\`\`
+${content}
+\`\`\`
+
+**General Analysis:**
+- Code quality and structure
+- Security considerations
+- Optimization opportunities
+- Best practices review
+- Potential improvements`;
 }

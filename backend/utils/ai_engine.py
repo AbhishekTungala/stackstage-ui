@@ -372,12 +372,20 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
             "Content-Type": "application/json"
         }
 
+        # Enhanced payload with better token management and format detection
+        needs_json = any("JSON" in msg.get("content", "").upper() or 
+                        "terraform" in msg.get("content", "").lower() or
+                        "analyze" in msg.get("content", "").lower() 
+                        for msg in chat_messages)
+        
         payload = {
             "model": "openai/gpt-4o-mini",
             "messages": chat_messages,
-            "temperature": 0.3,
-            "max_tokens": 2000,
-            "response_format": {"type": "json_object"} if any("JSON" in msg.get("content", "") for msg in chat_messages) else None
+            "temperature": 0.2,  # Lower temperature for more consistent responses
+            "max_tokens": 3000,  # Increased for comprehensive analysis
+            "response_format": {"type": "json_object"} if needs_json else None,
+            "frequency_penalty": 0.1,  # Reduce repetition
+            "presence_penalty": 0.1    # Encourage diverse vocabulary
         }
 
         response = requests.post(
@@ -393,16 +401,28 @@ async def assistant_chat(messages: List[Dict[str, str]], role_hint: Optional[str
         result = response.json()
         content = result['choices'][0]['message']['content'].strip()
         
-        # Always return the actual AI response, never fallbacks
-        # Ensure content is not empty or generic
+        # Enhanced response validation and processing
         if not content or len(content.strip()) < 10:
             raise Exception("AI returned empty or invalid response")
-            
+        
+        # Log successful response metadata
+        print(f"✅ OpenRouter Response: {len(content)} chars, model: {result.get('model', 'unknown')}")
+        
+        # Try to parse JSON if it looks like JSON
+        parsed_content = None
+        if content.strip().startswith('{') or "iac_present" in content:
+            try:
+                parsed_content = json.loads(content.strip())
+                print("📊 Successfully parsed JSON response")
+            except json.JSONDecodeError:
+                print("⚠️ Response appears to be JSON but failed to parse - keeping as text")
+        
         return {
-            "response": content,
+            "response": parsed_content if parsed_content else content,
             "suggestions": generate_contextual_suggestions(content, role_hint),
             "timestamp": datetime.now().isoformat(),
-            "source": "openrouter_api"
+            "source": "openrouter_api",
+            "parsed_json": parsed_content is not None
         }
         
     except Exception as e:
