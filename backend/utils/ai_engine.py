@@ -203,7 +203,18 @@ Architecture Input:
   }}
 }}
 
-🚨 CRITICAL: Return ONLY valid JSON. No markdown, no explanations outside the JSON structure.
+🚨 CRITICAL: 
+- Return ONLY valid JSON. No markdown, no explanations outside the JSON structure.
+- If no Infrastructure as Code is detected in the input, return this exact JSON:
+{
+  "iac_present": false,
+  "analysis": null,
+  "recommendations": [],
+  "error": {
+    "code": "NO_IAC_PROVIDED",
+    "message": "No Infrastructure as Code detected in the input. Please provide valid IaC for analysis."
+  }
+}
 """
     
     return [

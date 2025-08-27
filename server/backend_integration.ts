@@ -317,6 +317,17 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     }
     
     if (structuredResponse) {
+      // Check if this is an error response for no IaC
+      if (structuredResponse.iac_present === false && structuredResponse.error) {
+        return {
+          response: structuredResponse,
+          suggestions: ["Please provide Infrastructure as Code (Terraform, CloudFormation, etc.) for analysis", "Try uploading a valid IaC file", "Use our IaC templates to get started"],
+          timestamp: new Date().toISOString(),
+          structured: true,
+          error: true
+        };
+      }
+      
       // Return structured response with suggestions based on the structured data
       const suggestions = generateStructuredSuggestions(structuredResponse, role);
       
@@ -363,7 +374,18 @@ Return ONLY valid, properly escaped JSON (no markdown, no prose, no backticks).
 - Ensure all string values are properly quoted
 - Do not include any text before or after the JSON object
 
-Follow this exact schema:
+CRITICAL: If no Infrastructure as Code is detected in the input, return this exact JSON structure:
+{
+  "iac_present": false,
+  "analysis": null,
+  "recommendations": [],
+  "error": {
+    "code": "NO_IAC_PROVIDED",
+    "message": "No Infrastructure as Code detected in the input. Please provide valid IaC for analysis."
+  }
+}
+
+For valid IaC analysis, follow this exact schema:
 
 {
   "score": integer (0-100, overall architecture health),
@@ -551,7 +573,13 @@ function extractAndValidateJson(rawText: string): any {
     }
   }
   
-  // Validation and normalization
+  // Check if this is an error response for no IaC
+  if (parsed.iac_present === false && parsed.error) {
+    // This is a valid error response - return it as-is
+    return parsed;
+  }
+  
+  // Validation and normalization for successful analysis
   const required = ['score', 'summary', 'diagram_mermaid', 'cost'];
   for (const key of required) {
     if (!(key in parsed)) {
