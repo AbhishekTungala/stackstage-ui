@@ -334,6 +334,7 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
         // Return a properly structured error response instead of throwing
         structuredResponse = {
           iac_present: false,
+          score: 0,
           analysis: null,
           recommendations: [],
           error: {
@@ -346,11 +347,13 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
     }
     
     if (structuredResponse) {
-      // Check if this is an error response for no IaC
+      // Check if this is an error response for no IaC or parsing failure
       if (structuredResponse.iac_present === false && structuredResponse.error) {
         return {
           response: structuredResponse,
-          suggestions: ["Please provide Infrastructure as Code (Terraform, CloudFormation, etc.) for analysis", "Try uploading a valid IaC file", "Use our IaC templates to get started"],
+          suggestions: structuredResponse.error.code === "PARSING_FAILED" 
+            ? ["Try rephrasing your question", "Ensure you're providing valid Infrastructure as Code", "Contact support if the issue persists"]
+            : ["Please provide Infrastructure as Code (Terraform, CloudFormation, etc.) for analysis", "Try uploading a valid IaC file", "Use our IaC templates to get started"],
           timestamp: new Date().toISOString(),
           structured: true,
           error: true
@@ -403,15 +406,31 @@ Return ONLY valid, properly escaped JSON (no markdown, no prose, no backticks).
 - Ensure all string values are properly quoted
 - Do not include any text before or after the JSON object
 
-CRITICAL: If no Infrastructure as Code is detected in the input, return this exact JSON structure:
+CRITICAL IaC DETECTION: First detect if Infrastructure as Code is present by looking for:
+- Terraform: "resource", "provider", "module", "variable", "output", "data"  
+- CloudFormation: "AWSTemplateFormatVersion", "Resources", "Parameters"
+- Kubernetes: "apiVersion", "kind", "metadata", "spec"
+- Docker: "FROM", "RUN", "COPY", "EXPOSE"
+
+If NO IaC detected, return:
 {
   "iac_present": false,
+  "score": 0,
   "analysis": null,
   "recommendations": [],
   "error": {
     "code": "NO_IAC_PROVIDED",
     "message": "No Infrastructure as Code detected in the input. Please provide valid IaC for analysis."
   }
+}
+
+If IaC IS detected, return:
+{
+  "iac_present": true,
+  "score": <0-100 integer>,
+  "analysis": "<analysis>", 
+  "recommendations": [...],
+  "error": null
 }
 
 For valid IaC analysis, follow this exact schema:
@@ -602,17 +621,32 @@ function extractAndValidateJson(rawText: string): any {
     }
   }
   
+  // Validate the new consistent schema
+  if (!('iac_present' in parsed)) {
+    throw new Error(`AI response missing required field: iac_present`);
+  }
+  
   // Check if this is an error response for no IaC
   if (parsed.iac_present === false && parsed.error) {
-    // This is a valid error response - return it as-is
+    // Validate error response structure
+    if (!parsed.error.code || !parsed.error.message) {
+      throw new Error('Invalid error response structure');
+    }
     return parsed;
   }
   
-  // Validation and normalization for successful analysis
-  const required = ['score', 'summary', 'diagram_mermaid', 'cost'];
-  for (const key of required) {
-    if (!(key in parsed)) {
-      throw new Error(`AI response missing required field: ${key}`);
+  // Validation for successful IaC analysis
+  if (parsed.iac_present === true) {
+    const required = ['score', 'analysis', 'recommendations'];
+    for (const key of required) {
+      if (!(key in parsed)) {
+        throw new Error(`AI response missing required field: ${key}`);
+      }
+    }
+    
+    // Ensure error is null for successful analysis
+    if (parsed.error !== null) {
+      parsed.error = null;
     }
   }
   

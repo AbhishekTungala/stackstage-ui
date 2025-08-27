@@ -203,11 +203,31 @@ Architecture Input:
   }}
 }}
 
-🚨 CRITICAL: 
-- Return ONLY valid JSON. No markdown, no explanations outside the JSON structure.
-- If no Infrastructure as Code is detected in the input, return this exact JSON:
+🚨 CRITICAL IaC DETECTION AND RESPONSE FORMAT:
+
+STEP 1: IaC Detection - Look for these patterns in the input:
+- Terraform: "resource", "provider", "module", "variable", "output", "data"  
+- CloudFormation: "AWSTemplateFormatVersion", "Resources", "Parameters", "Outputs"
+- Kubernetes: "apiVersion", "kind", "metadata", "spec"
+- Docker: "FROM", "RUN", "COPY", "EXPOSE"
+- Ansible: "hosts:", "tasks:", "vars:", "playbook"
+- Pulumi: "new aws.", "new gcp.", "export"
+
+STEP 2: Response Format - ALWAYS use this exact structure:
+
+For VALID IaC (when patterns detected):
+{
+  "iac_present": true,
+  "score": <0-100 integer based on AWS Well-Architected Framework>,
+  "analysis": "<comprehensive analysis summary>",
+  "recommendations": [<array of specific recommendations>],
+  "error": null
+}
+
+For NO IaC (when no patterns detected):
 {
   "iac_present": false,
+  "score": 0,
   "analysis": null,
   "recommendations": [],
   "error": {
@@ -215,6 +235,8 @@ Architecture Input:
     "message": "No Infrastructure as Code detected in the input. Please provide valid IaC for analysis."
   }
 }
+
+Return ONLY valid JSON. No markdown, no explanations outside the JSON structure.
 """
     
     return [
