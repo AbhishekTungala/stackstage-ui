@@ -1,0 +1,60 @@
+You are a senior cloud solutions architect and AI systems engineer. I need you to design and analyze a **multi-cloud, AI-powered backend system** with the following requirements:
+
+### Core Features:
+1. **AI Assistant Module**
+   - Uses OpenRouter API with model: `perplexity/llama-3-sonar-large-32k-online`
+   - Handles advanced analysis and recommendations.
+   - Real-time inference with caching layer for optimization.
+
+2. **Visualization**
+   - Integrate **Mermaid.js diagrams** for architecture visualization.
+   - Include real-time data charts (e.g., system load, AI usage, cost tracking).
+
+3. **Multi-Cloud Deployment**
+   - AWS (EKS for Kubernetes, S3, RDS)
+   - GCP (GKE, Cloud SQL)
+   - Azure (AKS, Blob Storage)
+   - Provide **cost-effective failover strategy**.
+
+4. **Geo-Location Detection**
+   - Detect user location (MaxMind GeoIP or similar).
+   - Route requests to nearest cloud region for low latency.
+
+5. **Real-Time Data Analysis**
+   - Stream data from multiple sources (Kafka or AWS Kinesis).
+   - Perform real-time metrics computation for dashboards.
+
+6. **Security**
+   - End-to-end encryption.
+   - Mutual TLS between microservices.
+   - JWT-based authentication and Role-Based Access Control (RBAC).
+   - AWS WAF integration for DDoS and OWASP protections.
+
+7. **Scalability & Monitoring**
+   - Kubernetes for container orchestration.
+   - Horizontal Pod Autoscaling for AI inference services.
+   - Observability with Prometheus + Grafana or AWS CloudWatch.
+   - Log aggregation with ELK or OpenSearch.
+
+### What I Need in Your Response:
+✔ **Detailed Architecture Overview**
+✔ **Mermaid Diagram for the entire system**
+✔ **Deployment Workflow (CI/CD pipeline steps)**
+✔ **Exact Tech Stack Selection**
+✔ **Cost Breakdown per Cloud Provider (AWS, GCP, Azure)**
+✔ **Estimated Cost for AI usage (OpenRouter)**
+✔ **Performance Optimization Recommendations**
+✔ **Security Best Practices**
+✔ **Multi-Cloud Failover Strategy**
+✔ **Database Design for AI logs, user data, and metrics**
+✔ **Integration steps for AI model (Llama3 Sonar) with Replit backend**
+
+### Output Format:
+1. **High-Level Summary**
+2. **Architecture Analysis with Score**
+3. **Cost Analysis (Monthly Estimate)**
+4. **Mermaid Diagram**
+5. **Deployment Plan**
+6. **Risk & Performance Recommendations**
+
+Your response should be **complete and production-grade**, as if presenting to a CTO.
