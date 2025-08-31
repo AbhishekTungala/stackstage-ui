@@ -832,5 +832,179 @@
       "diagram": "graph TD;\n    A[WebServer] -->|HTTP| B[Load Balancer];\n    A -->|SSH| C[Admin];\n    B -->|HTTP| D[User Browser];"
     },
     "mode": "comprehensive"
+  },
+  "analysis_1756646895780": {
+    "id": "1756646895780",
+    "timestamp": "2025-08-31T13:28:15.780Z",
+    "score": 65,
+    "security_score": 50,
+    "performance_score": 70,
+    "cost_score": 80,
+    "reliability_score": 75,
+    "scalability_score": 60,
+    "compliance_score": 65,
+    "issues": [
+      {
+        "description": "Security group allows SSH (port 22) from all IP addresses (0.0.0.0/0).",
+        "severity": 8
+      },
+      {
+        "description": "No IAM role attached to the EC2 instance, which can lead to over-permissioning.",
+        "severity": 7
+      },
+      {
+        "description": "Public IP assigned to the EC2 instance without a proper firewall configuration.",
+        "severity": 6
+      }
+    ],
+    "recommendations": [
+      {
+        "description": "Restrict SSH access to specific IP addresses.",
+        "steps": [
+          "Identify the IP addresses that require SSH access.",
+          "Update the security group to allow SSH only from those IP addresses."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Attach an IAM role with least privilege to the EC2 instance.",
+        "steps": [
+          "Create an IAM role with necessary permissions.",
+          "Attach the IAM role to the EC2 instance."
+        ],
+        "category": "Security",
+        "priority": "high",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Consider using a private subnet for the EC2 instance to enhance security.",
+        "steps": [
+          "Create a private subnet in the VPC.",
+          "Launch the EC2 instance in the private subnet.",
+          "Set up a NAT Gateway for outbound internet access if needed."
+        ],
+        "category": "Security",
+        "priority": "medium",
+        "estimated_savings": 0
+      },
+      {
+        "description": "Monitor and optimize instance type based on usage patterns.",
+        "steps": [
+          "Analyze the instance's CPU and memory usage.",
+          "Consider switching to a more cost-effective instance type if underutilized."
+        ],
+        "category": "Cost",
+        "priority": "medium",
+        "estimated_savings": 20
+      }
+    ],
+    "cost": "$50-100/month",
+    "cost_breakdown": {
+      "compute": "$30-60",
+      "storage": "$10-20",
+      "network": "$5-10",
+      "services": "$5-10"
+    },
+    "performance_metrics": {
+      "avg_response_time": 200,
+      "throughput": 50,
+      "availability": 99.9,
+      "error_rate": 1.5
+    },
+    "trend_analysis": {
+      "security_trend": "declining",
+      "performance_trend": "stable",
+      "cost_trend": "optimizing"
+    },
+    "diagram": "graph TD;\n    A[EC2 Instance] -->|uses| B[Security Group];\n    A -->|attached to| C[VPC];\n    C -->|contains| D[Subnet];\n    A -->|uses| E[IAM Role];",
+    "details": {
+      "score": 65,
+      "security_score": 50,
+      "performance_score": 70,
+      "cost_score": 80,
+      "reliability_score": 75,
+      "scalability_score": 60,
+      "compliance_score": 65,
+      "issues": [
+        {
+          "description": "Security group allows SSH (port 22) from all IP addresses (0.0.0.0/0).",
+          "severity": 8
+        },
+        {
+          "description": "No IAM role attached to the EC2 instance, which can lead to over-permissioning.",
+          "severity": 7
+        },
+        {
+          "description": "Public IP assigned to the EC2 instance without a proper firewall configuration.",
+          "severity": 6
+        }
+      ],
+      "recommendations": [
+        {
+          "description": "Restrict SSH access to specific IP addresses.",
+          "steps": [
+            "Identify the IP addresses that require SSH access.",
+            "Update the security group to allow SSH only from those IP addresses."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Attach an IAM role with least privilege to the EC2 instance.",
+          "steps": [
+            "Create an IAM role with necessary permissions.",
+            "Attach the IAM role to the EC2 instance."
+          ],
+          "category": "Security",
+          "priority": "high",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Consider using a private subnet for the EC2 instance to enhance security.",
+          "steps": [
+            "Create a private subnet in the VPC.",
+            "Launch the EC2 instance in the private subnet.",
+            "Set up a NAT Gateway for outbound internet access if needed."
+          ],
+          "category": "Security",
+          "priority": "medium",
+          "estimated_savings": 0
+        },
+        {
+          "description": "Monitor and optimize instance type based on usage patterns.",
+          "steps": [
+            "Analyze the instance's CPU and memory usage.",
+            "Consider switching to a more cost-effective instance type if underutilized."
+          ],
+          "category": "Cost",
+          "priority": "medium",
+          "estimated_savings": 20
+        }
+      ],
+      "cost": "$50-100/month",
+      "cost_breakdown": {
+        "compute": "$30-60",
+        "storage": "$10-20",
+        "network": "$5-10",
+        "services": "$5-10"
+      },
+      "performance_metrics": {
+        "avg_response_time": 200,
+        "throughput": 50,
+        "availability": 99.9,
+        "error_rate": 1.5
+      },
+      "trend_analysis": {
+        "security_trend": "declining",
+        "performance_trend": "stable",
+        "cost_trend": "optimizing"
+      },
+      "diagram": "graph TD;\n    A[EC2 Instance] -->|uses| B[Security Group];\n    A -->|attached to| C[VPC];\n    C -->|contains| D[Subnet];\n    A -->|uses| E[IAM Role];"
+    },
+    "mode": "comprehensive",
+    "provider": ""
   }
 }
