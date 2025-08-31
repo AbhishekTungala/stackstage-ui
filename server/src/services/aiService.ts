@@ -38,8 +38,8 @@ class AIService {
   constructor() {
     this.openRouterApiKey = process.env.OPENROUTER_API_KEY || '';
     this.baseUrl = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
-    this.model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
-    this.maxTokens = parseInt(process.env.OPENROUTER_MAX_TOKENS || '2000');
+    this.model = process.env.OPENROUTER_MODEL || 'perplexity/llama-3-sonar-large-32k-online';
+    this.maxTokens = parseInt(process.env.OPENROUTER_MAX_TOKENS || '4000');
     this.temperature = parseFloat(process.env.OPENROUTER_TEMPERATURE || '0.7');
     this.isConfigured = !!this.openRouterApiKey;
     
