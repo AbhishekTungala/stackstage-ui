@@ -1,0 +1,310 @@
+📌 PROJECT CONTEXT
+
+StackStage helps DevOps teams, cloud architects, and enterprises validate, score, and optimize their cloud infrastructure using AI-driven analysis, visualization, and automation.
+Mission: “Build with Confidence” — Ensure infra is secure, scalable, cost-optimized, and future-ready.
+
+✅ BACKEND ARCHITECTURE & TECHNOLOGY STACK
+
+Primary Backend: Node.js (Express + TypeScript)
+
+Handles API routing, authentication, session management, orchestration.
+
+Exposes REST endpoints for analysis, AI chat, diagrams, exports, and user management.
+
+Secondary AI Backend: Python (FastAPI)
+
+Handles deep AI processing, IaC parsing, and diagram generation.
+
+Communicates with Node.js via internal API or gRPC.
+
+Database: PostgreSQL with Drizzle ORM.
+
+AI Models:
+
+Primary: OpenRouter API → gpt-4o-mini (or perplexity/llama-3-sonar-large-32k-online for large context)
+
+Future fallback: Local lightweight models.
+
+Real-Time Communication: WebSockets (Socket.IO) or SSE for live analysis progress.
+
+Visualization: Mermaid.js and Graphviz for diagrams.
+
+Auth: Replit Auth + JWT for API security.
+
+✅ CORE MODULES & FEATURES
+1. AI-Powered Analysis Engine
+
+Accepts IaC inputs:
+
+Text description
+
+Terraform (.tf)
+
+CloudFormation (YAML/JSON)
+
+Kubernetes YAML
+
+Analysis Pipeline:
+
+Input validation & parsing.
+
+Multi-dimensional scoring (0–100):
+
+Security
+
+Reliability
+
+Scalability
+
+Performance
+
+Cost Optimization
+
+AI-enhanced recommendations using OpenRouter.
+
+Structured JSON output:
+
+{
+  "overall_score": 83,
+  "categories": {
+    "security": 28,
+    "reliability": 22,
+    "performance": 18,
+    "cost": 15
+  },
+  "verdict": "Needs Work",
+  "recommendations": [
+    { "issue": "No Multi-AZ DB", "fix": "Add RDS Multi-AZ" }
+  ]
+}
+
+
+Endpoints:
+
+POST /api/analyze → Perform full analysis.
+
+POST /api/assistant → Conversational Q&A with role-based personas (CTO, DevOps).
+
+POST /api/compare → Compare two architectures.
+
+2. Visualization & Diagram Generator
+
+Auto-generate Mermaid diagrams + Graphviz.
+
+Diagram Types:
+
+High-level architecture flow
+
+IaC resource mapping
+
+Highlight risky components
+
+Endpoints:
+
+POST /api/diagram → Returns Mermaid code + SVG.
+
+Extra:
+
+Embed diagrams in PDF reports.
+
+Support Diagrams-as-Code for future CI/CD automation.
+
+3. Real-Time Updates & Notifications
+
+Use WebSockets for:
+
+Live AI analysis progress.
+
+Drift detection alerts.
+
+Multi-cloud status updates.
+
+Example:
+
+/api/stream/analysis → Streams events like:
+
+{ "event": "scoring", "progress": 45 }
+
+4. Geo-Aware Optimization
+
+Detect client IP → Geo info:
+
+Country, region, timezone.
+
+Use Geo data for AI insights:
+
+Suggest infra region placement to minimize latency & cost.
+
+Endpoint:
+
+GET /api/location → Returns:
+
+{
+  "ip": "203.0.113.5",
+  "country": "US",
+  "region": "California",
+  "timezone": "PST"
+}
+
+5. Multi-Cloud Integration (Read-Only for MVP)
+
+AWS → aws-sdk
+
+Azure → @azure/arm-resources
+
+GCP → @google-cloud/resource-manager
+
+Endpoints:
+
+/api/cloud/aws/status
+
+/api/cloud/azure/status
+
+/api/cloud/gcp/status
+
+Data returned:
+
+Running instances, regions, basic cost estimates.
+
+6. Report Generation & Export
+
+Formats:
+
+PDF (with charts, diagrams, scores, recommendations)
+
+Markdown (for GitHub/GitLab issues)
+
+Delivery:
+
+Email
+
+Slack
+
+Notion / Jira (via integrations)
+
+Endpoint:
+
+POST /api/export/pdf → Generates full report.
+
+7. Authentication & Security
+
+Auth Flow:
+
+Replit Auth for users.
+
+JWT for API sessions.
+
+Security Layers:
+
+Validate requests using Zod schemas.
+
+API key management.
+
+CORS setup.
+
+Rate limiting.
+
+Env Variables:
+
+OPENROUTER_API_KEY=xxxx
+DATABASE_URL=postgres://user:pass@host/db
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AZURE_CLIENT_ID=
+AZURE_CLIENT_SECRET=
+GCP_SERVICE_ACCOUNT_KEY=
+
+8. Performance & Monitoring
+
+Logging: Winston or Pino.
+
+Error Handling: Centralized with proper HTTP codes.
+
+Metrics: Request time, API usage.
+
+Streaming for long-running tasks.
+
+✅ API ROUTES SUMMARY
+Route	Method	Description
+/api/analyze	POST	Analyze IaC/infra input
+/api/assistant	POST	Conversational AI help
+/api/diagram	POST	Generate architecture diagram
+/api/location	GET	Get user geo-location info
+/api/cloud/aws/status	GET	AWS resources status
+/api/cloud/azure/status	GET	Azure resources status
+/api/cloud/gcp/status	GET	GCP resources status
+/api/export/pdf	POST	Export full analysis report
+/api/auth/user	GET	Get user profile
+✅ FOLDER STRUCTURE
+/server
+  /src
+    /routes
+      analysis.ts
+      assistant.ts
+      diagram.ts
+      location.ts
+      cloud.ts
+      export.ts
+      auth.ts
+    /services
+      aiService.ts
+      diagramService.ts
+      cloudService.ts
+      reportService.ts
+      geoService.ts
+    /utils
+      logger.ts
+      errorHandler.ts
+    app.ts
+    server.ts
+/backend
+  /fastapi
+    main.py
+    services/
+      analysis_engine.py
+      diagram_engine.py
+      scoring.py
+  requirements.txt
+/storage
+  analyses.json
+
+✅ DELIVERABLES
+
+TypeScript-based Node.js backend (server/).
+
+Python FastAPI AI engine (backend/).
+
+PostgreSQL schema (Drizzle).
+
+All routes + services implemented.
+
+README.md with:
+
+Setup steps
+
+Example API calls
+
+Future roadmap
+
+✅ OUTPUT FORMAT FOR REPLIT
+
+Generate full backend code with:
+
+package.json
+
+.env.example
+
+Multi-file structure.
+
+Include comments for clarity.
+
+Start script:
+
+"scripts": {
+  "start": "ts-node src/server.ts"
+}
+
+ACTION
+
+👉 Build the complete backend now using the above specification.
+Output: All files in code blocks with correct structure.
