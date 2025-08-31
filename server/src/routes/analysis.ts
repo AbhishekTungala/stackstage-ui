@@ -3,6 +3,7 @@ import { z } from "zod";
 import { aiService } from "../services/aiService";
 import { logger } from "../utils/logger";
 import { isAuthenticated } from "./auth";
+import { createRateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ const compareRequestSchema = z.object({
 });
 
 // POST /api/analyze - Perform infrastructure analysis
-router.post('/', async (req, res) => {
+router.post('/', createRateLimiter('analysis'), async (req, res) => {
   try {
     const validatedData = analyzeRequestSchema.parse(req.body);
     
@@ -55,7 +56,7 @@ router.post('/', async (req, res) => {
 });
 
 // POST /api/analyze/compare - Compare two architectures
-router.post('/compare', async (req, res) => {
+router.post('/compare', createRateLimiter('analysis'), async (req, res) => {
   try {
     const validatedData = compareRequestSchema.parse(req.body);
     

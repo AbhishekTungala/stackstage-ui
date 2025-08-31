@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { aiService } from "../services/aiService";
 import { logger } from "../utils/logger";
+import { createRateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ const assistantRequestSchema = z.object({
 });
 
 // POST /api/assistant - Conversational AI help
-router.post('/', async (req, res) => {
+router.post('/', createRateLimiter('assistant'), async (req, res) => {
   try {
     const validatedData = assistantRequestSchema.parse(req.body);
     

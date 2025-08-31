@@ -1,0 +1,78 @@
+
+---
+
+### **Current State of the Backend**
+- Dual-backend architecture:
+  - **Node.js (Express)**: API orchestration, authentication, session management
+  - **Python (FastAPI)**: AI processing, infrastructure analysis, diagram generation
+- PostgreSQL schema with **Drizzle ORM** for:
+  - Users, authentication, analysis results, diagrams, reports, and AI history
+- Implemented services:
+  - **Cloud Integration:** AWS, Azure, GCP
+  - **Geo Service:** IP-based region optimization
+  - **AI Service:** OpenRouter integration for GPT-based responses
+  - **Report Service:** PDF/Markdown generation
+
+---
+
+### **Problem**
+- The backend throws an error when calling the AI Assistant API because the **OpenRouter API key** is not properly configured.
+- Missing or incomplete `.env` variable setup and validation for the AI integration.
+
+---
+
+### **What I Need You to Do**
+1. **Environment Setup**
+   - Ensure `.env` file contains:
+     ```
+     OPENROUTER_API_KEY=your_api_key_here
+     ```
+   - Update the backend to **read and validate this environment variable**.
+   - Add a fallback error handler for missing keys.
+
+2. **AI Service Update**
+   - In the AI Service module:
+     - Load `OPENROUTER_API_KEY` from `process.env`.
+     - Inject it properly in the API request header:
+       ```
+       Authorization: Bearer ${OPENROUTER_API_KEY}
+       ```
+   - Ensure **config-driven architecture** for API base URL (from `.env`):
+     ```
+     OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+     ```
+
+3. **Error Handling**
+   - Add proper response for missing or invalid API key.
+   - Log an actionable message like:
+     ```
+     AI Service Error: Missing OpenRouter API Key. Please set OPENROUTER_API_KEY in .env file.
+     ```
+
+4. **Testing**
+   - Create a **health-check endpoint** `/api/ai/test` that:
+     - Sends a small prompt to OpenRouter (e.g., "Hello AI") and returns the response.
+     - Confirms the AI service is fully functional.
+
+---
+
+### **Deliverables**
+✅ Fully functional AI Assistant with OpenRouter API working.  
+✅ Proper `.env` configuration and validation for API keys.  
+✅ Health-check route for AI Service.  
+✅ Updated README with setup instructions.
+
+---
+
+### **Bonus**
+If possible:
+- Add **rate limiting** for AI API calls.
+- Implement **retry logic** for failed requests.
+
+---
+
+**Now, please implement these changes step by step and show me the updated code for:**
+- `.env.example`
+- `AI Service` file
+- `server.ts` (or wherever the AI service is initialized)
+- Health-check route (`/api/ai/test`)

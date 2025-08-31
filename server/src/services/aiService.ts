@@ -1,4 +1,5 @@
 import { logger } from "../utils/logger";
+import { RetryHelper } from "../middleware/rateLimiter";
 
 // Interface for analysis request
 interface AnalysisRequest {
@@ -28,12 +29,24 @@ interface AssistantRequest {
 
 class AIService {
   private readonly openRouterApiKey: string;
-  private readonly baseUrl = 'https://openrouter.ai/api/v1';
+  private readonly baseUrl: string;
+  private readonly model: string;
+  private readonly maxTokens: number;
+  private readonly temperature: number;
+  private readonly isConfigured: boolean;
 
   constructor() {
     this.openRouterApiKey = process.env.OPENROUTER_API_KEY || '';
-    if (!this.openRouterApiKey) {
-      logger.warn('OpenRouter API key not found, using fallback responses');
+    this.baseUrl = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+    this.model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+    this.maxTokens = parseInt(process.env.OPENROUTER_MAX_TOKENS || '2000');
+    this.temperature = parseFloat(process.env.OPENROUTER_TEMPERATURE || '0.7');
+    this.isConfigured = !!this.openRouterApiKey;
+    
+    if (!this.isConfigured) {
+      logger.error('AI Service Error: Missing OpenRouter API Key. Please set OPENROUTER_API_KEY in .env file.');
+    } else {
+      logger.info('AI Service initialized with OpenRouter API');
     }
   }
 
@@ -41,8 +54,9 @@ class AIService {
     try {
       logger.info(`Analyzing infrastructure: ${request.analysisMode} mode for ${request.cloudProvider}`);
 
-      // If no API key, return mock analysis
-      if (!this.openRouterApiKey) {
+      // If not configured, return mock analysis
+      if (!this.isConfigured) {
+        logger.warn('Using mock analysis - OpenRouter API key not configured');
         return this.getMockAnalysis(request);
       }
 
@@ -75,7 +89,8 @@ class AIService {
         Provide a detailed comparison with scores and recommendations.
       `;
 
-      if (!this.openRouterApiKey) {
+      if (!this.isConfigured) {
+        logger.warn('Using mock comparison - OpenRouter API key not configured');
         return this.getMockComparison();
       }
 
@@ -92,7 +107,8 @@ class AIService {
     try {
       const prompt = this.buildAssistantPrompt(request);
 
-      if (!this.openRouterApiKey) {
+      if (!this.isConfigured) {
+        logger.warn('Using mock assistant response - OpenRouter API key not configured');
         return this.getMockAssistantResponse(request);
       }
 
@@ -139,7 +155,8 @@ class AIService {
   }
 
   private async callOpenRouter(prompt: string, persona: string) {
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+    return await RetryHelper.withRetry(async () => {
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.openRouterApiKey}`,
@@ -148,7 +165,7 @@ class AIService {
         'X-Title': 'StackStage'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
+        model: this.model,
         messages: [
           {
             role: 'system',
@@ -159,8 +176,8 @@ class AIService {
             content: prompt
           }
         ],
-        temperature: 0.7,
-        max_tokens: 2000
+        temperature: this.temperature,
+        max_tokens: this.maxTokens
       })
     });
 
@@ -168,8 +185,9 @@ class AIService {
       throw new Error(`OpenRouter API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    return data.choices[0].message.content;
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }, 3, 1000, 2);
   }
 
   private getSystemPrompt(persona: string): string {

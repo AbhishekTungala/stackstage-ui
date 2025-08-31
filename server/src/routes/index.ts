@@ -6,6 +6,7 @@ import { locationRouter } from "./location";
 import { cloudRouter } from "./cloud";
 import { exportRouter } from "./export";
 import { authRouter } from "./auth";
+import aiTestRoutes from "./aiTest";
 
 export function registerRoutes(app: Express): void {
   // Health check
@@ -26,4 +27,5 @@ export function registerRoutes(app: Express): void {
   app.use('/api/cloud', cloudRouter);
   app.use('/api/export', exportRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/ai', aiTestRoutes);
 }

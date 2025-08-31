@@ -28,7 +28,16 @@ export async function callPythonAnalyze(request: AnalyzeRequest): Promise<Analyz
     // Use OpenRouter API for architecture analysis
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER;
     if (!apiKey) {
-      throw new Error("OpenRouter API key not found. Please configure OPENROUTER_API_KEY environment variable.");
+      console.log("⚠️ OpenRouter API key not configured - returning mock analysis");
+      return {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        score: 75,
+        issues: ["API key not configured - using fallback analysis", "Set OPENROUTER_API_KEY to enable AI features"],
+        recommendations: ["Configure OpenRouter API key in environment variables", "Check .env.example for required configuration"],
+        cost: "$100-300/month (estimated)",
+        diagram: "graph TD\n    A[User] --> B[Load Balancer]\n    B --> C[Web Server]\n    C --> D[Database]"
+      };
     }
 
     const analysisInput = request.architecture_text || request.file_content || '';
@@ -238,10 +247,17 @@ export async function callPythonAssistant(messages: any[] | string, role?: strin
   try {
     console.log("Calling OpenAI API for enhanced assistant...");
     
-    // Check for API key
+    // Check for API key with graceful fallback
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER;
     if (!apiKey) {
-      throw new Error("OpenRouter API key not found. Please set OPENROUTER_API_KEY environment variable.");
+      console.log("⚠️ OpenRouter API key not configured - using fallback response");
+      return {
+        response: "AI Service is not configured. Please set OPENROUTER_API_KEY in your environment variables to enable full AI capabilities.",
+        suggestions: ["Set up OpenRouter API key", "Check environment configuration", "Use mock responses for testing"],
+        timestamp: new Date().toISOString(),
+        error: false,
+        configured: false
+      };
     }
     
     // Prepare messages for OpenAI
